@@ -13,8 +13,7 @@
 from typing import Any
 
 import protocols.base as Base
-import protocols.http as Http
-import protocols.redissub as RedisSub
+#import protocols.redissub as RedisSub
 import protocols.ros1 as ROS1
 import protocols.movai as MovAI
 
@@ -96,16 +95,16 @@ class TransportRedis:
         return self._instance
 
 
-class TransportHttp:
+#class TransportHttp:
 
-    def __init__(self):
-        self._instance = None
+ #   def __init__(self):
+ #       self._instance = None
 
-    def __call__(self, node_name, **_ignore):
-        if not self._instance:
-            port = gd.params.get("_port", 5000)
-            self._instance = Http.CreateServer(node_name, '0.0.0.0', port)
-        return self._instance
+ #   def __call__(self, node_name, **_ignore):
+ #       if not self._instance:
+ #           port = gd.params.get("_port", 5000)
+ #           self._instance = Http.CreateServer(node_name, '0.0.0.0', port)
+ #       return self._instance
 
 
 class TransportROS2:
@@ -138,7 +137,7 @@ class TransportSocketIO:
 Transports = TransportsProvider()
 Transports.register('ROS1', TransportROS1())
 Transports.register('Redis', TransportRedis())
-Transports.register('Http', TransportHttp())
+#Transports.register('Http', TransportHttp())
 Transports.register('ROS2', TransportROS2())
 Transports.register('SocketIO', TransportSocketIO())
 
@@ -259,28 +258,28 @@ class IportRos1TopicHz:
             self._instance.unregister()
 
 
-class IportRedisSub:
+#class IportRedisSub:
 
-    def __init__(self, **kwargs):
-        name = kwargs['_port_name']
-        gd.iport[name] = RedisSub.Redis_Subscriber(**kwargs)
-
-
-class IportVarSub:
-
-    def __init__(self, **kwargs):
-        name = kwargs['_port_name']
-        gd.iport[name] = RedisSub.Var_Subscriber(**kwargs)
+ #   def __init__(self, **kwargs):
+ #       name = kwargs['_port_name']
+ #       gd.iport[name] = RedisSub.Redis_Subscriber(**kwargs)
 
 
-class IportHttpRoute:
+#class IportVarSub:
 
-    def __init__(self, **kwargs):
-        name = kwargs['_port_name']
-        self._instance = Http.HttpRoute(**kwargs)
+ #   def __init__(self, **kwargs):
+ #       name = kwargs['_port_name']
+ #       gd.iport[name] = RedisSub.Var_Subscriber(**kwargs)
+
+
+#class IportHttpRoute:
+
+ #   def __init__(self, **kwargs):
+ #       name = kwargs['_port_name']
+ #       self._instance = Http.HttpRoute(**kwargs)
         #gd.oport['reply@' + name] = Http.HttpRouteReply()
-        gd.oport['reply@' + name + '/data_in'] = self._instance
-        gd.iport[name] = self._instance
+ #       gd.oport['reply@' + name + '/data_in'] = self._instance
+ #       gd.iport[name] = self._instance
 
 
 class IportWebSocket:
@@ -387,9 +386,9 @@ Iport.register('ROS1/ActionClient', IportRos1ActionClient)
 Iport.register('ROS1/Timer', IportRos1Timer)
 Iport.register('ROS1/TF', IportRos1Tf)
 Iport.register('ROS1/TopicHz', IportRos1TopicHz)
-Iport.register('Redis/Subscriber', IportRedisSub)
-Iport.register('Redis/VarSubscriber', IportVarSub)
-Iport.register('AioHttp/Http', IportHttpRoute)
+#Iport.register('Redis/Subscriber', IportRedisSub)
+#Iport.register('Redis/VarSubscriber', IportVarSub)
+#Iport.register('AioHttp/Http', IportHttpRoute)
 Iport.register('AioHttp/Websocket', IportWebSocket)
 Iport.register('MovAI/Exit', IportMovaiExit)
 Iport.register('MovAI/Init', IportMovaiInit)

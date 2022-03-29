@@ -12,11 +12,11 @@
 import asyncio
 
 
-from API2.Exceptions import TransitionException
-from API2.Layer1 import MovaiDB
-from API2.Redis import RedisClient
-from API2.Robot import Robot
-from API2.StateMachine import SMVars, StateMachine
+from common_general.api.exceptions import TransitionException
+from common_general.api.core.database import MovaiDB
+from common_general.api.core.redis import RedisClient
+from common_general.api.models.robot import Robot
+from ..statemachine import SMVars, StateMachine
 from ..callback import GD_Callback as Callback
 from ..user import GD_User
 from common_general.logger import StdoutLogger
