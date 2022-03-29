@@ -20,15 +20,15 @@ from common_general.api.core.database import MovaiDB
 from common_general.api.models.lock import Lock
 
 from common_general.api.models.robot import Robot, FleetRobot
-from common_general.api.models.statemachine import SMVars
+from .statemachine import SMVars
 from common_general.api.models.var import Var
 from common_general.api.models.task import Task
-from common_general.api.models.statemachine import StateMachine
-from common_general.api.models.message import Message
+from .statemachine import StateMachine
+from .message_model import Message
 from common_general.api.models.ports import Ports
 from common_general.api.models.package import Package
 from common_general.logger import Logger
-from common_general.metrics import Metrics
+from .metrics import Metrics
 
 from .user import GD_User as gd
 from os import getenv

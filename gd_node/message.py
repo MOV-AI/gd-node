@@ -11,7 +11,7 @@ import re
 import sys
 import importlib
 from typing import Any
-from common_general.api.models.message import Message
+from .message_model import Message
 from common_general.envvars import ROS2_PATH
 
 ROS2_ONLY_ATTR = 'SLOT_TYPES' #Check in future updates
