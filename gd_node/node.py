@@ -9,7 +9,6 @@
 """
 import ast
 import asyncio
-from common_general.movai.data.scope import ScopePropertyNode
 import pickle
 import re
 import signal
@@ -17,19 +16,22 @@ import time
 
 import uvloop
 
+from movai_core_shared.logger import  Log
+from movai_core_shared.consts import MOVAI_INIT
+
+from movai.data.scope import ScopePropertyNode
 
 # importing database profile automatically registers the database connections
-from common_general.api.core.redis import RedisClient
-from common_general.api.models.var import Var
-from common_general.api.consts import MOVAI_INIT
+from dal.movaidb.database import MovaiDB. RedisClient ?
+from common_general.movai.data import scopes ?
 
-from common_general.movai.data import scopes
+from dal.models.var import Var
+
 
 from .protocol import Iport, Oport, Transports
 from .user import GD_User
 
-from common_general.logger import StdoutLogger
-LOGGER = StdoutLogger("spawner.mov.ai")
+LOGGER = Log("spawner.mov.ai")
 
 TIME_0 = time.time()
 

@@ -11,18 +11,19 @@
 """
 import asyncio
 
+from movai_core_shared.logger import Log
+from movai_core_shared.exceptions import TransitionException
 
-from common_general.api.exceptions import TransitionException
-from common_general.api.core.database import MovaiDB
-from common_general.api.core.redis import RedisClient
-from common_general.api.models.robot import Robot
+from common_general.api.core.redis import RedisClient ?
+from dal.movaidb.database import MovaiDB
+from dal.models.robot import Robot
+
 from ..statemachine import SMVars, StateMachine
 from ..callback import GD_Callback as Callback
 from ..user import GD_User
-from common_general.logger import StdoutLogger
 from .base import BaseIport
 
-LOGGER = StdoutLogger("spawner.mov.ai")
+LOGGER = Log("spawner.mov.ai")
 
 class Init(BaseIport):
 

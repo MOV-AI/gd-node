@@ -25,38 +25,47 @@ from typing import List, Union
 import jwt
 import yaml
 from aiohttp import web
-
-from common_general.api.models.callback import Callback
-from common_general.api.models.configuration import Configuration
-from common_general.api.models.shareddataentry import SharedDataEntry
-from common_general.api.models.shareddatatemplate import SharedDataTemplate
-from common_general.api.models.taskentry import TaskEntry
-from common_general.api.models.tasktemplate import TaskTemplate
-from common_general.api.models.flow import Flow
-from common_general.api.models.graphicscene import GraphicScene
-from common_general.api.core.database import MovaiDB
-from common_general.api.models.node import Node
-from common_general.api.models.package import Package
-from common_general.api.core.helpers import Helpers
-from common_general.api.models.annotation import Annotation
-from common_general.api.models.application import Application
-from common_general.api.models.form import Form
-from common_general.api.models.layout import Layout
-from common_general.api.models.statemachine import StateMachine
-from common_general.api.models.user import User
-from common_general.api.models.var import Var
-from common_general.api.models.role import Role
-from common_general.api.core.acl import ACLManager
-from ..callback import GD_Callback
-from common_general.envvars import SCOPES_TO_TRACK
-from common_general.logger import Logger
-from common_general.metrics import Metrics
-from common_general.api.models.robot import Robot
 from urllib.parse import unquote
 
-from common_general.logger import StdoutLogger
+from movai_core_shared.logger import  Log
+from movai_core_shared.envvars import SCOPES_TO_TRACK
 
-LOGGER = StdoutLogger("RestAPI")
+try:
+    from movai_core_enterprise.models.shareddataentry import SharedDataEntry
+    from movai_core_enterprise.models.shareddatatemplate import SharedDataTemplate
+    from movai_core_enterprise.models.taskentry import TaskEntry
+    from movai_core_enterprise.models.tasktemplate import TaskTemplate
+    from movai_core_enterprise.models.graphicscene import GraphicScene
+    from movai_core_enterprise.models.annotation import Annotation
+    from movai_core_enterprise.models.application import Application
+    from movai_core_enterprise.models.layout import Layout
+    enterprise = True
+except ImportError:
+    enterprise = False
+
+from common_general.api.models.callback import Callback ?
+
+from dal.movaidb.database import MovaiDB
+from dal.models.configuration import Configuration
+from dal.models.node import Node
+from dal.models.package import Package
+from dal.models.var import Var
+from dal.models.robot import Robot
+
+from common_general.api.core.helpers import Helpers
+from common_general.api.models.form import Form => deleted
+
+from common_general.api.models.flow import Flow =>Spawner
+from common_general.api.models.user import User => Backend
+from common_general.api.models.role import Role => Backend
+from common_general.api.core.acl import ACLManager => Backend
+
+from ..callback import GD_Callback
+from ..metrics import Metrics
+from ..statemachine import StateMachine
+
+
+LOGGER = Log("RestAPI")
 PAGE_SIZE = 100
 
 

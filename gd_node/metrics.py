@@ -27,7 +27,7 @@ from urllib.parse import urlparse
 
 import requests
 
-from common_general.logger import Logger
+from movai_core_shared.logger import Log
 
 
 class HealthNodeHandler(logging.handlers.HTTPHandler):
@@ -141,7 +141,7 @@ class Metrics:
         try:
             content = response.json()
         except Exception as e:
-            logger = Logger()
+            logger = Log()
             logger.error(message=str(e))
             return []
         else:

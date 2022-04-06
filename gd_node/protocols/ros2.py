@@ -11,9 +11,10 @@ import asyncio
 import importlib
 import sys
 from typing import Any
-
 import rclpy
-from common_general.envvars import ROS2_PATH
+
+from movai_core_shared.envvars import ROS2_PATH
+
 from ..message import GD_Message2
 from ..user import GD_User
 
