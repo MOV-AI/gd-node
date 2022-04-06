@@ -24,15 +24,14 @@ class GD_User:
         params (dict): Parameters of the node instance
     """
 
-    name = ''
-    template = ''
+    name = ""
+    template = ""
     iport = {}
     oport = {}
     params = {}
     shared = Shared()
 
-
     @classmethod
-    def send(cls, port, msg=''):
+    def send(cls, port, msg=""):
         """Making send function easy to write"""
         cls.oport[port].send(msg)

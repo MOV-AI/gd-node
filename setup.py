@@ -21,4 +21,3 @@ setuptools.setup(
     install_requires=[],
     entry_points={},
 )
-

@@ -31,7 +31,6 @@ from movai_core_shared.logger import Log
 
 
 class HealthNodeHandler(logging.handlers.HTTPHandler):
-
     def __init__(self, url):
         logging.Handler.__init__(self)
 
@@ -39,7 +38,7 @@ class HealthNodeHandler(logging.handlers.HTTPHandler):
 
         self.host = parsed_uri.netloc
         self.url = parsed_uri.path
-        self.method = 'POST'
+        self.method = "POST"
         self.secure = False
         self.credentials = False
 
@@ -54,7 +53,7 @@ class HealthNodeHandler(logging.handlers.HTTPHandler):
 
             i = host.find(":")
             if i >= 0:
-                port = host[i+1:]
+                port = host[i + 1 :]
                 host = host[:i]
 
             conn = http.client.HTTPConnection(host, port=port)
@@ -64,8 +63,8 @@ class HealthNodeHandler(logging.handlers.HTTPHandler):
             data = json.dumps(data)
 
             headers = {
-                'Content-type': 'application/json',
-                'Content-length': str(len(data))
+                "Content-type": "application/json",
+                "Content-length": str(len(data)),
             }
             conn.request(self.method, self.url, data, headers)
             conn.getresponse()  # can't do anything with the result
@@ -74,14 +73,13 @@ class HealthNodeHandler(logging.handlers.HTTPHandler):
 
 
 class Metrics:
-
     def __init__(self):
         """
         Metrics
         """
 
-        _log_host = os.environ.get('LOG_HTTP_HOST', 'http://health-node:8081')
-        _host_http_log_handler = f'{_log_host}/metrics'
+        _log_host = os.environ.get("LOG_HTTP_HOST", "http://health-node:8081")
+        _host_http_log_handler = f"{_log_host}/metrics"
 
         logging.raiseExceptions = False
 
@@ -89,7 +87,7 @@ class Metrics:
         # Generate uuid name to not conflict with existing logger channels
         self._logger = logging.getLogger(str(uuid.uuid4()))
 
-        _handler_name = 'health_node_handler'
+        _handler_name = "health_node_handler"
         health_node_handler = HealthNodeHandler(url=_host_http_log_handler)
         health_node_handler.name = _handler_name
         health_node_handler.setLevel(logging.DEBUG)
@@ -97,40 +95,40 @@ class Metrics:
 
         self._logger.setLevel(logging.INFO)
 
-        self._tag_service = os.getenv('HOSTNAME')
+        self._tag_service = os.getenv("HOSTNAME")
 
     def _log(self, name, **kwargs):
-        """ Add Log """
+        """Add Log"""
 
         options = {
-            'name': name,
-            'fields': {**kwargs},
-            'tags': {
-                'service': self._tag_service
-            }
+            "name": name,
+            "fields": {**kwargs},
+            "tags": {"service": self._tag_service},
         }
 
         # Call logger
-        self._logger.info('metrics', options)  # If getattr by level fails, store log as info
+        self._logger.info(
+            "metrics", options
+        )  # If getattr by level fails, store log as info
 
     @staticmethod
     def get_metrics(name=None, limit=1000, offset=0, tags=None, pagination=False):
-        """ Get Metrics from HealthNode """
+        """Get Metrics from HealthNode"""
 
-        _metrics_host = os.environ.get('LOG_HTTP_HOST', 'http://health-node:8081')
-        url = f'{_metrics_host}/metrics'
+        _metrics_host = os.environ.get("LOG_HTTP_HOST", "http://health-node:8081")
+        url = f"{_metrics_host}/metrics"
 
         params = {
-            'name': name,
-            'limit': Metrics.validate_limit(limit),
-            'offset': Metrics.validate_limit(offset),
+            "name": name,
+            "limit": Metrics.validate_limit(limit),
+            "offset": Metrics.validate_limit(offset),
         }
 
         # If invalid name raise ValueError
         Metrics.validate_name(name)
 
         if tags:
-            params['tags'] = Metrics.validate_tags(tags)
+            params["tags"] = Metrics.validate_tags(tags)
 
         try:
             response = requests.get(url, params=params, timeout=5)
@@ -145,12 +143,12 @@ class Metrics:
             logger.error(message=str(e))
             return []
         else:
-            return content if pagination else content.get('data', [])
+            return content if pagination else content.get("data", [])
 
     @staticmethod
     def validate_name(value):
         if value and not re.search(r"[a-zA-Z0-9-_.]+", value):
-            raise ValueError('invalid name')
+            raise ValueError("invalid name")
         return value
 
     @staticmethod
@@ -158,19 +156,19 @@ class Metrics:
         try:
             val = int(value)
         except ValueError:
-            raise ValueError('invalid limit/offset value')
+            raise ValueError("invalid limit/offset value")
         return val
 
     @staticmethod
     def validate_fields(value):
         if not value:
-            raise ValueError('at least one field is required')
+            raise ValueError("at least one field is required")
 
         try:
             value = [] if value is None else value
-            tags = ','.join(value)
+            tags = ",".join(value)
         except ValueError:
-            raise ValueError('invalid tags value')
+            raise ValueError("invalid tags value")
         return tags
 
     @staticmethod
@@ -184,11 +182,11 @@ class Metrics:
     @staticmethod
     def _filter_data(*args, **kwargs):
         # Get message stf from args or kwargs
-        name = args[0] if args else kwargs.get('name', '')
+        name = args[0] if args else kwargs.get("name", "")
 
         # Search and remove fields
-        if 'name' in kwargs:
-            del(kwargs['name'])
+        if "name" in kwargs:
+            del kwargs["name"]
 
         return name
 

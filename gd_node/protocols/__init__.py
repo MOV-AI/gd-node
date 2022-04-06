@@ -6,4 +6,3 @@
    Developers:
    - Alexandre Pires  (alexandre.pires@mov.ai) - 2020
 """
-import warnings
