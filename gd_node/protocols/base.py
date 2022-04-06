@@ -11,12 +11,22 @@
 """
 
 from typing import Any
-from ..callback import GD_Callback as Callback
+from gd_node.callback import GD_Callback as Callback
+
 
 class BaseIport:
-    """ Class with common methods for all the iports """
-    def __init__(self, _node_name: str, _port_name: str, _topic: str,
-                 _message: str, _callback: str, update: bool = True, **_ignore) -> None:
+    """Class with common methods for all the iports"""
+
+    def __init__(
+        self,
+        _node_name: str,
+        _port_name: str,
+        _topic: str,
+        _message: str,
+        _callback: str,
+        update: bool = True,
+        **_ignore
+    ) -> None:
 
         self.node_name = _node_name
         self.port_name = _port_name
@@ -25,23 +35,22 @@ class BaseIport:
         self.start_enabled = True
         self.cb = Callback(_callback, self.node_name, self.port_name, update)
 
-    def callback(self, msg: Any)-> None:
+    def callback(self, msg: Any) -> None:
         """Executes the callback if port is enabled"""
         if self.enabled:
-            #print("iport trigger", self.port_name)
+            # print("iport trigger", self.port_name)
             self.cb.execute(msg)
 
-    def unregister(self)-> None:
-        """Disables the iport
-        """
+    def unregister(self) -> None:
+        """Disables the iport"""
         self.enabled = False
 
-    def register(self)-> None:
-        """Enables the iport
-        """
+    def register(self) -> None:
+        """Enables the iport"""
         self.enabled = True
 
 
 class BaseOport:
-    """ Class with common methods for all the oports """
+    """Class with common methods for all the oports"""
+
     pass

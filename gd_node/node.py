@@ -16,14 +16,12 @@ import time
 
 import uvloop
 
-from movai_core_shared.logger import  Log
+from movai_core_shared.logger import Log
 from movai_core_shared.consts import MOVAI_INIT
 
-from movai.data.scope import ScopePropertyNode
-
 # importing database profile automatically registers the database connections
-from dal.movaidb.database import MovaiDB. RedisClient ?
-from common_general.movai.data import scopes ?
+from dal.movaidb import RedisClient
+from dal.scopes import scopes, ScopePropertyNode
 
 from dal.models.var import Var
 
@@ -31,7 +29,7 @@ from dal.models.var import Var
 from .protocol import Iport, Oport, Transports
 from .user import GD_User
 
-LOGGER = Log("spawner.mov.ai")
+LOGGER = Log.get_logger("spawner.mov.ai")
 
 TIME_0 = time.time()
 
@@ -67,8 +65,13 @@ class GDNode:
         self.loop.set_exception_handler(self.handle_exception)
 
         self.databases = None
-        self.transports = {'ROS1': False, 'ROS2': False,
-                           'Flask': False, 'Redis': True, 'Http': False}
+        self.transports = {
+            "ROS1": False,
+            "ROS2": False,
+            "Flask": False,
+            "Redis": True,
+            "Http": False,
+        }
         self.launched_transports = []
         self.ports_params = {}
         self.loop.run_until_complete(self.main(args, unknown))
@@ -83,25 +86,27 @@ class GDNode:
         # await self.databases.init_redis()
 
     def _stop(self):
-        """ stop node out of async loop """
+        """stop node out of async loop"""
         type(self).RUNNING = False
 
     async def stop(self) -> None:
-        """ Gracefully shutdown node """
-        LOGGER.info('Shutting down GD Node: %s' % self.inst_name)
+        """Gracefully shutdown node"""
+        LOGGER.info("Shutting down GD Node: %s" % self.inst_name)
 
         Iport.shutdown()
         Oport.shutdown()
         Transports.shutdown()
 
         # Clean all vars related to this node
-        Var.delete_all(scope='Node', _node_name=GD_User.name)
+        Var.delete_all(scope="Node", _node_name=GD_User.name)
         for iport in GD_User.iport:
-            Var.delete_all(scope='Callback',
-                           _node_name=GD_User.name, _port_name=iport)
+            Var.delete_all(scope="Callback", _node_name=GD_User.name, _port_name=iport)
 
-        tasks = [task for task in asyncio.Task.all_tasks(loop=self.loop) if task is not
-                 asyncio.tasks.Task.current_task(loop=self.loop)]
+        tasks = [
+            task
+            for task in asyncio.Task.all_tasks(loop=self.loop)
+            if task is not asyncio.tasks.Task.current_task(loop=self.loop)
+        ]
 
         list(map(lambda task: task.cancel(), tasks))
         results = await asyncio.gather(*tasks, return_exceptions=True)
@@ -109,14 +114,23 @@ class GDNode:
     def initial_print(self, inst_name: str, template_name: str, inst_params: list):
         """Some inital debug prints"""
         to_send = '--- Starting GD_Node with Name "%s" and Template "%s"' % (
-            inst_name, template_name)
+            inst_name,
+            template_name,
+        )
         LOGGER.info(to_send)
         # print('With parameters:')
         # for elem in inst_params:
         #    print(elem, ': ', inst_params[elem])
         # print('\n')
 
-    async def init_transports(self, node_name: str, inst_name: str, ports_templates: dict, transports: dict, remaps: list):
+    async def init_transports(
+        self,
+        node_name: str,
+        inst_name: str,
+        ports_templates: dict,
+        transports: dict,
+        remaps: list,
+    ):
         """Check all existing Transports allong ports and init them
         In case of ROS1 need to wait until node registers in master
 
@@ -134,8 +148,11 @@ class GDNode:
                         transports[tranport_name] = True
         for key in transports:
             if transports[key]:
-                config = {'node_name': node_name,
-                          'inst_name': inst_name, 'remaps': remaps}
+                config = {
+                    "node_name": node_name,
+                    "inst_name": inst_name,
+                    "remaps": remaps,
+                }
                 if self.debug:
                     print("Transport", key)
                     print("    ", config)
@@ -144,15 +161,18 @@ class GDNode:
         # Allow transports to trigger GD_Node shutdown
         # ex.: when a node is launched with the same name as a node already running
         # rospy triggers a request shutdown event
-        Transports.register_event('on_shutdown', self._stop)
+        Transports.register_event("on_shutdown", self._stop)
 
-        if transports['ROS1']:
+        if transports["ROS1"]:
             from protocols.ros1 import ROS1
+
             while not ROS1.is_init(inst_name):
                 await asyncio.sleep(0.01)
             # print("ROS1 Node %s registered successfully." % inst_name)
 
-    async def init_oports(self, inst_name: str, ports_templates: dict, ports_inst: dict, flow_name: str):
+    async def init_oports(
+        self, inst_name: str, ports_templates: dict, ports_inst: dict, flow_name: str
+    ):
         """Init all the output ports
 
         Args:
@@ -171,17 +191,30 @@ class GDNode:
 
                 for param in params:
                     params[param] = self.ports_params.get(
-                        '@'+param+'@'+pout+'@'+ports, params[param])
+                        "@" + param + "@" + pout + "@" + ports, params[param]
+                    )
 
-                key = transport+'/'+protocol
+                key = transport + "/" + protocol
 
-                config = {'node_name': inst_name, 'name': ports, 'topic': inst_name+'/'+ports+'/'+pout,
-                    'message': message, '_params': params, 'flow_name': flow_name}
+                config = {
+                    "node_name": inst_name,
+                    "name": ports,
+                    "topic": inst_name + "/" + ports + "/" + pout,
+                    "message": message,
+                    "_params": params,
+                    "flow_name": flow_name,
+                }
 
                 Oport.create(key, **config)
 
-    async def init_iports(self, inst_name: str, ports_templates: dict, ports_inst: dict,
-                          init: bool = False, transition_data=None):
+    async def init_iports(
+        self,
+        inst_name: str,
+        ports_templates: dict,
+        ports_inst: dict,
+        init: bool = False,
+        transition_data=None,
+    ):
         """Init all the input ports
 
         Args:
@@ -202,15 +235,24 @@ class GDNode:
 
                 for param in params:
                     params[param] = self.ports_params.get(
-                        '@'+param+'@'+i+'@'+ports, params[param])
+                        "@" + param + "@" + i + "@" + ports, params[param]
+                    )
 
                 _type = key = "/".join([transport, protocol])
                 _port_name = ports  # "/".join([ports, i])
                 _topic = "/".join([inst_name, ports, i])
                 config = {
-                    '_node_name': inst_name, '_port_name': _port_name, '_port': i, '_type': _type,
-                    '_topic': _topic, '_message': message, '_callback': callback, '_params': params,
-                    '_data': transition_data, '_update': self.develop}
+                    "_node_name": inst_name,
+                    "_port_name": _port_name,
+                    "_port": i,
+                    "_type": _type,
+                    "_topic": _topic,
+                    "_message": message,
+                    "_callback": callback,
+                    "_params": params,
+                    "_data": transition_data,
+                    "_update": self.develop,
+                }
 
                 if (key == MOVAI_INIT) == init:
                     Iport.create(key, **config)
@@ -225,7 +267,7 @@ class GDNode:
         GD_User.name = self.inst_name
         GD_User.template = self.node_name
 
-        self.node = scopes.from_path(self.node_name, scope='Node')
+        self.node = scopes.from_path(self.node_name, scope="Node")
 
         # set db    client name
         # await self.databases.db_global.client_setname(self.robot.RobotName + '_' + self.inst_name)
@@ -235,8 +277,8 @@ class GDNode:
         inst_params = {}
         if args.params:
             parameters = args.params.split('"', 1)[1].rsplit('"', 1)[0]
-            for param in parameters.split(';'):
-                key, value = param.split(':=')
+            for param in parameters.split(";"):
+                key, value = param.split(":=")
                 try:
                     value = ast.literal_eval(value)
                 except:
@@ -247,15 +289,14 @@ class GDNode:
 
         # params are available all over the node as gd.params['name']
         for param in self.node.Parameter:
-            value = inst_params.get(
-                param, self.node['Parameter'][param]['Value'])
+            value = inst_params.get(param, self.node["Parameter"][param]["Value"])
             try:
                 if isinstance(value, ScopePropertyNode):
                     value = value.value
                 value = ast.literal_eval(value)
             except:
                 pass
-            pattern = r'^@[a-zA-Z_0-9-.]+(@[a-zA-Z_0-9-]+)(@[a-zA-Z_0-9-.]+)$'
+            pattern = r"^@[a-zA-Z_0-9-.]+(@[a-zA-Z_0-9-]+)(@[a-zA-Z_0-9-.]+)$"
             if not re.match(pattern, param):
                 GD_User.params[param] = value
             else:
@@ -264,8 +305,7 @@ class GDNode:
         node_ports = {}
         for ports in self.node.PortsInst:
             ports_name = self.node.PortsInst[ports].Template
-            node_ports[ports_name] = scopes.from_path(
-                ports_name, scope='Ports')
+            node_ports[ports_name] = scopes.from_path(ports_name, scope="Ports")
 
         # Transition message
         trans_msg = None
@@ -275,20 +315,32 @@ class GDNode:
                 trans_msg = pickle.loads(temp_msg)
 
         # Initialize each of the transports
-        await self.init_transports(self.node_name, self.inst_name, node_ports, self.transports, unknown)
+        await self.init_transports(
+            self.node_name, self.inst_name, node_ports, self.transports, unknown
+        )
 
         # Then we start the oports
-        await self.init_oports(self.inst_name, node_ports, self.node['PortsInst'], self.flow_name)
+        await self.init_oports(
+            self.inst_name, node_ports, self.node["PortsInst"], self.flow_name
+        )
 
         # Init all the Iports
-        await self.init_iports(self.inst_name, node_ports, self.node['PortsInst'], init=False, transition_data=trans_msg)
+        await self.init_iports(
+            self.inst_name,
+            node_ports,
+            self.node["PortsInst"],
+            init=False,
+            transition_data=trans_msg,
+        )
 
-        if self.transports['ROS1']:
+        if self.transports["ROS1"]:
             # ros publishers sending stuff in the init need time to register..
             await asyncio.sleep(0.2)
 
         # Then we run the initial callback
-        await self.init_iports(self.inst_name, node_ports, self.node['PortsInst'], init=True)
+        await self.init_iports(
+            self.inst_name, node_ports, self.node["PortsInst"], init=True
+        )
 
         # And finally we enable the iports
         for iport in GD_User.iport:
@@ -299,13 +351,14 @@ class GDNode:
                 pass
 
         # Start servers only after all routes were added
-        if self.transports['Http']:
-            Transports.get('Http').start()
+        if self.transports["Http"]:
+            Transports.get("Http").start()
 
-        start_time = time.time()-TIME_0
+        start_time = time.time() - TIME_0
 
-        LOGGER.info('Full time to init the GD_Node "%s": %s'
-                    % (self.inst_name, start_time))
+        LOGGER.info(
+            'Full time to init the GD_Node "%s": %s' % (self.inst_name, start_time)
+        )
 
         while self.RUNNING:
             # heart beat

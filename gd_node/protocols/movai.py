@@ -14,16 +14,17 @@ import asyncio
 from movai_core_shared.logger import Log
 from movai_core_shared.exceptions import TransitionException
 
-from common_general.api.core.redis import RedisClient ?
+from dal.movaidb import RedisClient
 from dal.movaidb.database import MovaiDB
-from dal.models.robot import Robot
+from dal.scopes import Robot
 
-from ..statemachine import SMVars, StateMachine
-from ..callback import GD_Callback as Callback
-from ..user import GD_User
+from gd_node.statemachine import SMVars, StateMachine
+from gd_node.callback import GD_Callback as Callback
+from gd_node.user import GD_User
 from .base import BaseIport
 
 LOGGER = Log("spawner.mov.ai")
+
 
 class Init(BaseIport):
 
@@ -35,12 +36,14 @@ class Init(BaseIport):
             _cb_name: Name of the callback to be executed
     """
 
-    def __init__(self, _node_name: str, _port_name: str, _callback: str, **_ignore)-> None:
-        """Init
-        """
+    def __init__(
+        self, _node_name: str, _port_name: str, _callback: str, **_ignore
+    ) -> None:
+        """Init"""
         super().__init__(_node_name, _port_name, None, None, _callback, False)
         self.register()
-        self.callback('')
+        self.callback("")
+
 
 class Exit(BaseIport):
 
@@ -51,19 +54,26 @@ class Exit(BaseIport):
             _iport_name: Name of the port
             _cb_name: Name of the callback to be executed
     """
-    def __init__(self, _node_name: str, _port_name: str, _topic: str,
-                 _message: str, _callback: str, **_ignore):
-        """Init
-        """
+
+    def __init__(
+        self,
+        _node_name: str,
+        _port_name: str,
+        _topic: str,
+        _message: str,
+        _callback: str,
+        **_ignore
+    ):
+        """Init"""
         super().__init__(_node_name, _port_name, _topic, _message, _callback, False)
 
     def execute(self):
         """Executes exit callback"""
-        self.callback('')
+        self.callback("")
 
-        #deletes all vars
-        #Var.delete_all(scope='Node', _node_name=GD_User.name)
-        #for iport in GD_User.iport:
+        # deletes all vars
+        # Var.delete_all(scope='Node', _node_name=GD_User.name)
+        # for iport in GD_User.iport:
         #    Var.delete_all(scope='Callback', _node_name=GD_User.name, _port_name=iport)
 
     def unregister(self):
@@ -73,90 +83,112 @@ class Exit(BaseIport):
 class StateMachineProtocol(BaseIport):
     """Class that implements a state machine inside a GD_Node"""
 
-    def __init__(self, _node_name: str, _port_name: str, _topic: str,
-                 _message: str, _callback: str, _params: dict, **_ignore):
+    def __init__(
+        self,
+        _node_name: str,
+        _port_name: str,
+        _topic: str,
+        _message: str,
+        _callback: str,
+        _params: dict,
+        **_ignore
+    ):
 
         super().__init__(_node_name, _port_name, _topic, _message, _callback, False)
 
         self.current_state = None
-        sm_id = _params.get('StateMachine', 'random_id')
-        #sm_id = GD_User.params.get('movai_statemachine_name', 'random_id')
+        sm_id = _params.get("StateMachine", "random_id")
+        # sm_id = GD_User.params.get('movai_statemachine_name', 'random_id')
 
-        print('')
-        print('Initializing State Machine "%s":'%sm_id)
+        print("")
+        print('Initializing State Machine "%s":' % sm_id)
 
         self.sm_var = SMVars(_sm_name=sm_id, _node_name=_node_name)
 
-        #instantiate all states in the sm and map them to callbacks to be executed
+        # instantiate all states in the sm and map them to callbacks to be executed
         state_machine = StateMachine(sm_id).get_dict()
 
         self.states = {}
-        for state in state_machine['StateMachine'][sm_id]['State']:
-            cb_name = state_machine['StateMachine'][sm_id]['State'][state].get('Callback', 'place_holder')
+        for state in state_machine["StateMachine"][sm_id]["State"]:
+            cb_name = state_machine["StateMachine"][sm_id]["State"][state].get(
+                "Callback", "place_holder"
+            )
             callback = Callback(cb_name, _node_name, _port_name, True)
             callback.user.globals.update({"send": self.change_state})
 
-            #Add parameters to Callback
-            for param, value in state_machine['StateMachine'][sm_id]['State'][state].get('Parameter',{}).items():
-                callback.user.globals.update({param: value['Value']})
+            # Add parameters to Callback
+            for param, value in (
+                state_machine["StateMachine"][sm_id]["State"][state]
+                .get("Parameter", {})
+                .items()
+            ):
+                callback.user.globals.update({param: value["Value"]})
 
             self.states.update({state: callback})
-            print('\tState "%s" with callback "%s"'%(state, cb_name))
+            print('\tState "%s" with callback "%s"' % (state, cb_name))
 
         self.transitions = {}
-        #links = self.cache_dict["StateMachine"][self.name].get("Links", {})
-        for link in state_machine['StateMachine'][sm_id]['Link']:
-            link_from = state_machine['StateMachine'][sm_id]['Link'][link]['From']
-            link_to = state_machine['StateMachine'][sm_id]['Link'][link]['To']
-            link_to = link_to.split('/')[0]
+        # links = self.cache_dict["StateMachine"][self.name].get("Links", {})
+        for link in state_machine["StateMachine"][sm_id]["Link"]:
+            link_from = state_machine["StateMachine"][sm_id]["Link"][link]["From"]
+            link_to = state_machine["StateMachine"][sm_id]["Link"][link]["To"]
+            link_to = link_to.split("/")[0]
             self.transitions.update({link_from: link_to})
-            print('\tLink from "%s" to "%s"'%(link_from, link_to))
+            print('\tLink from "%s" to "%s"' % (link_from, link_to))
 
-        #set the first state acording to start
-        self.set_state(self.transitions.get('start/start/start')) #__start
+        # set the first state acording to start
+        self.set_state(self.transitions.get("start/start/start"))  # __start
 
-        print('\tInitial state is:', self.current_state)
+        print("\tInitial state is:", self.current_state)
         self.sm_var.CURRENT_STATE = self.current_state
 
-        #create a redis subscriber to the sm hash key
+        # create a redis subscriber to the sm hash key
         self.loop = asyncio.get_event_loop()
-        sub_dict = {'Name':'node', 'ID':_node_name + '@' + sm_id, 'Parameter':'*'}
-        self.loop.create_task(self.register_sub(self.loop, 'Var', self.callback, **sub_dict))
+        sub_dict = {"Name": "node", "ID": _node_name + "@" + sm_id, "Parameter": "*"}
+        self.loop.create_task(
+            self.register_sub(self.loop, "Var", self.callback, **sub_dict)
+        )
 
-        #TODO Possible minimum rate implemented with timer
+        # TODO Possible minimum rate implemented with timer
 
     async def register_sub(self, loop, scope, callback, **sub_dict):
         databases = await RedisClient.get_client()
-        MovaiDB(db='local', loop=loop, databases=databases).subscribe_by_args(scope, callback, **sub_dict)
+        MovaiDB(db="local", loop=loop, databases=databases).subscribe_by_args(
+            scope, callback, **sub_dict
+        )
 
-    def callback(self, msg)-> None: #the redis subscriber callback
+    def callback(self, msg) -> None:  # the redis subscriber callback
         """Executes the callback if port is enabled"""
         if self.enabled:
             self.run()
 
     def change_state(self, port):
         """Change from current state to next one according to port called"""
-        new_state = self.transitions.get(self.current_state + '/' + port + '/out')
+        new_state = self.transitions.get(self.current_state + "/" + port + "/out")
         if new_state:
-            print('Called exit "%s", transitioning to state "%s"'%(port, new_state))
+            print('Called exit "%s", transitioning to state "%s"' % (port, new_state))
             self.set_state(new_state)
         else:
-            print('Exit port "%s" from state "%s" does not exist or is unconnected'%(port, self.current_state))
-            #raise DoesNotExist('Called exit port %s from state %s does not exist or is unconnected'%(port, self.current_state))
+            print(
+                'Exit port "%s" from state "%s" does not exist or is unconnected'
+                % (port, self.current_state)
+            )
+            # raise DoesNotExist('Called exit port %s from state %s does not exist or is unconnected'%(port, self.current_state))
 
     def run(self):
         """Executes the callback of the current state"""
         if self.enabled:
-            self.states.get(self.current_state).execute('')
+            self.states.get(self.current_state).execute("")
 
     def set_state(self, state):
         """Sets the current state"""
         self.current_state = state
-        self.sm_var.CURRENT_STATE = state #this will trigger the execution
+        self.sm_var.CURRENT_STATE = state  # this will trigger the execution
 
     def get_state(self):
         """Returns the current state"""
         return self.current_state
+
 
 class TransitionIn(BaseIport):
 
@@ -168,9 +200,10 @@ class TransitionIn(BaseIport):
             _cb_name: Name of the callback to be executed
     """
 
-    def __init__(self, _node_name: str, _port_name: str, _callback: str, _data, **_ignore)-> None:
-        """Init
-        """
+    def __init__(
+        self, _node_name: str, _port_name: str, _callback: str, _data, **_ignore
+    ) -> None:
+        """Init"""
         super().__init__(_node_name, _port_name, None, None, _callback, False)
         self.register()
         self.callback(_data)
@@ -188,18 +221,23 @@ class Transition:
 
     """
 
-    def __init__(self, _node_name: str, _oport_name: str, _flow_name: str)-> None:
+    def __init__(self, _node_name: str, _oport_name: str, _flow_name: str) -> None:
         """Init"""
         self.robot = Robot()
         self.node_name = _node_name
         self.port_name = _oport_name
         self.flow_name = _flow_name
 
-    def send(self, msg=None)->None:
+    def send(self, msg=None) -> None:
         """Send function"""
 
-        self.robot.send_cmd(command='TRANS', node=self.node_name, port=self.port_name,
-            data=msg, flow=self.flow_name)
+        self.robot.send_cmd(
+            command="TRANS",
+            node=self.node_name,
+            port=self.port_name,
+            data=msg,
+            flow=self.flow_name,
+        )
 
         for iport in GD_User.iport:
             try:
@@ -208,15 +246,18 @@ class Transition:
                 pass
         raise TransitionException
 
+
 class ContextMsg:
     """Message for Context
-        data -> dictionary of full context table
-        changed -> dictionary only of values changed
+    data -> dictionary of full context table
+    changed -> dictionary only of values changed
     """
+
     def __init__(self, id={}, data={}, changed={}):
         self.data = data
         self.changed = changed
         self.id = id
+
 
 class ContextClientIn(BaseIport):
 
@@ -228,37 +269,52 @@ class ContextClientIn(BaseIport):
             _iport_name: Name of the port
             _cb_name: Name of the callback to be executed
     """
-    def __init__(self, _node_name: str, _port_name: str, _topic: str,
-                 _message: str, _callback: str, _params: dict, _update: bool, **_ignore):
+
+    def __init__(
+        self,
+        _node_name: str,
+        _port_name: str,
+        _topic: str,
+        _message: str,
+        _callback: str,
+        _params: dict,
+        _update: bool,
+        **_ignore
+    ):
         """Init"""
         super().__init__(_node_name, _port_name, _topic, _message, _callback, _update)
 
-        self.stack = _params.get('Namespace', '')
+        self.stack = _params.get("Namespace", "")
 
         self.loop = asyncio.get_event_loop()
         self.loop.create_task(self.register_sub())
 
     async def register_sub(self) -> None:
         """Subscribe to key."""
-        pattern = {'Var':{'context':{'ID':{self.stack+'_TX':{'Parameter':'**'}}}}}
+        pattern = {
+            "Var": {"context": {"ID": {self.stack + "_TX": {"Parameter": "**"}}}}
+        }
         databases = await RedisClient().get_client()
-        await MovaiDB('local', loop=self.loop, databases=databases).subscribe_channel(pattern, self.callback)
+        await MovaiDB("local", loop=self.loop, databases=databases).subscribe_channel(
+            pattern, self.callback
+        )
 
     def callback(self, msg):
         """Executes callback"""
-        key = msg[0].decode('utf-8')
-        changed_fields = list(msg[1].split(' '))
+        key = msg[0].decode("utf-8")
+        changed_fields = list(msg[1].split(" "))
 
-        dict_key = MovaiDB().keys_to_dict([(key, '')])
-        full_table = MovaiDB('local').get_hash(dict_key)
+        dict_key = MovaiDB().keys_to_dict([(key, "")])
+        full_table = MovaiDB("local").get_hash(dict_key)
 
-        changed = {item:full_table[item] for item in changed_fields}
+        changed = {item: full_table[item] for item in changed_fields}
 
-        _id = full_table.pop('_id')
-        changed.pop('_id')
+        _id = full_table.pop("_id")
+        changed.pop("_id")
 
         msg = ContextMsg(id=_id, data=full_table, changed=changed)
         super().callback(msg)
+
 
 class ContextServerIn(BaseIport):
 
@@ -270,34 +326,48 @@ class ContextServerIn(BaseIport):
             _iport_name: Name of the port
             _cb_name: Name of the callback to be executed
     """
-    def __init__(self, _node_name: str, _port_name: str, _topic: str,
-                 _message: str, _callback: str, _params: dict, _update: bool, **_ignore):
+
+    def __init__(
+        self,
+        _node_name: str,
+        _port_name: str,
+        _topic: str,
+        _message: str,
+        _callback: str,
+        _params: dict,
+        _update: bool,
+        **_ignore
+    ):
         """Init"""
         super().__init__(_node_name, _port_name, _topic, _message, _callback, _update)
 
-        self.stack = _params.get('Namespace', '')
+        self.stack = _params.get("Namespace", "")
 
         self.loop = asyncio.get_event_loop()
         self.loop.create_task(self.register_sub())
 
     async def register_sub(self) -> None:
         """Subscribe to key."""
-        pattern = {'Var':{'context':{'ID':{self.stack+'_RX':{'Parameter':'**'}}}}}
+        pattern = {
+            "Var": {"context": {"ID": {self.stack + "_RX": {"Parameter": "**"}}}}
+        }
         databases = await RedisClient().get_client()
-        await MovaiDB('local', loop=self.loop, databases=databases).subscribe_channel(pattern, self.callback)
+        await MovaiDB("local", loop=self.loop, databases=databases).subscribe_channel(
+            pattern, self.callback
+        )
 
     def callback(self, msg):
         """Executes callback"""
-        key = msg[0].decode('utf-8')
-        changed_fields = list(msg[1].split(' '))
+        key = msg[0].decode("utf-8")
+        changed_fields = list(msg[1].split(" "))
 
-        dict_key = MovaiDB().keys_to_dict([(key, '')])
-        full_table = MovaiDB('local').get_hash(dict_key)
+        dict_key = MovaiDB().keys_to_dict([(key, "")])
+        full_table = MovaiDB("local").get_hash(dict_key)
 
-        changed = {item:full_table[item] for item in changed_fields}
+        changed = {item: full_table[item] for item in changed_fields}
 
-        _id = full_table.pop('_id')
-        changed.pop('_id')
+        _id = full_table.pop("_id")
+        changed.pop("_id")
 
         msg = ContextMsg(id=_id, data=full_table, changed=changed)
         super().callback(msg)
@@ -306,37 +376,39 @@ class ContextServerIn(BaseIport):
 class ContextClientOut:
     """Class that implements Client Context comunication in the GD_Node"""
 
-    def __init__(self, _node_name: str, _oport_name: str, _params: dict)-> None:
+    def __init__(self, _node_name: str, _oport_name: str, _params: dict) -> None:
         """Init"""
 
-        self.stack = _params.get('Namespace', '')
+        self.stack = _params.get("Namespace", "")
         self._node_name = _node_name
 
     def send(self, msg):
         """Send function"""
 
         if not isinstance(msg, dict):
-            raise Exception('Wrong message type, this should be a dictionary')
+            raise Exception("Wrong message type, this should be a dictionary")
 
-        msg.update({'_id': self._node_name})
-        to_send = {'Var':{'context':{'ID':{self.stack+'_RX':{'Parameter':msg}}}}}
-        MovaiDB('local').hset_pub(to_send)
+        msg.update({"_id": self._node_name})
+        to_send = {"Var": {"context": {"ID": {self.stack + "_RX": {"Parameter": msg}}}}}
+        MovaiDB("local").hset_pub(to_send)
+
 
 class ContextServerOut:
     """Class that implements Client Context comunication in the GD_Node"""
 
-    def __init__(self, _node_name: str, _oport_name: str, _params: dict)-> None:
+    def __init__(self, _node_name: str, _oport_name: str, _params: dict) -> None:
         """Init"""
-        self.stack = _params.get('Namespace', '')
+        self.stack = _params.get("Namespace", "")
         self._node_name = _node_name
 
     def send(self, msg):
         """Send function"""
 
         if not isinstance(msg, dict):
-            raise Exception('Wrong message type, this should be a dictionary')
-        msg.update({'_id': self._node_name})
-        to_send = {'Var':{'context':{'ID':{self.stack+'_TX':{'Parameter':msg}}}}}
-        MovaiDB('local').hset_pub(to_send)
+            raise Exception("Wrong message type, this should be a dictionary")
+        msg.update({"_id": self._node_name})
+        to_send = {"Var": {"context": {"ID": {self.stack + "_TX": {"Parameter": msg}}}}}
+        MovaiDB("local").hset_pub(to_send)
 
-#RX TX Transmit FROM this server, and Receive TO this server.
+
+# RX TX Transmit FROM this server, and Receive TO this server.
