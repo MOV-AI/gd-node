@@ -11,8 +11,12 @@ import re
 import sys
 import importlib
 from typing import Any
+
+from movai_core_shared.envvars import ROS2_PATH
+
+from movai.data import scopes
+
 from .message_model import Message
-from common_general.envvars import ROS2_PATH
 
 ROS2_ONLY_ATTR = 'SLOT_TYPES' #Check in future updates
 

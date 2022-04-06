@@ -11,29 +11,36 @@ import copy
 import importlib
 import time
 from typing import Any
+from os import getenv
 
-from common_general.movai.data import ScopesTree
-from common_general.movai.data import scopes
+from movai_core_shared.logger import Log
+from movai_core_shared.exceptions import DoesNotExist, TransitionException
 
-from common_general.api.exceptions import DoesNotExist, TransitionException
-from common_general.api.core.database import MovaiDB
-from common_general.api.models.lock import Lock
+try:
+    from movai_core_enterprise.models.task import Task
+    enterprise = True
+except ImportError:
+    enterprise = False
 
-from common_general.api.models.robot import Robot, FleetRobot
+# Imports from DAL
+from common_general.movai.data import ScopesTree ?
+from common_general.movai.data import scopes  ?
+
+from dal.movaidb.database import MovaiDB
+from dal.movaidb.lock import Lock
+from dal.models.robot import Robot, FleetRobot
+from dal.models.var import Var
+from dal.models.ports import Ports
+from dal.models.package import Package
+
 from .statemachine import SMVars
-from common_general.api.models.var import Var
-from common_general.api.models.task import Task
 from .statemachine import StateMachine
 from .message_model import Message
-from common_general.api.models.ports import Ports
-from common_general.api.models.package import Package
-from common_general.logger import Logger
 from .metrics import Metrics
 
 from .user import GD_User as gd
-from os import getenv
 
-LOGGER = Logger("spawner.mov.ai")
+LOGGER = Log("spawner.mov.ai")
 
 
 class GD_Callback:

@@ -18,7 +18,10 @@ import rospkg
 
 import genmsg
 import rosmsg
-from common_general.api.core.scope import Scope, MovaiDB
+
+from dal.movaidb.database import MovaiDB
+from dal.models.scope import Scope
+
 
 sys.stderr = open(os.devnull, "w")  # just to ignore stupid print
 sys.stderr = sys.__stderr__

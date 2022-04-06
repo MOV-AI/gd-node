@@ -9,8 +9,8 @@
 
    Module to work with State Machines in GD_Nodes
 """
-from common_general.api.core.database import MovaiDB
-from common_general.api.core.scope import Scope
+from dal.movaidb.database import MovaiDB
+from dal.models.scope import Scope
 
 
 class StateMachine(Scope):
