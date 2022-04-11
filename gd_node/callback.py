@@ -21,6 +21,7 @@ try:
 
     enterprise = True
 except ImportError:
+    Task = None
     enterprise = False
 
 # Imports from DAL
@@ -231,13 +232,14 @@ class UserFunctions:
                 super().__init__(_sm_name=sm_id, _node_name=_node_name)
 
         if _user == "SUPER":
-            logger = Logger("GD_Callback", node=self.node_name, callback=self.cb_name)
+            logger = Log.get_logger("GD_Callback") # node=self.node_name, callback=self.cb_name)
             metrics = Metrics()
+            import dal
             self.globals.update(
                 {
                     "scopes": scopes,
                     # hacky but quick way to export all models
-                    **{key: getattr(movai.models, key) for key in movai.models.__all__},
+                    **{key: getattr(dal.models, key) for key in dal.models.__all__},
                     "Package": Package,
                     "Message": Message,
                     "Ports": Ports,
