@@ -23,7 +23,7 @@ from gd_node.callback import GD_Callback as Callback
 from gd_node.user import GD_User
 from .base import BaseIport
 
-LOGGER = Log("spawner.mov.ai")
+LOGGER = Log.get_logger("spawner.mov.ai")
 
 
 class Init(BaseIport):

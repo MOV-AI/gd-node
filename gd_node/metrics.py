@@ -139,7 +139,7 @@ class Metrics:
         try:
             content = response.json()
         except Exception as e:
-            logger = Log()
+            logger = Log.get_logger("merrtix")
             logger.error(message=str(e))
             return []
         else:

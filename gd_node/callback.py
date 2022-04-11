@@ -25,7 +25,8 @@ except ImportError:
 
 # Imports from DAL
 
-from dal.movaidb import Lock, MovaiDB
+from dal.movaidb import MovaiDB
+from dal.models import Lock
 from dal.scopes import Robot, FleetRobot, scopes, ScopesTree
 from dal.models import Var, Package, Ports
 
@@ -36,7 +37,7 @@ from .metrics import Metrics
 
 from .user import GD_User as gd
 
-LOGGER = Log("spawner.mov.ai")
+LOGGER = Log.get_logger("spawner.mov.ai")
 
 
 class GD_Callback:
