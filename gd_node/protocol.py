@@ -16,10 +16,10 @@ from dal.classes.protocols import redissub as RedisSub
 
 import gd_node.protocols.http.http_route
 import gd_node.protocols.http.web_socket
-import protocols.base as Base
-import protocols.http as Http
-import protocols.ros1 as ROS1
-import protocols.movai as MovAI
+import gd_node.protocols.base as Base
+import gd_node.protocols.http as Http
+import gd_node.protocols.ros1 as ROS1
+import gd_node.protocols.movai as MovAI
 
 from .user import GD_User as gd
 
@@ -114,7 +114,7 @@ class TransportROS2:
         self._instance = None
 
     def __call__(self, inst_name, **_ignore):
-        import protocols.ros2 as ROS2
+        import gd_node.protocols.ros2 as ROS2
 
         if not self._instance:
             self._instance = ROS2.ROS2_INIT(inst_name)
@@ -329,7 +329,7 @@ class IportMovaiContextServer:
 
 class IportRos2Sub:
     def __init__(self, **kwargs):
-        import protocols.ros2 as ROS2
+        import gd_node.protocols.ros2 as ROS2
 
         name = kwargs["_port_name"]
         self._instance = ROS2.ROS2_Subscriber(**kwargs)
@@ -343,7 +343,7 @@ class IportRos2Sub:
 
 class IportRos2ServiceServer:
     def __init__(self, **kwargs):
-        import protocols.ros2 as ROS2
+        import gd_node.protocols.ros2 as ROS2
 
         name = kwargs["_port_name"]
         self._instance = ROS2.ROS2_ServiceServer(**kwargs)
@@ -448,7 +448,7 @@ class OportRos1Bag:
 
 class OportRos2Pub:
     def __init__(self, name, topic, message, _params, **_ignore):
-        import protocols.ros2 as ROS2
+        import gd_node.protocols.ros2 as ROS2
 
         self._instance = ROS2.ROS2_Publisher(topic, message)
         gd.oport[name] = self._instance
@@ -456,7 +456,7 @@ class OportRos2Pub:
 
 class OportRos2ServiceClient:
     def __init__(self, name, topic, message, _params, **_ignore):
-        import protocols.ros2 as ROS2
+        import gd_node.protocols.ros2 as ROS2
 
         self._instance = ROS2.ROS2_ServiceClient(topic, message)
         gd.oport[name] = self._instance

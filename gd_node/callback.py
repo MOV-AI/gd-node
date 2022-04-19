@@ -13,30 +13,46 @@ import time
 from typing import Any
 from os import getenv
 
-from movai_core_shared.logger import Log
+from movai_core_shared.logger import Log, LogAdapter
 from movai_core_shared.exceptions import DoesNotExist, TransitionException
 
-try:
-    from movai_core_enterprise.models.task import Task
-
-    enterprise = True
-except ImportError:
-    Task = None
-    enterprise = False
 
 # Imports from DAL
 
 from dal.movaidb import MovaiDB
+import dal.models
 from dal.models import Lock
-from dal.scopes import Robot, FleetRobot, scopes, ScopesTree
+from dal.scopes import (
+    Robot,
+    FleetRobot,
+    scopes,
+    ScopesTree,
+    NodeInst,
+    Container,
+    Configuration,
+)
 from dal.models import Var, Package, Ports
-
 from .statemachine import SMVars
 from .statemachine import StateMachine
 from .message_model import Message
 from .metrics import Metrics
 
 from .user import GD_User as gd
+
+try:
+    from movai_core_enterprise.models.task import Task
+    from movai_core_enterprise.v2.models import (
+        Layout,
+        Annotations,
+        TaskEntry,
+        TaskTemplate,
+        GraphicAsset,
+        GraphicScene,
+    )
+
+    enterprise = True
+except ImportError:
+    enterprise = False
 
 LOGGER = Log.get_logger("spawner.mov.ai")
 
@@ -90,7 +106,7 @@ class GD_Callback:
         self.start(self.compiled_code, globais)
         self.count += 1
         self.updated_globals = globais
-        if "status_code" in globais["response"]:
+        if "response" in globais and isinstance(globais["response"], dict) and "status_code" in globais["response"]:
             self.updated_globals["status_code"] = globais["response"]["status_code"]
 
     def start(self, code, globais):
@@ -232,9 +248,9 @@ class UserFunctions:
                 super().__init__(_sm_name=sm_id, _node_name=_node_name)
 
         if _user == "SUPER":
-            logger = Log.get_logger("GD_Callback") # node=self.node_name, callback=self.cb_name)
+            log = Log.get_logger("GD_Callback")
+            logger = LogAdapter(log, node=self.node_name, callback=self.cb_name)
             metrics = Metrics()
-            import dal
             self.globals.update(
                 {
                     "scopes": scopes,
@@ -243,7 +259,6 @@ class UserFunctions:
                     "Package": Package,
                     "Message": Message,
                     "Ports": Ports,
-                    "Task": Task,
                     "StateMachine": StateMachine,  # TODO implement model
                     "Var": UserVar,
                     "Robot": GD_Callback._robot,
@@ -255,8 +270,23 @@ class UserFunctions:
                     "Lock": UserLock,
                     "print": self.user_print,
                     "Scene": GD_Callback._scene,
+                    "NodeInst": NodeInst,
+                    "Container": Container,
+                    "Configuration": Configuration,
                 }
             )
+            if enterprise:
+                self.globals.update(
+                    {
+                        "Task": Task,
+                        "TaskTemplate": TaskTemplate,
+                        "TaskEntry": TaskEntry,
+                        "Annotations": Annotations,
+                        "GraphicAsset": GraphicAsset,
+                        "GraphicScene": GraphicScene,
+                        "Layout": Layout,
+                    }
+                )
 
     def user_print(self, *args):
         """Method to redirect the print function into logger"""
