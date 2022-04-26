@@ -8,7 +8,7 @@ with open("README.md", "r") as fh:
 # The 'install_requires' is where you specify the package dependencies of your package. They will be automaticly installed, before your package.  # noqa: E501
 setuptools.setup(
     name="gd-node",
-    version="1.0.0-3",
+    version="1.0.0-4",
     author="Backend team",
     author_email="backend@mov.ai",
     description="Dummy description",
@@ -18,6 +18,6 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     include_package_data=True,
     classifiers=["Programming Language :: Python :: 3"],
-    install_requires=["dal==1.0.0.21"],
+    install_requires=["dal==1.0.0.23"],
     entry_points={},
 )
