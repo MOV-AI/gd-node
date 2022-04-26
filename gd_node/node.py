@@ -164,7 +164,7 @@ class GDNode:
         Transports.register_event("on_shutdown", self._stop)
 
         if transports["ROS1"]:
-            from protocols.ros1 import ROS1
+            from .protocols.ros1 import ROS1
 
             while not ROS1.is_init(inst_name):
                 await asyncio.sleep(0.01)
