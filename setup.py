@@ -18,6 +18,6 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     include_package_data=True,
     classifiers=["Programming Language :: Python :: 3"],
-    install_requires=["dal==1.0.0.23"],
+    install_requires=["dal==1.0.0.25"],
     entry_points={},
 )
