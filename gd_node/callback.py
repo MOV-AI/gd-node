@@ -54,7 +54,7 @@ try:
 except ImportError:
     enterprise = False
 
-LOGGER = Log.get_logger("spawner.mov.ai")
+LOGGER = LogAdapter(Log.get_logger("spawner.mov.ai"))
 
 
 class GD_Callback:
