@@ -312,7 +312,7 @@ class ROS1_TFSubscriber(BaseIport):
 
         self.parent_frame = _params["Parent"]
         self.child_frame = _params["Child"]
-        self.duration = 1 / _params.get("Frequency", 30)
+        self.duration = 1 / int(_params.get("Frequency", 30))
         self.listener = tf.TransformListener()
 
         self.timer = rospy.Timer(rospy.Duration(self.duration), self.callback)
