@@ -16,9 +16,8 @@ from movai_core_shared.exceptions import TransitionException
 
 from dal.movaidb import RedisClient
 from dal.movaidb.database import MovaiDB
-from dal.scopes import Robot
-
-from gd_node.statemachine import SMVars, StateMachine
+from dal.scopes.robot import Robot
+from dal.scopes.statemachine import SMVars, StateMachine
 from gd_node.callback import GD_Callback as Callback
 from gd_node.user import GD_User
 from .base import BaseIport

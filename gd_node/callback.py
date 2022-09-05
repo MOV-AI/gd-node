@@ -21,7 +21,12 @@ from movai_core_shared.exceptions import DoesNotExist, TransitionException
 
 from dal.movaidb import MovaiDB
 import dal.models
-from dal.models import Lock
+from dal.models import (
+    Lock,
+    Var,
+    Package,
+    Ports
+)
 from dal.scopes import (
     Robot,
     FleetRobot,
@@ -30,10 +35,10 @@ from dal.scopes import (
     NodeInst,
     Container,
     Configuration,
+    SMVars,
+    StateMachine
 )
-from dal.models import Var, Package, Ports
-from .statemachine import SMVars
-from .statemachine import StateMachine
+
 from .message_model import Message
 from .metrics import Metrics
 
