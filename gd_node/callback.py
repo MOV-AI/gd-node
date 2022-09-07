@@ -45,14 +45,14 @@ from .metrics import Metrics
 from .user import GD_User as gd
 
 try:
-    from movai_core_enterprise.models.task import Task
-    from movai_core_enterprise.v2.models import (
-        Layout,
-        Annotations,
-        TaskEntry,
-        TaskTemplate,
+    from movai_core_enterprise.scopes import Task
+    from movai_core_enterprise.models import (
+        Annotation,
         GraphicAsset,
         GraphicScene,
+        Layout,
+        TaskEntry,
+        TaskTemplate        
     )
 
     enterprise = True
@@ -290,7 +290,7 @@ class UserFunctions:
                         "Task": Task,
                         "TaskTemplate": TaskTemplate,
                         "TaskEntry": TaskEntry,
-                        "Annotations": Annotations,
+                        "Annotation": Annotation,
                         "GraphicAsset": GraphicAsset,
                         "GraphicScene": GraphicScene,
                         "Layout": Layout,
