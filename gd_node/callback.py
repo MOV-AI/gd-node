@@ -28,18 +28,18 @@ from dal.models import (
     Ports
 )
 from dal.scopes import (
-    Robot,
-    FleetRobot,
-    scopes,
-    ScopesTree,
-    NodeInst,
     Container,
     Configuration,
+    FleetRobot,
+    Message,
+    NodeInst,
+    Robot,
+    scopes,
+    ScopesTree,    
     SMVars,
     StateMachine
 )
 
-from .message_model import Message
 from .metrics import Metrics
 
 from .user import GD_User as gd
@@ -111,7 +111,11 @@ class GD_Callback:
         self.start(self.compiled_code, globais)
         self.count += 1
         self.updated_globals = globais
-        if "response" in globais and isinstance(globais["response"], dict) and "status_code" in globais["response"]:
+        if (
+            "response" in globais 
+            and isinstance(globais["response"], dict) 
+            and "status_code" in globais["response"]
+        ):
             self.updated_globals["status_code"] = globais["response"]["status_code"]
 
     def start(self, code, globais):
