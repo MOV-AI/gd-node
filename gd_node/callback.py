@@ -20,25 +20,20 @@ from movai_core_shared.exceptions import DoesNotExist, TransitionException
 # Imports from DAL
 
 from dal.movaidb import MovaiDB
-import dal.models
-from dal.models import (
-    Lock,
-    Var,
-    Package,
-    Ports
-)
-from dal.scopes import (
-    Container,
-    Configuration,
-    FleetRobot,
-    Message,
-    NodeInst,
-    Robot,
-    scopes,
-    ScopesTree,    
-    SMVars,
-    StateMachine
-)
+
+from dal.models.lock import  Lock
+from dal.models.package import Package
+from dal.models.ports import Ports
+from dal.models.var import Var
+
+from dal.scopes.container import Container
+from dal.scopes.configuration import Configuration
+from dal.scopes.fleetrobot import FleetRobot
+from dal.scopes.message import Message
+from dal.scopes.nodeinst import NodeInst
+from dal.scopes.robot import Robot
+from dal.scopes.scopestree import ScopesTree, scopes
+from dal.scopes.statemachine import StateMachine, SMVars
 
 from .metrics import Metrics
 
@@ -263,8 +258,6 @@ class UserFunctions:
             self.globals.update(
                 {
                     "scopes": scopes,
-                    # hacky but quick way to export all models
-                    **{key: getattr(dal.models, key) for key in dal.models.__all__},
                     "Package": Package,
                     "Message": Message,
                     "Ports": Ports,
