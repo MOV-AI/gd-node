@@ -30,6 +30,7 @@ from movai_core_shared.logger import Log
 from dal.movaidb import MovaiDB, RedisClient
 from dal.scopes.node import Node
 from dal.scopes.widget import Widget
+from dal.scopes.user import User
 from dal.classes.protocols.wsredissub import WSRedisSub
 
 try:
@@ -40,7 +41,6 @@ except ImportError:
 
 from gd_node.callback import GD_Callback
 
-from backend.scopes.user import User
 from backend.core.vault import JWT_SECRET_KEY
 
 
