@@ -32,7 +32,11 @@ from dal.scopes.node import Node
 from dal.scopes.widget import Widget
 from dal.classes.protocols.wsredissub import WSRedisSub
 
-from movai_core_enterprise.scopes.layout import Layout
+try:
+    from movai_core_enterprise.scopes.layout import Layout
+    enterprise = True
+except ImportError:
+    enterprise = False
 
 from gd_node.callback import GD_Callback
 

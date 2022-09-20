@@ -21,7 +21,7 @@ import gd_node.protocols.http as Http
 import gd_node.protocols.ros1 as ROS1
 import gd_node.protocols.movai as MovAI
 
-from .user import GD_User as gd
+from gd_node.user import GD_User as gd
 
 
 class TransportsProvider:

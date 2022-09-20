@@ -26,8 +26,8 @@ from dal.scopes.scopestree import scopes, ScopePropertyNode
 from dal.models.var import Var
 
 
-from .protocol import Iport, Oport, Transports
-from .user import GD_User
+from gd_node.protocol import Iport, Oport, Transports
+from gd_node.user import GD_User
 
 LOGGER = Log.get_logger("spawner.mov.ai")
 
