@@ -40,17 +40,14 @@ except ImportError:
     enterprise = False
 
 from gd_node.callback import GD_Callback
-
-from backend.core.vault import JWT_SECRET_KEY
-
-
-from backend.endpoints.api.v1.restapi import (
+from gd_node.protocols.http.middleware import (
     JWTMiddleware,
-    RestAPI,
     redirect_not_found,
     remove_flow_exposed_port_links,
     save_node_type,
 )
+
+from dal.data.shared.vault import JWT_SECRET_KEY
 
 
 LOGGER = Log.get_logger("http.mov.ai")
