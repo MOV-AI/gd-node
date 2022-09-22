@@ -22,17 +22,17 @@ from movai_core_shared.exceptions import DoesNotExist, TransitionException
 from dal.movaidb import MovaiDB
 
 from dal.models.lock import  Lock
+from dal.models.container import Container
+from dal.models.nodeinst import NodeInst
 from dal.models.package import Package
 from dal.models.ports import Ports
 from dal.models.var import Var
+from dal.models.scopestree import ScopesTree, scopes
 
-from dal.scopes.container import Container
 from dal.scopes.configuration import Configuration
 from dal.scopes.fleetrobot import FleetRobot
 from dal.scopes.message import Message
-from dal.scopes.nodeinst import NodeInst
 from dal.scopes.robot import Robot
-from dal.scopes.scopestree import ScopesTree, scopes
 from dal.scopes.statemachine import StateMachine, SMVars
 
 from gd_node.metrics import Metrics

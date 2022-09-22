@@ -21,8 +21,7 @@ from movai_core_shared.consts import MOVAI_INIT
 
 # importing database profile automatically registers the database connections
 from dal.movaidb import RedisClient
-from dal.scopes.scopestree import scopes, ScopePropertyNode
-
+from dal.models.scopestree import scopes, ScopePropertyNode
 from dal.models.var import Var
 
 
