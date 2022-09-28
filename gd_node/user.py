@@ -10,7 +10,7 @@
     Module to store and give access to GD_Node
     Iports, Oports and Parameters during runtime
 """
-from .shared import Shared
+from gd_node.shared import Shared
 
 
 class GD_User:

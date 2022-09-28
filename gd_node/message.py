@@ -14,7 +14,7 @@ from typing import Any
 
 from movai_core_shared.envvars import ROS2_PATH
 
-from .message_model import Message
+from dal.scopes.message import Message
 
 ROS2_ONLY_ATTR = "SLOT_TYPES"  # Check in future updates
 

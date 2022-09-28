@@ -1,6 +1,6 @@
 import uuid
 
-from dal.models import Widget
+from dal.models.widget import Widget
 
 from gd_node.protocols.http import LOGGER
 
