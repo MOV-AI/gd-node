@@ -61,7 +61,7 @@ class JWTMiddleware:
         ):
             # contains non-ascii chars
             return False
-        if bleach.clean(str(request.raw_headers)) != str(request.raw_headers):
+        if bleach.clean(str(request.headers['Host'])) != str(request.headers['Host']):
             return False
         decoded_params = urllib.parse.unquote(q_string)
         if "<script>" in decoded_params:
