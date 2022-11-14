@@ -1,5 +1,7 @@
 import uuid
 
+from movai_core_shared.consts import DEFAULT_CALLBACK
+
 from dal.models.widget import Widget
 
 from gd_node.protocols.http import LOGGER
@@ -54,7 +56,7 @@ class MovaiWidget(object):
                     if "sub" in node_test.PortsInst[ports_inst].In:
                         if (
                             not node_test.PortsInst[ports_inst].In["sub"].Callback
-                            == "null_callback"
+                            == DEFAULT_CALLBACK
                         ):
                             supported["listener"]["callback"] = (
                                 node_test.PortsInst[ports_inst].In["sub"].Callback
