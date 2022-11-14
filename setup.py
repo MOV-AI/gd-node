@@ -13,15 +13,6 @@ requirements = [
 ]
 
 
-with open("requirements.txt", "r") as fh:
-    for line in fh.readlines(): 
-        if line != '\n':
-            if '\n' in line:
-                line = line.rstrip('\n')
-            requirements.append(str(line))
-
-
-
 setuptools.setup(
     name="gd-node",
     version="1.0.1-0",
