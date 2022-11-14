@@ -3,14 +3,15 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-requirements = []
 
-with open("requirements.txt", "r") as fh:
-    for line in fh.readlines(): 
-        if line != '\n':
-            if '\n' in line:
-                line = line.rstrip('\n')
-            requirements.append(str(line))
+requirements = [
+    "aiohttp==3.8.1",
+    "aioredis==1.3.0",
+    "bleach==4.1.0",
+    "requests==2.22.0",
+    "uvloop==0.14.0",
+    "dal==1.0.1.0"
+]
 
 
 
