@@ -3,6 +3,7 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+
 requirements = [
     "aiohttp==3.8.1",
     "aioredis==1.3.0",
@@ -11,6 +12,7 @@ requirements = [
     "uvloop==0.14.0",
     "dal==1.0.1.0"
 ]
+
 
 
 setuptools.setup(
