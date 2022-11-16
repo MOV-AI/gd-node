@@ -28,5 +28,8 @@ setuptools.setup(
     include_package_data=True,
     classifiers=["Programming Language :: Python :: 3"],
     install_requires=[requirements],
-    entry_points={},
+    entry_points={
+        "console_scripts":[
+            "gd_node = gd_node.__main__:main",
+            ]},
 )
