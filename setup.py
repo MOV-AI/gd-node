@@ -10,14 +10,14 @@ requirements = [
     "bleach==4.1.0",
     "requests==2.22.0",
     "uvloop==0.14.0",
-    "data_access_layer==2.4.0.0"
+    "data_access_layer==2.4.0-1-1.0"
 ]
 
 
 
 setuptools.setup(
     name="gd-node",
-    version="2.4.0-0",
+    version="2.4.0-1",
     author="Backend team",
     author_email="backend@mov.ai",
     description="GD_Node",
