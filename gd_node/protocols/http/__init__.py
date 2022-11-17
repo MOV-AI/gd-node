@@ -14,18 +14,22 @@
 """
 
 import asyncio
+from typing import Any
 
 import aiohttp_cors
 from aiohttp import web
 
-try:
-    from movai_core_enterprise.models.layout import Layout
-
-    enterprise = True
-except ImportError:
-    enterprise = False
-
 from movai_core_shared.logger import Log
+
+from dal.data.shared.vault import JWT_SECRET_KEY
+
+from gd_node.protocols.http.middleware import (
+    JWTMiddleware,
+    redirect_not_found,
+    remove_flow_exposed_port_links,
+    save_node_type,
+)
+
 
 LOGGER = Log.get_logger("http.mov.ai")
 
@@ -34,10 +38,6 @@ class HTTP:
     """Holder for app"""
 
     app = ""
-
-
-# @TODO: pass HttpMessage to the callback
-# @TODO: define message structure
 
 
 class CreateServer:
@@ -50,7 +50,7 @@ class CreateServer:
     """
 
     def __init__(
-        self, _node_name: str, _hostname: str, _port: int, *, middleware
+        self, _node_name: str, _hostname: str, _port: int, *, test=False
     ) -> None:
         """Init"""
         self.hostname = _hostname
@@ -69,11 +69,10 @@ class CreateServer:
 
         HTTP.app = web.Application(
             middlewares=[
-                # Todo: add middlewere or use the backend functions
-                # JWTMiddleware(JWT_SECRET_KEY, auth_whitelist).middleware,
-                # save_node_type,
-                # remove_flow_exposed_port_links,
-                # redirect_not_found
+                JWTMiddleware(JWT_SECRET_KEY, auth_whitelist).middleware,
+                save_node_type,
+                remove_flow_exposed_port_links,
+                redirect_not_found,
             ]
         )
         HTTP.app["connections"] = set()
@@ -105,3 +104,6 @@ class CreateServer:
         LOGGER.info(
             "Http/websockets server listenning on %s %s", self.hostname, self.port
         )
+
+
+

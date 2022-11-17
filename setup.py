@@ -3,21 +3,33 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-# TODO Adapt your project configuration to your own project.
-# The name of the package is the one to be used in runtime.
-# The 'install_requires' is where you specify the package dependencies of your package. They will be automaticly installed, before your package.  # noqa: E501
+
+requirements = [
+    "aiohttp==3.8.1",
+    "aioredis==1.3.0",
+    "bleach==4.1.0",
+    "requests==2.22.0",
+    "uvloop==0.14.0",
+    "data_access_layer==2.4.0.0"
+]
+
+
+
 setuptools.setup(
     name="gd-node",
-    version="1.0.0-9",
+    version="2.4.0-0",
     author="Backend team",
     author_email="backend@mov.ai",
-    description="Dummy description",
+    description="GD_Node",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/MOV-AI/gd-node",
     packages=setuptools.find_packages(),
     include_package_data=True,
     classifiers=["Programming Language :: Python :: 3"],
-    install_requires=["dal==1.0.0.29"],
-    entry_points={},
+    install_requires=requirements,
+    entry_points={
+        "console_scripts":[
+            "gd_node = gd_node.__main__:main",
+            ]},
 )

@@ -18,7 +18,7 @@ from movai_core_shared.envvars import ROS2_PATH
 from gd_node.message import GD_Message2
 from gd_node.user import GD_User
 
-from .base import BaseIport
+from gd_node.protocols.base import BaseIport
 
 # Initialization, Shutdown, and Spinning
 # http://docs.ros2.org/latest/api/rclpy/api/init_shutdown.html

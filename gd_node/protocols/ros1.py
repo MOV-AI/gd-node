@@ -21,12 +21,13 @@ import rosnode
 import rosparam
 import rospy
 from dynamic_reconfigure.client import Client as DynClient
+from geometry_msgs.msg import Pose
+
 from gd_node.callback import GD_Callback as Callback
 from gd_node.message import GD_Message
 from gd_node.user import GD_User
-from geometry_msgs.msg import Pose
 
-from .base import BaseIport
+from gd_node.protocols.base import BaseIport
 
 
 class ROS1:
@@ -312,7 +313,7 @@ class ROS1_TFSubscriber(BaseIport):
 
         self.parent_frame = _params["Parent"]
         self.child_frame = _params["Child"]
-        self.duration = 1 / _params.get("Frequency", 30)
+        self.duration = 1 / float(_params.get("Frequency", 30))
         self.listener = tf.TransformListener()
 
         self.timer = rospy.Timer(rospy.Duration(self.duration), self.callback)
