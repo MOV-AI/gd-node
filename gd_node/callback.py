@@ -21,7 +21,7 @@ from movai_core_shared.exceptions import DoesNotExist, TransitionException
 
 from dal.movaidb import MovaiDB
 
-from dal.models.lock import  Lock
+from dal.models.lock import Lock
 from dal.models.container import Container
 from dal.models.nodeinst import NodeInst
 from dal.models.package import Package
@@ -104,8 +104,8 @@ class GD_Callback:
         self.count += 1
         self.updated_globals = globais
         if (
-            "response" in globais 
-            and isinstance(globais["response"], dict) 
+            "response" in globais
+            and isinstance(globais["response"], dict)
             and "status_code" in globais["response"]
         ):
             self.updated_globals["status_code"] = globais["response"]["status_code"]
@@ -179,9 +179,7 @@ class UserFunctions:
             scene_name = GD_Callback._robot.Status.get("active_scene")
             if scene_name:
                 try:
-                    GD_Callback._scene = scopes.from_path(
-                        scene_name, scope="GraphicScene"
-                    )
+                    GD_Callback._scene = scopes.from_path(scene_name, scope="GraphicScene")
                 except:
                     LOGGER.error(f'Scene "{scene_name}" was not found')
 
@@ -215,24 +213,20 @@ class UserFunctions:
                         {
                             "Node": {
                                 gd.template: {
-                                    "PortsInst": {
-                                        "*": {"Template": "MovAI/StateMachine"}
-                                    }
+                                    "PortsInst": {"*": {"Template": "MovAI/StateMachine"}}
                                 }
                             }
                         }
                     )
                     for port in sm_ports_dict:
-                        for name in MovaiDB().keys_to_dict([(port, "")])["Node"][
-                            gd.template
-                        ]["PortsInst"]:
+                        for name in MovaiDB().keys_to_dict([(port, "")])["Node"][gd.template][
+                            "PortsInst"
+                        ]:
                             sm_params = MovaiDB().get_hash(
                                 {
                                     "Node": {
                                         gd.template: {
-                                            "PortsInst": {
-                                                name: {"In": {"in": {"Parameter": ""}}}
-                                            }
+                                            "PortsInst": {name: {"In": {"in": {"Parameter": ""}}}}
                                         }
                                     }
                                 },
@@ -243,9 +237,7 @@ class UserFunctions:
 
                 sm_id = UserSM.sm_ports.get(sm_name)
                 if not sm_id:
-                    raise DoesNotExist(
-                        "State Machine %s not found for this node" % sm_name
-                    )
+                    raise DoesNotExist("State Machine %s not found for this node" % sm_name)
                 super().__init__(_sm_name=sm_id, _node_name=_node_name)
 
         if _user == "SUPER":

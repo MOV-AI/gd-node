@@ -14,9 +14,7 @@ class MovaiWidget(object):
         try:
             self.obj = Widget(self.name)
         except Exception as e:
-            LOGGER.error(
-                "COULD NOT GET WIDGET OBJECT, ARE YOU SURE THIS WIDGET EXISTS? %s", e
-            )
+            LOGGER.error("COULD NOT GET WIDGET OBJECT, ARE YOU SURE THIS WIDGET EXISTS? %s", e)
             self.obj = None
         if uid:
             self.uid = uid
@@ -41,12 +39,8 @@ class MovaiWidget(object):
                 ):
                     supported = {
                         "main": {
-                            "callback": node_test.PortsInst[ports_inst]
-                            .In["data_in"]
-                            .Callback,
-                            "message": node_test.PortsInst[ports_inst]
-                            .In["data_in"]
-                            .Message,
+                            "callback": node_test.PortsInst[ports_inst].In["data_in"].Callback,
+                            "message": node_test.PortsInst[ports_inst].In["data_in"].Message,
                         },
                         "listener": {"callback": False, "message": []},
                         "name": self.name,

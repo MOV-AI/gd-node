@@ -319,9 +319,7 @@ class GDNode:
         )
 
         # Then we start the oports
-        await self.init_oports(
-            self.inst_name, node_ports, self.node["PortsInst"], self.flow_name
-        )
+        await self.init_oports(self.inst_name, node_ports, self.node["PortsInst"], self.flow_name)
 
         # Init all the Iports
         await self.init_iports(
@@ -337,9 +335,7 @@ class GDNode:
             await asyncio.sleep(0.2)
 
         # Then we run the initial callback
-        await self.init_iports(
-            self.inst_name, node_ports, self.node["PortsInst"], init=True
-        )
+        await self.init_iports(self.inst_name, node_ports, self.node["PortsInst"], init=True)
 
         # And finally we enable the iports
         for iport in GD_User.iport:
@@ -355,9 +351,7 @@ class GDNode:
 
         start_time = time.time() - TIME_0
 
-        LOGGER.info(
-            'Full time to init the GD_Node "%s": %s' % (self.inst_name, start_time)
-        )
+        LOGGER.info('Full time to init the GD_Node "%s": %s' % (self.inst_name, start_time))
 
         while self.RUNNING:
             # heart beat

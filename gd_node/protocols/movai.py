@@ -36,9 +36,7 @@ class Init(BaseIport):
             _cb_name: Name of the callback to be executed
     """
 
-    def __init__(
-        self, _node_name: str, _port_name: str, _callback: str, **_ignore
-    ) -> None:
+    def __init__(self, _node_name: str, _port_name: str, _callback: str, **_ignore) -> None:
         """Init"""
         super().__init__(_node_name, _port_name, None, None, _callback, False)
         self.register()
@@ -118,9 +116,7 @@ class StateMachineProtocol(BaseIport):
 
             # Add parameters to Callback
             for param, value in (
-                state_machine["StateMachine"][sm_id]["State"][state]
-                .get("Parameter", {})
-                .items()
+                state_machine["StateMachine"][sm_id]["State"][state].get("Parameter", {}).items()
             ):
                 callback.user.globals.update({param: value["Value"]})
 
@@ -145,9 +141,7 @@ class StateMachineProtocol(BaseIport):
         # create a redis subscriber to the sm hash key
         self.loop = asyncio.get_event_loop()
         sub_dict = {"Name": "node", "ID": _node_name + "@" + sm_id, "Parameter": "*"}
-        self.loop.create_task(
-            self.register_sub(self.loop, "Var", self.callback, **sub_dict)
-        )
+        self.loop.create_task(self.register_sub(self.loop, "Var", self.callback, **sub_dict))
 
         # TODO Possible minimum rate implemented with timer
 
@@ -200,9 +194,7 @@ class TransitionIn(BaseIport):
             _cb_name: Name of the callback to be executed
     """
 
-    def __init__(
-        self, _node_name: str, _port_name: str, _callback: str, _data, **_ignore
-    ) -> None:
+    def __init__(self, _node_name: str, _port_name: str, _callback: str, _data, **_ignore) -> None:
         """Init"""
         super().__init__(_node_name, _port_name, None, None, _callback, False)
         self.register()
@@ -291,9 +283,7 @@ class ContextClientIn(BaseIport):
 
     async def register_sub(self) -> None:
         """Subscribe to key."""
-        pattern = {
-            "Var": {"context": {"ID": {self.stack + "_TX": {"Parameter": "**"}}}}
-        }
+        pattern = {"Var": {"context": {"ID": {self.stack + "_TX": {"Parameter": "**"}}}}}
         databases = await RedisClient().get_client()
         await MovaiDB("local", loop=self.loop, databases=databases).subscribe_channel(
             pattern, self.callback
@@ -348,9 +338,7 @@ class ContextServerIn(BaseIport):
 
     async def register_sub(self) -> None:
         """Subscribe to key."""
-        pattern = {
-            "Var": {"context": {"ID": {self.stack + "_RX": {"Parameter": "**"}}}}
-        }
+        pattern = {"Var": {"context": {"ID": {self.stack + "_RX": {"Parameter": "**"}}}}}
         databases = await RedisClient().get_client()
         await MovaiDB("local", loop=self.loop, databases=databases).subscribe_channel(
             pattern, self.callback

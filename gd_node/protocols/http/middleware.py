@@ -55,13 +55,10 @@ class JWTMiddleware:
                 xss_check_dict.pop(key)
             else:
                 return False
-        if (
-            q_string.encode("ascii", "ignore").decode() != q_string
-            or len(xss_check_dict) > 0
-        ):
+        if q_string.encode("ascii", "ignore").decode() != q_string or len(xss_check_dict) > 0:
             # contains non-ascii chars
             return False
-        if bleach.clean(str(request.headers['Host'])) != str(request.headers['Host']):
+        if bleach.clean(str(request.headers["Host"])) != str(request.headers["Host"]):
             return False
         decoded_params = urllib.parse.unquote(q_string)
         if "<script>" in decoded_params:
@@ -189,9 +186,7 @@ async def remove_flow_exposed_port_links(request, handler):
                         node_inst_name = next(iter(deleted_exposed_port))
                         for port in deleted_exposed_port[node_inst_name]:
                             port_name = re.search(r"^.+/", port)[0][:-1]
-                            flow_obj.delete_exposed_port_links(
-                                node_inst_name, port_name
-                            )
+                            flow_obj.delete_exposed_port_links(node_inst_name, port_name)
 
             if request.get("scope_delete"):
                 # Flow was deleted

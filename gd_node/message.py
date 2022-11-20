@@ -33,9 +33,7 @@ class GD_Message:
         Exception: Message does not exist
     """
 
-    def __init__(
-        self, _name: str, _type="msg"
-    ):  # _name includes _package for simplicity
+    def __init__(self, _name: str, _type="msg"):  # _name includes _package for simplicity
         """Init"""
         self.m = self.m_req = self.m_resp = None
         # it is has more than 1 '/', it shall blow
@@ -213,9 +211,7 @@ class GD_Message2:
 
             if field_type in self.ros_time_types:  # Time
                 # sec, nanosec in ros2...
-                setattr(
-                    getattr(ros2_msg, field_name), "secs", getattr(field_value, "secs")
-                )
+                setattr(getattr(ros2_msg, field_name), "secs", getattr(field_value, "secs"))
                 setattr(
                     getattr(ros2_msg, field_name),
                     "nsecs",
