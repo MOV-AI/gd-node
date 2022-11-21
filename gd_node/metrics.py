@@ -107,9 +107,7 @@ class Metrics:
         }
 
         # Call logger
-        self._logger.info(
-            "metrics", options
-        )  # If getattr by level fails, store log as info
+        self._logger.info("metrics", options)  # If getattr by level fails, store log as info
 
     @staticmethod
     def get_metrics(name=None, limit=1000, offset=0, tags=None, pagination=False):

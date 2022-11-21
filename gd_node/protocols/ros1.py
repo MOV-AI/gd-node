@@ -773,9 +773,7 @@ class ROS1_TFBroadcaster:
             msg.orientation.w,
         )
 
-        self.broadcaster.sendTransform(
-            pos, ori, rospy.Time.now(), self._topic1, self._topic2
-        )
+        self.broadcaster.sendTransform(pos, ori, rospy.Time.now(), self._topic1, self._topic2)
 
     def unregister(self):
         self.broadcaster = None

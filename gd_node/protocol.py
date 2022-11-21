@@ -77,9 +77,7 @@ class TransportROS1:
 
     def __call__(self, inst_name, remaps, **_ignore):
         if not self._instance:
-            self._instance = ROS1.ROS1(
-                inst_name, remaps, shutdown=Transports.on_shutdown
-            )
+            self._instance = ROS1.ROS1(inst_name, remaps, shutdown=Transports.on_shutdown)
             self._instance.init_node()
         return self._instance
 
@@ -403,9 +401,7 @@ class OportRos1ActionClient:
         _topic, _, port = topic.rpartition("/")
 
         if port == "goal":
-            gd.oport["goal@" + name] = ROS1.ROS1_ActionClient(
-                _topic, message.rsplit("Goal")[0]
-            )
+            gd.oport["goal@" + name] = ROS1.ROS1_ActionClient(_topic, message.rsplit("Goal")[0])
         if port == "cancel":
             gd.oport["cancel@" + name] = ROS1.ROS1_Publisher(topic, message)
 

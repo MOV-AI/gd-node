@@ -49,9 +49,7 @@ class CreateServer:
         _port: Port of the server
     """
 
-    def __init__(
-        self, _node_name: str, _hostname: str, _port: int, *, test=False
-    ) -> None:
+    def __init__(self, _node_name: str, _hostname: str, _port: int, *, test=False) -> None:
         """Init"""
         self.hostname = _hostname
         self.port = _port
@@ -101,9 +99,4 @@ class CreateServer:
         await runner.setup()
         site = web.TCPSite(runner, self.hostname, self.port)
         await site.start()
-        LOGGER.info(
-            "Http/websockets server listenning on %s %s", self.hostname, self.port
-        )
-
-
-
+        LOGGER.info("Http/websockets server listenning on %s %s", self.hostname, self.port)

@@ -111,9 +111,7 @@ class ROS2_Subscriber(BaseIport):
         """Registers the subscriber"""
         super().register()
         if self.sub is None:
-            self.sub = ROS2.node.create_subscription(
-                self.msg, self.topic, self.callback, 10
-            )
+            self.sub = ROS2.node.create_subscription(self.msg, self.topic, self.callback, 10)
             self.sub  # prevent unused variable warning
 
 
