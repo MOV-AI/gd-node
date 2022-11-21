@@ -150,6 +150,10 @@ class Metrics:
         return value
 
     @staticmethod
+    def validate_tags(value: str):
+        return value
+
+    @staticmethod
     def validate_limit(value):
         try:
             val = int(value)
