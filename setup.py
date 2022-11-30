@@ -6,13 +6,13 @@ with open("README.md", "r") as fh:
 
 requirements = [
     "aiohttp==3.8.1",
+    "aiohttp_cors==0.7.0",
     "aioredis==1.3.0",
     "bleach==4.1.0",
     "requests==2.22.0",
     "uvloop==0.14.0",
-    "data_access_layer==2.4.*"
+    "data_access_layer==2.4.*",
 ]
-
 
 
 setuptools.setup(
@@ -29,7 +29,8 @@ setuptools.setup(
     classifiers=["Programming Language :: Python :: 3"],
     install_requires=requirements,
     entry_points={
-        "console_scripts":[
+        "console_scripts": [
             "gd_node = gd_node.__main__:main",
-            ]},
+        ]
+    },
 )
