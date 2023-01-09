@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - main
-      - releases/*
+      - 'releases/**'
     paths-ignore:
       - '.bumpversion.cfg'
       - 'setup.py'
