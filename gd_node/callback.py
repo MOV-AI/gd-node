@@ -35,7 +35,6 @@ from dal.scopes.message import Message
 from dal.scopes.robot import Robot
 from dal.scopes.statemachine import StateMachine, SMVars
 
-from gd_node.metrics import Metrics
 from gd_node.user import GD_User as gd
 
 try:
@@ -48,6 +47,7 @@ try:
     from movai_core_enterprise.scopes.task import Task    
     from movai_core_enterprise.models.taskentry import TaskEntry
     from movai_core_enterprise.models.tasktemplate import TaskTemplate
+    from movai_core_enterprise.message_client_handlers.metrics import Metrics
     enterprise = True
 except ImportError:
     enterprise = False
