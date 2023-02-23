@@ -35,7 +35,6 @@ from dal.scopes.message import Message
 from dal.scopes.robot import Robot
 from dal.scopes.statemachine import StateMachine, SMVars
 
-from gd_node.metrics import Metrics
 from gd_node.user import GD_User as gd
 
 try:
@@ -48,6 +47,7 @@ try:
     from movai_core_enterprise.scopes.task import Task    
     from movai_core_enterprise.models.taskentry import TaskEntry
     from movai_core_enterprise.models.tasktemplate import TaskTemplate
+    from movai_core_enterprise.message_client_handlers.metrics import Metrics
     enterprise = True
 except ImportError:
     enterprise = False
@@ -244,7 +244,6 @@ class UserFunctions:
         if _user == "SUPER":
             log = Log.get_logger("GD_Callback")
             logger = LogAdapter(log, node=self.node_name, callback=self.cb_name)
-            metrics = Metrics()
             self.globals.update(
                 {
                     "scopes": scopes,
@@ -256,7 +255,6 @@ class UserFunctions:
                     "Robot": GD_Callback._robot,
                     "FleetRobot": FleetRobot,
                     "logger": logger,
-                    "metrics": metrics,
                     "PortName": _port_name,
                     "SM": UserSM,
                     "Lock": UserLock,
@@ -268,6 +266,7 @@ class UserFunctions:
                 }
             )
             if enterprise:
+                metrics = Metrics()
                 self.globals.update(
                     {
                         "Alerts": Alerts,
@@ -275,6 +274,7 @@ class UserFunctions:
                         "GraphicAsset": GraphicAsset,
                         "GraphicScene": GraphicScene,
                         "Layout": Layout,
+                        "metrics": metrics,
                         "Task": Task,
                         "TaskEntry": TaskEntry,
                         "TaskTemplate": TaskTemplate,
