@@ -244,7 +244,6 @@ class UserFunctions:
         if _user == "SUPER":
             log = Log.get_logger("GD_Callback")
             logger = LogAdapter(log, node=self.node_name, callback=self.cb_name)
-            metrics = Metrics()
             self.globals.update(
                 {
                     "scopes": scopes,
@@ -256,7 +255,6 @@ class UserFunctions:
                     "Robot": GD_Callback._robot,
                     "FleetRobot": FleetRobot,
                     "logger": logger,
-                    "metrics": metrics,
                     "PortName": _port_name,
                     "SM": UserSM,
                     "Lock": UserLock,
@@ -268,6 +266,7 @@ class UserFunctions:
                 }
             )
             if enterprise:
+                metrics = Metrics()
                 self.globals.update(
                     {
                         "Alerts": Alerts,
@@ -275,6 +274,7 @@ class UserFunctions:
                         "GraphicAsset": GraphicAsset,
                         "GraphicScene": GraphicScene,
                         "Layout": Layout,
+                        "metrics": metrics,
                         "Task": Task,
                         "TaskEntry": TaskEntry,
                         "TaskTemplate": TaskTemplate,
