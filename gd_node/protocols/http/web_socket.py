@@ -65,9 +65,7 @@ class WebSocketRedisSub:
             await ws_resp.send_json({"event": "", "patterns": None, "error": error})
 
         # add connection
-        self.connections.update(
-            {conn_id: {"conn": ws_resp, "subs": conn, "patterns": []}}
-        )
+        self.connections.update({conn_id: {"conn": ws_resp, "subs": conn, "patterns": []}})
 
         # wait for messages
         async for ws_msg in ws_resp:
@@ -103,9 +101,7 @@ class WebSocketRedisSub:
                     output = {"event": None, "patterns": None, "error": str(e)}
                     await ws_resp.send_json(output)
             elif ws_msg.type == WSMsgType.ERROR:
-                LOGGER.error(
-                    "ws connection closed with exception %s" % ws_resp.exception()
-                )
+                LOGGER.error("ws connection closed with exception %s" % ws_resp.exception())
 
         conn.close()
         await conn.wait_closed()
@@ -160,9 +156,7 @@ class WebSocketRedisSub:
         values = await self.mget(keys)
 
         ws = self.connections[conn_id]["conn"]
-        await ws.send_json(
-            {"event": "subscribe", "patterns": [_pattern], "value": values}
-        )
+        await ws.send_json({"event": "subscribe", "patterns": [_pattern], "value": values})
 
     async def remove_pattern(self, conn_id, conn, _pattern, **ignore):
         """Remove pattern from subscriber"""
@@ -417,9 +411,7 @@ class WebSocketSub:
                 self.run_callback(ws_msg)
                 await ws_resp.send_json(self.reply)
             elif ws_msg.type == WSMsgType.ERROR:
-                LOGGER.error(
-                    "ws connection closed with exception %s", ws_resp.exception()
-                )
+                LOGGER.error("ws connection closed with exception %s", ws_resp.exception())
         HTTP.app["connections"].remove(ws_resp)
         return ws_resp
 

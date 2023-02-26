@@ -1,3 +1,5 @@
+# @TODO: pass HttpMessage to the callback
+# @TODO: define message structure
 class HttpMessage:
     """Messsage"""
 

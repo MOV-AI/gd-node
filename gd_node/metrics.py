@@ -107,9 +107,7 @@ class Metrics:
         }
 
         # Call logger
-        self._logger.info(
-            "metrics", options
-        )  # If getattr by level fails, store log as info
+        self._logger.info("metrics", options)  # If getattr by level fails, store log as info
 
     @staticmethod
     def get_metrics(name=None, limit=1000, offset=0, tags=None, pagination=False):
@@ -149,6 +147,10 @@ class Metrics:
     def validate_name(value):
         if value and not re.search(r"[a-zA-Z0-9-_.]+", value):
             raise ValueError("invalid name")
+        return value
+
+    @staticmethod
+    def validate_tags(value: str):
         return value
 
     @staticmethod
