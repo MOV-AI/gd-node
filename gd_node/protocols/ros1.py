@@ -537,14 +537,15 @@ class ROS1_Publisher:
         _message: ROS message
     """
 
-    def __init__(self, _topic: str, _message: Any, _params: dict) -> None:
+    def __init__(self, _topic: str, _message: Any, _params: dict = None) -> None:
         """Init"""
 
         self.msg = GD_Message(_message).get()
         params = {
             "queue_size": 1
         }
-        params.update(_params)
+        if _params is not None:
+            params.update(_params)
         self.pub = rospy.Publisher(_topic, self.msg, **params)
 
     def send(self, msg: Any) -> None:
