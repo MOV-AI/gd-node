@@ -38,16 +38,17 @@ from dal.scopes.statemachine import StateMachine, SMVars
 from gd_node.user import GD_User as gd
 
 try:
-    
+
     from movai_core_enterprise.message_client_handlers.alerts import Alerts
     from movai_core_enterprise.models.annotation import Annotation
     from movai_core_enterprise.models.graphicasset import GraphicAsset
     from movai_core_enterprise.models.graphicscene import GraphicScene
     from movai_core_enterprise.models.layout import Layout
-    from movai_core_enterprise.scopes.task import Task    
+    from movai_core_enterprise.scopes.task import Task
     from movai_core_enterprise.models.taskentry import TaskEntry
     from movai_core_enterprise.models.tasktemplate import TaskTemplate
     from movai_core_enterprise.message_client_handlers.metrics import Metrics
+
     enterprise = True
 except ImportError:
     enterprise = False
