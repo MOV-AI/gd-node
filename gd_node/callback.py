@@ -20,36 +20,34 @@ from movai_core_shared.exceptions import DoesNotExist, TransitionException
 # Imports from DAL
 
 from dal.movaidb import MovaiDB
-import dal.models
-from dal.models import Lock
-from dal.scopes import (
-    Robot,
-    FleetRobot,
-    scopes,
-    ScopesTree,
-    NodeInst,
-    Container,
-    Configuration,
-)
-from dal.models import Var, Package, Ports
-from .statemachine import SMVars
-from .statemachine import StateMachine
-from .message_model import Message
-from .metrics import Metrics
 
-from .user import GD_User as gd
+from dal.models.lock import Lock
+from dal.models.container import Container
+from dal.models.nodeinst import NodeInst
+from dal.models.package import Package
+from dal.models.ports import Ports
+from dal.models.var import Var
+from dal.models.scopestree import ScopesTree, scopes
+
+from dal.scopes.configuration import Configuration
+from dal.scopes.fleetrobot import FleetRobot
+from dal.scopes.message import Message
+from dal.scopes.robot import Robot
+from dal.scopes.statemachine import StateMachine, SMVars
+
+from gd_node.user import GD_User as gd
 
 try:
-    from movai_core_enterprise.models.task import Task
-    from movai_core_enterprise.v2.models import (
-        Layout,
-        Annotations,
-        TaskEntry,
-        TaskTemplate,
-        GraphicAsset,
-        GraphicScene,
-    )
-
+    
+    from movai_core_enterprise.message_client_handlers.alerts import Alerts
+    from movai_core_enterprise.models.annotation import Annotation
+    from movai_core_enterprise.models.graphicasset import GraphicAsset
+    from movai_core_enterprise.models.graphicscene import GraphicScene
+    from movai_core_enterprise.models.layout import Layout
+    from movai_core_enterprise.scopes.task import Task    
+    from movai_core_enterprise.models.taskentry import TaskEntry
+    from movai_core_enterprise.models.tasktemplate import TaskTemplate
+    from movai_core_enterprise.message_client_handlers.metrics import Metrics
     enterprise = True
 except ImportError:
     enterprise = False
@@ -106,7 +104,11 @@ class GD_Callback:
         self.start(self.compiled_code, globais)
         self.count += 1
         self.updated_globals = globais
-        if "response" in globais and isinstance(globais["response"], dict) and "status_code" in globais["response"]:
+        if (
+            "response" in globais
+            and isinstance(globais["response"], dict)
+            and "status_code" in globais["response"]
+        ):
             self.updated_globals["status_code"] = globais["response"]["status_code"]
 
     def start(self, code, globais):
@@ -178,9 +180,7 @@ class UserFunctions:
             scene_name = GD_Callback._robot.Status.get("active_scene")
             if scene_name:
                 try:
-                    GD_Callback._scene = scopes.from_path(
-                        scene_name, scope="GraphicScene"
-                    )
+                    GD_Callback._scene = scopes.from_path(scene_name, scope="GraphicScene")
                 except:
                     LOGGER.error(f'Scene "{scene_name}" was not found')
 
@@ -214,24 +214,20 @@ class UserFunctions:
                         {
                             "Node": {
                                 gd.template: {
-                                    "PortsInst": {
-                                        "*": {"Template": "MovAI/StateMachine"}
-                                    }
+                                    "PortsInst": {"*": {"Template": "MovAI/StateMachine"}}
                                 }
                             }
                         }
                     )
                     for port in sm_ports_dict:
-                        for name in MovaiDB().keys_to_dict([(port, "")])["Node"][
-                            gd.template
-                        ]["PortsInst"]:
+                        for name in MovaiDB().keys_to_dict([(port, "")])["Node"][gd.template][
+                            "PortsInst"
+                        ]:
                             sm_params = MovaiDB().get_hash(
                                 {
                                     "Node": {
                                         gd.template: {
-                                            "PortsInst": {
-                                                name: {"In": {"in": {"Parameter": ""}}}
-                                            }
+                                            "PortsInst": {name: {"In": {"in": {"Parameter": ""}}}}
                                         }
                                     }
                                 },
@@ -242,20 +238,15 @@ class UserFunctions:
 
                 sm_id = UserSM.sm_ports.get(sm_name)
                 if not sm_id:
-                    raise DoesNotExist(
-                        "State Machine %s not found for this node" % sm_name
-                    )
+                    raise DoesNotExist("State Machine %s not found for this node" % sm_name)
                 super().__init__(_sm_name=sm_id, _node_name=_node_name)
 
         if _user == "SUPER":
             log = Log.get_logger("GD_Callback")
             logger = LogAdapter(log, node=self.node_name, callback=self.cb_name)
-            metrics = Metrics()
             self.globals.update(
                 {
                     "scopes": scopes,
-                    # hacky but quick way to export all models
-                    **{key: getattr(dal.models, key) for key in dal.models.__all__},
                     "Package": Package,
                     "Message": Message,
                     "Ports": Ports,
@@ -264,7 +255,6 @@ class UserFunctions:
                     "Robot": GD_Callback._robot,
                     "FleetRobot": FleetRobot,
                     "logger": logger,
-                    "metrics": metrics,
                     "PortName": _port_name,
                     "SM": UserSM,
                     "Lock": UserLock,
@@ -276,15 +266,18 @@ class UserFunctions:
                 }
             )
             if enterprise:
+                metrics = Metrics()
                 self.globals.update(
                     {
-                        "Task": Task,
-                        "TaskTemplate": TaskTemplate,
-                        "TaskEntry": TaskEntry,
-                        "Annotations": Annotations,
+                        "Alerts": Alerts,
+                        "Annotation": Annotation,
                         "GraphicAsset": GraphicAsset,
                         "GraphicScene": GraphicScene,
                         "Layout": Layout,
+                        "metrics": metrics,
+                        "Task": Task,
+                        "TaskEntry": TaskEntry,
+                        "TaskTemplate": TaskTemplate,
                     }
                 )
 

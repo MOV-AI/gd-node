@@ -18,7 +18,7 @@ from movai_core_shared.envvars import ROS2_PATH
 from gd_node.message import GD_Message2
 from gd_node.user import GD_User
 
-from .base import BaseIport
+from gd_node.protocols.base import BaseIport
 
 # Initialization, Shutdown, and Spinning
 # http://docs.ros2.org/latest/api/rclpy/api/init_shutdown.html
@@ -111,9 +111,7 @@ class ROS2_Subscriber(BaseIport):
         """Registers the subscriber"""
         super().register()
         if self.sub is None:
-            self.sub = ROS2.node.create_subscription(
-                self.msg, self.topic, self.callback, 10
-            )
+            self.sub = ROS2.node.create_subscription(self.msg, self.topic, self.callback, 10)
             self.sub  # prevent unused variable warning
 
 
