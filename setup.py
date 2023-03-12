@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 
 requirements = [
-    "aiohttp==3.8.1",
+    "aiohttp==3.8.4",
     "aiohttp_cors==0.7.0",
     "aioredis==1.3.0",
     "bleach==4.1.0",
