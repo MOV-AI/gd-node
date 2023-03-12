@@ -103,8 +103,8 @@ class GDNode:
 
         tasks = [
             task
-            for task in asyncio.Task.all_tasks(loop=self.loop)
-            if task is not asyncio.tasks.Task.current_task(loop=self.loop)
+            for task in asyncio.all_tasks(loop=self.loop)
+            if task is not asyncio.current_task(loop=self.loop)
         ]
 
         list(map(lambda task: task.cancel(), tasks))
