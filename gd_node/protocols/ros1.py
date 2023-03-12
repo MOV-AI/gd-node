@@ -62,9 +62,7 @@ class ROS1:
 
     def launch_ros_node(self):
         """async launch"""
-        rospy.init_node(
-            self.node_name, argv=self.remaps, disable_signals=True, disable_rosout=True
-        )
+        rospy.init_node(self.node_name, argv=self.remaps, disable_signals=True, disable_rosout=True)
         rospy.on_shutdown(self.on_shutdown)
 
     def on_shutdown(self):
@@ -270,9 +268,7 @@ class ROS1_Timer(BaseIport):
         self.duration = 1 / float(_params.get("Frequency", 10))
         self.oneshot = _params.get("Oneshot", False)
 
-        self.timer = rospy.Timer(
-            rospy.Duration(self.duration), self.callback, oneshot=self.oneshot
-        )
+        self.timer = rospy.Timer(rospy.Duration(self.duration), self.callback, oneshot=self.oneshot)
         # timer need to start unregistered to start counting when enabled
         self.unregister()
 
@@ -541,9 +537,7 @@ class ROS1_Publisher:
         """Init"""
 
         self.msg = GD_Message(_message).get()
-        params = {
-            "queue_size": 1
-        }
+        params = {"queue_size": 1}
         if _params is not None:
             params.update(_params)
         self.pub = rospy.Publisher(_topic, self.msg, **params)
