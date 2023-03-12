@@ -17,15 +17,10 @@ import jsonpickle
 
 
 class Notify:
-    """Message Server Notifications Handler interface
-    """
+    """Message Server Notifications Handler interface"""
 
     @classmethod
-    def email(self,
-                recipients: list,
-                body: str,
-                subject: str = "",
-                attachment: str = ""):
+    def email(self, recipients: list, body: str, subject: str = "", attachment: str = ""):
         """sends an email through Message Server client, by sending smtp
         notification to the MessageServer with the needed information
         using zmq socket (MessageClient)
@@ -43,13 +38,12 @@ class Notify:
                 attachment_data = jsonpickle.encode(f.read())
 
         data = {
-                    "notification_type": "smtp",
-                    "recipients": recipients,
-                    "subject": subject,
-                    "body": body,
-                    "attachment_data": attachment_data
-                }
+            "notification_type": "smtp",
+            "recipients": recipients,
+            "subject": subject,
+            "body": body,
+            "attachment_data": attachment_data,
+        }
 
         client = MessageClient(MESSAGE_SERVER_BIND_ADDR)
         client.send_request(NOTIFICATIONS_HANDLER_MSG_TYPE, data)
-
