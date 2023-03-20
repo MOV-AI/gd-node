@@ -20,6 +20,7 @@ from movai_core_shared.exceptions import DoesNotExist, TransitionException
 # Imports from DAL
 
 from dal.movaidb import MovaiDB
+from dal.models.callback import Callback
 
 from dal.models.lock import Lock
 from dal.models.container import Container
@@ -258,6 +259,7 @@ class UserFunctions:
                     "logger": logger,
                     "PortName": _port_name,
                     "SM": UserSM,
+                    "Callback": Callback,
                     "Lock": UserLock,
                     "print": self.user_print,
                     "Scene": GD_Callback._scene,
