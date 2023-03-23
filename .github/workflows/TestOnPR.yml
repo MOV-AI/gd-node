@@ -9,9 +9,7 @@ on:
       - develop/*
       - main
       - 'releases/**'
-    paths-ignore:
-      - '.bumpversion.cfg'
-      - 'setup.py'
+
 jobs:
   CI:
     uses: MOV-AI/.github/.github/workflows/py-workflow.yml@v1
