@@ -245,7 +245,7 @@ class UserFunctions:
 
         if _user == "SUPER":
             log = Log.get_logger("GD_Callback")
-            logger = LogAdapter(log, node=self.node_name, callback=self.cb_name)
+            logger = LogAdapter(log, node=self.node_name, callback=self.cb_name, runtime=True)
             self.globals.update(
                 {
                     "scopes": scopes,
