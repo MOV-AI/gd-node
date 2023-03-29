@@ -11,10 +11,15 @@
 
 
 from movai_core_shared.core.message_client import MessageClient
-from movai_core_shared.envvars import MESSAGE_SERVER_BIND_ADDR
+from movai_core_shared.common.utils import is_manager
 from movai_core_shared.consts import NOTIFICATIONS_HANDLER_MSG_TYPE
 import re
 import jsonpickle
+from movai_core_shared.envvars import (
+    MESSAGE_SERVER_LOCAL_ADDR,
+    MESSAGE_SERVER_REMOTE_ADDR,
+)
+from dal.scopes.robot import Robot
 
 
 # to make it an instance
@@ -29,8 +34,15 @@ class Notify:
     def __init__(self, path="/"):
 
         # remove multiple '/' together
+        self._robot_id = Robot().name
         self._path = re.sub(r"/{2,}", r"/", path)
-        self.message_client = MessageClient(MESSAGE_SERVER_BIND_ADDR)
+        self._local_client = MessageClient(MESSAGE_SERVER_LOCAL_ADDR, self._robot_id)
+        if is_manager():
+            self._remote_client = self._local_client
+        else:
+            self._remote_client = MessageClient(
+                MESSAGE_SERVER_REMOTE_ADDR, self._robot_id
+            )
 
     def email(
         self, recipients: list, body: str, subject: str = "", attachment: str = ""
@@ -59,7 +71,7 @@ class Notify:
             "attachment_data": attachment_data,
         }
 
-        return self.message_client.send_request(NOTIFICATIONS_HANDLER_MSG_TYPE, data)
+        return self._remote_client.send_request(NOTIFICATIONS_HANDLER_MSG_TYPE, data)
 
     # Notify['/path/to/endpoint']
     def __getitem__(self, item):
