@@ -13,21 +13,35 @@
 from movai_core_shared.core.message_client import MessageClient
 from movai_core_shared.envvars import MESSAGE_SERVER_BIND_ADDR
 from movai_core_shared.consts import NOTIFICATIONS_HANDLER_MSG_TYPE
+import re
 import jsonpickle
 
 
+# to make it an instance
+def _inst(c):
+    return c()
+
+
+@_inst
 class Notify:
     """Message Server Notifications Handler interface"""
 
-    @classmethod
-    def email(self, recipients: list, body: str, subject: str = "", attachment: str = ""):
+    def __init__(self, path="/"):
+
+        # remove multiple '/' together
+        self._path = re.sub(r"/{2,}", r"/", path)
+        self.message_client = MessageClient(MESSAGE_SERVER_BIND_ADDR)
+
+    def email(
+        self, recipients: list, body: str, subject: str = "", attachment: str = ""
+    ):
         """sends an email through Message Server client, by sending smtp
         notification to the MessageServer with the needed information
         using zmq socket (MessageClient)
 
         Arguments:
-            - recipients(list): list includes the recipients emails that we want
-                                to send to.
+            - recipients(list): list includes the recipients
+                                emails that we want to send to.
             - body(str): the body of the email.
             - subject(str): the subject of the email.
             - attachment(str): path of the zip attachment we want to send.
@@ -45,5 +59,20 @@ class Notify:
             "attachment_data": attachment_data,
         }
 
-        client = MessageClient(MESSAGE_SERVER_BIND_ADDR)
-        client.send_request(NOTIFICATIONS_HANDLER_MSG_TYPE, data)
+        return self.message_client.send_request(NOTIFICATIONS_HANDLER_MSG_TYPE, data)
+
+    # Notify['/path/to/endpoint']
+    def __getitem__(self, item):
+        if not isinstance(item, str):
+            raise TypeError("key should be should be a str")
+
+        return self.__class__(self._path + "/" + item)
+
+    def post(self, **params):
+        if self._path.split("/")[-1] == "smtp":
+            return self.email(**params)
+        return {"result": "unsupported notification type"}
+
+    # Notify.path.to.endpoint
+    def __getattr__(self, attr):
+        return self.__class__(self._path + "/" + attr)
