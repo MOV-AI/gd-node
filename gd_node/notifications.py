@@ -45,7 +45,7 @@ class Notify:
             )
 
     def email(
-        self, recipients: list, body: str, subject: str = "", attachment: str = ""
+        self, recipients: list, body: str, subject: str = "", attachment: str = "", **kwargs
     ):
         """sends an email through Message Server client, by sending smtp
         notification to the MessageServer with the needed information
@@ -82,7 +82,10 @@ class Notify:
 
     def post(self, **params):
         if self._path.split("/")[-1] == "smtp":
-            return self.email(**params)
+            kwargs = params
+            if "message" in params:
+                kwargs.update({"body": params["message"]})
+            return self.email(**kwargs)
         return {"result": "unsupported notification type"}
 
     # Notify.path.to.endpoint
