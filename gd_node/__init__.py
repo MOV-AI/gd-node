@@ -8,5 +8,5 @@
 """
 import os
 import warnings
-warnings.simplefilter("ignore")
+warnings.simplefilter("ignore", category=DeprecationWarning)
 os.environ["PYTHONWARNINGS"] = "ignore"
