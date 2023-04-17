@@ -376,8 +376,8 @@ Iport.register("ROS2/ServiceServer", IportRos2ServiceServer)
 
 
 class OportRos1Pub:
-    def __init__(self, name, topic, message, **_ignore):
-        self._instance = ROS1.ROS1_Publisher(topic, message)
+    def __init__(self, name, topic, message, _params = {}, **_ignore):
+        self._instance = ROS1.ROS1_Publisher(topic, message, _params)
         gd.oport[name] = self._instance
 
     def shutdown(self):
