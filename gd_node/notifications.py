@@ -40,13 +40,9 @@ class Notify:
         if is_manager():
             self._remote_client = self._local_client
         else:
-            self._remote_client = MessageClient(
-                MESSAGE_SERVER_REMOTE_ADDR, self._robot_id
-            )
+            self._remote_client = MessageClient(MESSAGE_SERVER_REMOTE_ADDR, self._robot_id)
 
-    def email(
-        self, recipients: list, body: str, subject: str = "", attachment: str = "", **kwargs
-    ):
+    def email(self, recipients: list, body: str, subject: str = "", attachment: str = "", **kwargs):
         """sends an email through Message Server client, by sending smtp
         notification to the MessageServer with the needed information
         using zmq socket (MessageClient)
@@ -57,6 +53,7 @@ class Notify:
             - body(str): the body of the email.
             - subject(str): the subject of the email.
             - attachment(str): path of the zip attachment we want to send.
+            - kwargs: added in order to support old HealthNode functionality (will be deprecated)
         """
         attachment_data = ""
         if attachment:
@@ -80,11 +77,10 @@ class Notify:
 
         return self.__class__(self._path + "/" + item)
 
-    def post(self, **params):
+    def post(self, **kwargs):
         if self._path.split("/")[-1] == "smtp":
-            kwargs = params
-            if "message" in params:
-                kwargs.update({"body": params["message"]})
+            if "message" in kwargs:
+                kwargs.update({"body": kwargs["message"]})
             return self.email(**kwargs)
         return {"result": "unsupported notification type"}
 
