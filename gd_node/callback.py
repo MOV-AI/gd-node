@@ -20,6 +20,7 @@ from movai_core_shared.exceptions import DoesNotExist, TransitionException
 # Imports from DAL
 
 from dal.movaidb import MovaiDB
+from dal.models.callback import Callback
 
 from dal.models.lock import Lock
 from dal.models.container import Container
@@ -35,19 +36,20 @@ from dal.scopes.message import Message
 from dal.scopes.robot import Robot
 from dal.scopes.statemachine import StateMachine, SMVars
 
-from gd_node.metrics import Metrics
 from gd_node.user import GD_User as gd
 
 try:
-    
+
     from movai_core_enterprise.message_client_handlers.alerts import Alerts
     from movai_core_enterprise.models.annotation import Annotation
     from movai_core_enterprise.models.graphicasset import GraphicAsset
     from movai_core_enterprise.models.graphicscene import GraphicScene
     from movai_core_enterprise.models.layout import Layout
-    from movai_core_enterprise.scopes.task import Task    
+    from movai_core_enterprise.scopes.task import Task
     from movai_core_enterprise.models.taskentry import TaskEntry
     from movai_core_enterprise.models.tasktemplate import TaskTemplate
+    from movai_core_enterprise.message_client_handlers.metrics import Metrics
+
     enterprise = True
 except ImportError:
     enterprise = False
@@ -243,8 +245,7 @@ class UserFunctions:
 
         if _user == "SUPER":
             log = Log.get_logger("GD_Callback")
-            logger = LogAdapter(log, node=self.node_name, callback=self.cb_name)
-            metrics = Metrics()
+            logger = LogAdapter(log, node=self.node_name, callback=self.cb_name, runtime=True)
             self.globals.update(
                 {
                     "scopes": scopes,
@@ -256,9 +257,9 @@ class UserFunctions:
                     "Robot": GD_Callback._robot,
                     "FleetRobot": FleetRobot,
                     "logger": logger,
-                    "metrics": metrics,
                     "PortName": _port_name,
                     "SM": UserSM,
+                    "Callback": Callback,
                     "Lock": UserLock,
                     "print": self.user_print,
                     "Scene": GD_Callback._scene,
@@ -268,6 +269,7 @@ class UserFunctions:
                 }
             )
             if enterprise:
+                metrics = Metrics()
                 self.globals.update(
                     {
                         "Alerts": Alerts,
@@ -275,6 +277,7 @@ class UserFunctions:
                         "GraphicAsset": GraphicAsset,
                         "GraphicScene": GraphicScene,
                         "Layout": Layout,
+                        "metrics": metrics,
                         "Task": Task,
                         "TaskEntry": TaskEntry,
                         "TaskTemplate": TaskTemplate,
