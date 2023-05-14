@@ -25,7 +25,7 @@ from dal.models.callback import Callback
 from dal.models.lock import Lock
 from dal.models.container import Container
 from dal.models.nodeinst import NodeInst
-from dal.models.package import Package
+from dal.scopes.package import Package
 from dal.models.ports import Ports
 from dal.models.var import Var
 from dal.models.scopestree import ScopesTree, scopes
