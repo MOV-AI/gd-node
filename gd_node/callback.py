@@ -15,7 +15,7 @@ from os import getenv
 
 from movai_core_shared.logger import Log, LogAdapter
 from movai_core_shared.exceptions import DoesNotExist, TransitionException
-
+from movai_core_shared.consts import USER_LOG_TAG
 
 # Imports from DAL
 
@@ -245,7 +245,12 @@ class UserFunctions:
 
         if _user == "SUPER":
             log = Log.get_logger("GD_Callback")
-            logger = LogAdapter(log, node=self.node_name, callback=self.cb_name, runtime=True)
+            kwargs= {
+                "node": self.node_name,
+                "callback": self.cb_name,
+                USER_LOG_TAG: True
+            }
+            logger = LogAdapter(log, **kwargs)
             self.globals.update(
                 {
                     "scopes": scopes,
