@@ -16,7 +16,7 @@ from os import getenv
 from movai_core_shared.consts import ROBOTICS_LOGGER
 from movai_core_shared.logger import Log, LogAdapter
 from movai_core_shared.exceptions import DoesNotExist, TransitionException
-
+from movai_core_shared.consts import USER_LOG_TAG
 
 # Imports from DAL
 
@@ -245,8 +245,13 @@ class UserFunctions:
                 super().__init__(_sm_name=sm_id, _node_name=_node_name)
 
         if _user == "SUPER":
-            log = Log.get_logger(ROBOTICS_LOGGER, robo_debug = True)
-            logger = LogAdapter(log, node=self.node_name, callback=self.cb_name, runtime=True)
+            log = Log.get_logger("GD_Callback")
+            kwargs= {
+                "node": self.node_name,
+                "callback": self.cb_name,
+                USER_LOG_TAG: True
+            }
+            logger = LogAdapter(log, **kwargs)
             self.globals.update(
                 {
                     "scopes": scopes,
