@@ -245,13 +245,7 @@ class UserFunctions:
                 super().__init__(_sm_name=sm_id, _node_name=_node_name)
 
         if _user == "SUPER":
-            log = Log.get_logger("GD_Callback")
-            kwargs= {
-                "node": self.node_name,
-                "callback": self.cb_name,
-                USER_LOG_TAG: True
-            }
-            logger = LogAdapter(log, **kwargs)
+            logger = Log.get_callback_logger("GD_Callback", self.node_name, self.cb_name)
             self.globals.update(
                 {
                     "scopes": scopes,
