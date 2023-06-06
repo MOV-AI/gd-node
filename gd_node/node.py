@@ -265,8 +265,10 @@ class GDNode:
         # self.robot = Robot()
         GD_User.name = self.inst_name
         GD_User.template = self.node_name
+        from dal.new_models import Node
 
-        self.node = scopes.from_path(self.node_name, scope="Node")
+        #self.node = scopes.from_path(self.node_name, scope="Node")
+        self.node = Node(self.node_name)
 
         # set db    client name
         # await self.databases.db_global.client_setname(self.robot.RobotName + '_' + self.inst_name)
@@ -288,7 +290,7 @@ class GDNode:
 
         # params are available all over the node as gd.params['name']
         for param in self.node.Parameter:
-            value = inst_params.get(param, self.node["Parameter"][param]["Value"])
+            value = inst_params.get(param, self.node.Parameter[param].Value)
             try:
                 if isinstance(value, ScopePropertyNode):
                     value = value.value
@@ -319,13 +321,13 @@ class GDNode:
         )
 
         # Then we start the oports
-        await self.init_oports(self.inst_name, node_ports, self.node["PortsInst"], self.flow_name)
+        await self.init_oports(self.inst_name, node_ports, self.node.PortsInst, self.flow_name)
 
         # Init all the Iports
         await self.init_iports(
             self.inst_name,
             node_ports,
-            self.node["PortsInst"],
+            self.node.PortsInst,
             init=False,
             transition_data=trans_msg,
         )
@@ -335,7 +337,7 @@ class GDNode:
             await asyncio.sleep(0.2)
 
         # Then we run the initial callback
-        await self.init_iports(self.inst_name, node_ports, self.node["PortsInst"], init=True)
+        await self.init_iports(self.inst_name, node_ports, self.node.PortsInst, init=True)
 
         # And finally we enable the iports
         for iport in GD_User.iport:

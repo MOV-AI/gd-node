@@ -15,12 +15,12 @@ from os import getenv
 
 from movai_core_shared.logger import Log, LogAdapter
 from movai_core_shared.exceptions import DoesNotExist, TransitionException
-from movai_core_shared.consts import USER_LOG_TAG
+
 
 # Imports from DAL
 
 from dal.movaidb import MovaiDB
-from dal.models.callback import Callback
+from dal.new_models import Callback
 
 from dal.models.lock import Lock
 from dal.models.container import Container
@@ -79,7 +79,8 @@ class GD_Callback:
         self.port_name = _port_name
         self.updated_globals = {}
 
-        self.callback = ScopesTree().from_path(_cb_name, scope="Callback")
+        #self.callback = ScopesTree().from_path(_cb_name, scope="Callback")
+        self.callback = Callback(_cb_name)
 
         self.compiled_code = compile(self.callback.Code, _cb_name, "exec")
         self.user = UserFunctions(
@@ -150,7 +151,7 @@ class UserFunctions:
         _cb_name: str,
         _node_name: str,
         _port_name: str,
-        _libraries: list,
+        _libraries: dict,
         _message: str,
         _user="SUPER",
     ) -> None:
@@ -161,17 +162,18 @@ class UserFunctions:
         self.node_name = _node_name
         # self.globals['redis_sub'] = GD_Message('movai_msgs/redis_sub', _type='msg').get()
 
-        for lib in _libraries:
-            try:
-                mod = importlib.import_module(_libraries[lib].Module)
+        if _libraries:
+            for lib in _libraries:
                 try:
-                    self.globals[lib] = getattr(mod, _libraries[lib].Class)
-                except TypeError:  # Class is not defined
-                    self.globals[lib] = mod
-            except Exception as e:
-                raise Exception(
-                    f"Import {lib} in callback {_cb_name} of node {_node_name} was not found"
-                ) from e
+                    mod = importlib.import_module(_libraries[lib].Module)
+                    try:
+                        self.globals[lib] = getattr(mod, _libraries[lib].Class)
+                    except TypeError:  # Class is not defined
+                        self.globals[lib] = mod
+                except Exception as e:
+                    raise Exception(
+                        f"Import {lib} in callback {_cb_name} of node {_node_name} was not found"
+                    ) from e
 
         if GD_Callback._robot is None:
             GD_Callback._robot = Robot()
@@ -244,7 +246,8 @@ class UserFunctions:
                 super().__init__(_sm_name=sm_id, _node_name=_node_name)
 
         if _user == "SUPER":
-            logger = Log.get_callback_logger("GD_Callback", self.node_name, self.cb_name)
+            log = Log.get_logger("GD_Callback")
+            logger = LogAdapter(log, node=self.node_name, callback=self.cb_name, runtime=True)
             self.globals.update(
                 {
                     "scopes": scopes,
@@ -290,7 +293,8 @@ class UserFunctions:
 
     def run(self, cb_name, msg):
         """Run another callback from a callback"""
-        callback = scopes.from_path(cb_name, scope="Callback")
+        #callback = scopes.from_path(cb_name, scope="Callback")
+        callback = Callback(cb_name)
         compiled_code = compile(callback.Code, cb_name, "exec")
         user = UserFunctions("", "", "", callback.Py3Lib, callback.Message)
 
