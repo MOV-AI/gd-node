@@ -11,7 +11,7 @@ from movai_core_shared.exceptions import InvalidToken, TokenExpired, TokenRevoke
 from movai_core_shared.logger import Log
 
 from dal.scopes.flow import Flow
-from dal.scopes.node import Node
+from dal.new_models import Node
 from dal.models.remoteuser import RemoteUser
 from dal.models.internaluser import InternalUser
 
