@@ -272,16 +272,10 @@ class GDNode:
         # self.robot = Robot()
         GD_User.name = self.inst_name
         GD_User.template = self.node_name
-        from dal.new_models import Node, cache
+        from dal.new_models import Node
 
         # self.node = scopes.from_path(self.node_name, scope="Node")
-        # TODO change this
-        key = f"Movai:Node:{self.node_name}:__UNVERSIONED__"
-        if key in cache:
-            self.node = cache[key]
-        else:
-            self.node = Node(self.node_name)
-            cache[key] = self.node
+        self.node = Node(self.node_name)
 
         # set db    client name
         # await self.databases.db_global.client_setname(self.robot.RobotName + '_' + self.inst_name)
