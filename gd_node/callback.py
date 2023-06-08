@@ -80,7 +80,12 @@ class GD_Callback:
         self.updated_globals = {}
 
         #self.callback = ScopesTree().from_path(_cb_name, scope="Callback")
-        self.callback = Callback(_cb_name)
+        if "Callback/" in _cb_name:
+            import re
+            cb_name = re.search(f".*Callback\/([^\/]+)", _cb_name).group(1)
+            self.callback = Callback(cb_name)
+        else:
+            self.callback = Callback(_cb_name)
 
         self.compiled_code = compile(self.callback.Code, _cb_name, "exec")
         self.user = UserFunctions(
