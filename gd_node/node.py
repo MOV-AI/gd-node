@@ -181,12 +181,12 @@ class GDNode:
 
         for ports in ports_inst:
             template = ports_templates[ports_inst[ports].Template]
-            for pout in ports_inst[ports].Out:
-
+            for pout in ports_inst[ports].Out.dict(exclude_none=True):
+                outvalue = getattr(ports_inst[ports].Out, pout)
                 transport = template.Out[pout].Transport
                 protocol = template.Out[pout].Protocol
-                message = ports_inst[ports].Out[pout].Message
-                params = ports_inst[ports].Out[pout].Parameter or {}
+                message = outvalue.Message
+                params = outvalue.Parameter.dict(exclude_none=True) or {}
 
                 for param in params:
                     params[param] = self.ports_params.get(
@@ -224,13 +224,17 @@ class GDNode:
         for ports in ports_inst:
             template = ports_templates[ports_inst[ports].Template]
 
-            for i in ports_inst[ports].In:
+            for i, v in ports_inst[ports].In:
+                if i == "in_":
+                    i = "in"
+                if not v:
+                    continue
                 transport = template.In[i].Transport
                 protocol = template.In[i].Protocol
-                message = ports_inst[ports].In[i].Message
+                message = v.Message
                 # place_holder
-                callback = ports_inst[ports].In[i].Callback or self.__DEFAULT_CALLBACK__
-                params = ports_inst[ports].In[i].Parameter or {}
+                callback = v.Callback or self.__DEFAULT_CALLBACK__
+                params = v.Parameter.dict(exclude_none=True) or {}
 
                 for param in params:
                     params[param] = self.ports_params.get(
@@ -265,10 +269,16 @@ class GDNode:
         # self.robot = Robot()
         GD_User.name = self.inst_name
         GD_User.template = self.node_name
-        from dal.new_models import Node
+        from dal.new_models import Node, cache
 
-        #self.node = scopes.from_path(self.node_name, scope="Node")
-        self.node = Node(self.node_name)
+        # self.node = scopes.from_path(self.node_name, scope="Node")
+        # TODO change this
+        key = f"Movai:Node:{self.node_name}:__UNVERSIONED__"
+        if key in cache:
+            self.node = cache[key]
+        else:
+            self.node = Node(self.node_name)
+            cache[key] = self.node
 
         # set db    client name
         # await self.databases.db_global.client_setname(self.robot.RobotName + '_' + self.inst_name)
@@ -321,7 +331,9 @@ class GDNode:
         )
 
         # Then we start the oports
-        await self.init_oports(self.inst_name, node_ports, self.node.PortsInst, self.flow_name)
+        await self.init_oports(
+            self.inst_name, node_ports, self.node.PortsInst, self.flow_name
+        )
 
         # Init all the Iports
         await self.init_iports(
@@ -337,7 +349,9 @@ class GDNode:
             await asyncio.sleep(0.2)
 
         # Then we run the initial callback
-        await self.init_iports(self.inst_name, node_ports, self.node.PortsInst, init=True)
+        await self.init_iports(
+            self.inst_name, node_ports, self.node.PortsInst, init=True
+        )
 
         # And finally we enable the iports
         for iport in GD_User.iport:
@@ -353,7 +367,9 @@ class GDNode:
 
         start_time = time.time() - TIME_0
 
-        LOGGER.info('Full time to init the GD_Node "%s": %s' % (self.inst_name, start_time))
+        LOGGER.info(
+            'Full time to init the GD_Node "%s": %s' % (self.inst_name, start_time)
+        )
 
         while self.RUNNING:
             # heart beat
