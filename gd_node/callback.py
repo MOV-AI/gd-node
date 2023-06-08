@@ -12,6 +12,7 @@ import importlib
 import time
 from typing import Any
 from os import getenv
+import re
 
 from movai_core_shared.logger import Log, LogAdapter
 from movai_core_shared.exceptions import DoesNotExist, TransitionException
@@ -81,8 +82,7 @@ class GD_Callback:
 
         #self.callback = ScopesTree().from_path(_cb_name, scope="Callback")
         if "Callback/" in _cb_name:
-            import re
-            cb_name = re.search(f".*Callback\/([^\/]+)", _cb_name).group(1)
+            cb_name = re.search(r".*Callback/([^/]+)", _cb_name).group(1)
             self.callback = Callback(cb_name)
         else:
             self.callback = Callback(_cb_name)
