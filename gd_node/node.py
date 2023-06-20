@@ -23,6 +23,7 @@ from movai_core_shared.consts import MOVAI_INIT
 from dal.movaidb import RedisClient
 from dal.models.scopestree import scopes, ScopePropertyNode
 from dal.models.var import Var
+from dal.new_models import Ports
 
 
 from gd_node.protocol import Iport, Oport, Transports
@@ -313,7 +314,7 @@ class GDNode:
         node_ports = {}
         for ports in self.node.PortsInst:
             ports_name = self.node.PortsInst[ports].Template
-            node_ports[ports_name] = scopes.from_path(ports_name, scope="Ports")
+            node_ports[ports_name] = Ports(ports_name)
 
         # Transition message
         trans_msg = None
