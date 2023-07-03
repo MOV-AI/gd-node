@@ -13,10 +13,8 @@ import time
 from typing import Any
 from os import getenv
 
-from movai_core_shared.consts import ROBOTICS_LOGGER
 from movai_core_shared.logger import Log, LogAdapter
 from movai_core_shared.exceptions import DoesNotExist, TransitionException
-from movai_core_shared.consts import USER_LOG_TAG
 
 # Imports from DAL
 
