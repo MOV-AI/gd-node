@@ -6,7 +6,4 @@
    Developers:
    - Alexandre Pires  (alexandre.pires@mov.ai) - 2020
 """
-import os
-import warnings
-warnings.simplefilter("ignore", category=DeprecationWarning)
-os.environ["PYTHONWARNINGS"] = "ignore"
+
