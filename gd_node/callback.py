@@ -24,14 +24,14 @@ from dal.movaidb import MovaiDB
 from dal.new_models import Callback
 
 from dal.models.lock import Lock
-from dal.models.container import Container
-from dal.models.nodeinst import NodeInst
+from dal.new_models.flow.container import Container
+from dal.new_models.flow.nodeinst import NodeInst
 from dal.scopes.package import Package
-from dal.models.ports import Ports
+from dal.new_models import Ports
 from dal.models.var import Var
 from dal.models.scopestree import ScopesTree, scopes
 
-from dal.scopes.configuration import Configuration
+from dal.new_models import Configuration
 from dal.scopes.fleetrobot import FleetRobot
 from dal.scopes.message import Message
 from dal.scopes.robot import Robot
