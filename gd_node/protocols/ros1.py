@@ -115,8 +115,18 @@ class ROS1:
 
 ##############################            IPORTS                   ###############################
 
+class ROS1IportBase(BaseIport):
+    """
+    A base class for all of the ROS IPORTS
+    """
 
-class ROS1_Subscriber(BaseIport):
+    def __init__(self, _node_name: str, _port_name: str, _topic: str, _message: str, _callback: str, _update: bool, **_):
+        """Init"""
+        super().__init__(_node_name, _port_name, _topic, _message, _callback, _update)
+        self.enabled = True
+
+
+class ROS1_Subscriber(ROS1IportBase):
 
     """ROS Subscriber class. Implementation of the rospy.Subscriber
 
@@ -138,13 +148,14 @@ class ROS1_Subscriber(BaseIport):
         _message: str,
         _callback: str,
         _update: bool,
-        **_ignore
+        **_
     ) -> None:
         """Init"""
         super().__init__(_node_name, _port_name, _topic, _message, _callback, _update)
 
         self.msg = GD_Message(_message, _type="msg").get()
         self.sub = rospy.Subscriber(self.topic, self.msg, self.callback)
+
 
     def unregister(self) -> None:
         """Unregisters the subscriber"""
@@ -163,7 +174,7 @@ class ROS1_Subscriber(BaseIport):
 ####################################################
 
 
-class ROS1_ServiceServer(BaseIport):
+class ROS1_ServiceServer(ROS1IportBase):
 
     """ROS Service Server class. Implementation of the rospy.Service
 
@@ -239,7 +250,7 @@ class ROS1_ServiceServerReply:
 ####################################################
 
 
-class ROS1_Timer(BaseIport):
+class ROS1_Timer(ROS1IportBase):
 
     """ROS Timer class. Implementation of the rospy.Timer
 
@@ -289,7 +300,7 @@ class ROS1_Timer(BaseIport):
 ####################################################
 
 
-class ROS1_TFSubscriber(BaseIport):
+class ROS1_TFSubscriber(ROS1IportBase):
     """Subscriber of ROS TF. Implementation of tf.TransformListener"""
 
     def __init__(
@@ -338,7 +349,7 @@ class ROS1_TFSubscriber(BaseIport):
 ####################################################
 
 # This will not be used for now and is not up to date!
-class ROS1_ActionServer(BaseIport):
+class ROS1_ActionServer(ROS1IportBase):
     def __init__(
         self,
         _node_name: str,
@@ -425,7 +436,7 @@ class RostopicHzMsg:
         self.window = window
 
 
-class ROS1_TopicHz(BaseIport):
+class ROS1_TopicHz(ROS1IportBase):
 
     """ROS1 Frequency Subscriber class. Implementation of the rostopic.ROSTopicHz class
 
