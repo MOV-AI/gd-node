@@ -15,6 +15,8 @@ import os
 import sys
 from typing import Any
 
+from rospy.timer import sleep
+
 import actionlib
 import rosgraph
 import rosnode
@@ -119,12 +121,16 @@ class ROS1IportBase(BaseIport):
     """
     A base class for all of the ROS IPORTS
     """
+    MAX_RETRIES = 100
 
-    def __init__(self, _node_name: str, _port_name: str, _topic: str, _message: str, _callback: str, _update: bool, **_):
-        """Init"""
-        super().__init__(_node_name, _port_name, _topic, _message, _callback, _update)
-        self.enabled = True
-
+    def callback(self, msg: Any) -> None:
+        """Callback function for all the ROS IPORTS"""
+        for _ in range(self.MAX_RETRIES):
+            if self.enabled:
+                self.cb.execute(msg)
+                return
+            # if the port isn't initiated after 10 seconds it means it's disabled
+            sleep(0.1)
 
 class ROS1_Subscriber(ROS1IportBase):
 
