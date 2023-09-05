@@ -15,8 +15,6 @@ import os
 import sys
 from typing import Any
 
-from rospy.timer import sleep
-
 import actionlib
 import rosgraph
 import rosnode
@@ -130,7 +128,7 @@ class ROS1IportBase(BaseIport):
                 self.cb.execute(msg)
                 return
             # if the port isn't initiated after 10 seconds it means it's disabled
-            sleep(0.1)
+            rospy.timer.sleep(0.1)
 
 class ROS1_Subscriber(ROS1IportBase):
 
