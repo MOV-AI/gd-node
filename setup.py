@@ -11,7 +11,7 @@ requirements = [
     "bleach==4.1.0",
     "requests==2.28.2",
     "uvloop==0.14.0",
-    "data-access-layer==2.4.1.*",
+    "data-access-layer>=2.4.1.35",
 ]
 
 
