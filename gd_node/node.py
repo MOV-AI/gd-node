@@ -27,6 +27,7 @@ from dal.models.var import Var
 
 from gd_node.protocol import Iport, Oport, Transports
 from gd_node.user import GD_User
+from movai_core_shared.exceptions import TransitionException
 
 LOGGER = Log.get_logger("spawner.mov.ai")
 
@@ -335,26 +336,29 @@ class GDNode:
             await asyncio.sleep(0.2)
 
         # Then we run the initial callback
-        await self.init_iports(self.inst_name, node_ports, self.node["PortsInst"], init=True)
+        try:
+            await self.init_iports(self.inst_name, node_ports, self.node["PortsInst"], init=True)
 
-        # And finally we enable the iports
-        for iport in GD_User.iport:
-            try:
-                if GD_User.iport[iport].start_enabled:
-                    GD_User.iport[iport].register()
-            except AttributeError:
-                pass
+            # And finally we enable the iports
+            for iport in GD_User.iport:
+                try:
+                    if GD_User.iport[iport].start_enabled:
+                        GD_User.iport[iport].register()
+                except AttributeError:
+                    pass
 
-        # Start servers only after all routes were added
-        if self.transports["Http"]:
-            Transports.get("Http").start()
+            # Start servers only after all routes were added
+            if self.transports["Http"]:
+                Transports.get("Http").start()
 
-        start_time = time.time() - TIME_0
+            start_time = time.time() - TIME_0
 
-        LOGGER.info('Full time to init the GD_Node "%s": %s' % (self.inst_name, start_time))
+            LOGGER.info('Full time to init the GD_Node "%s": %s' % (self.inst_name, start_time))
 
-        while self.RUNNING:
-            # heart beat
-            await asyncio.sleep(1)  # Give time to other tasks to run.
+            while self.RUNNING:
+                # heart beat
+                await asyncio.sleep(1)  # Give time to other tasks to run.
+        except TransitionException:
+            pass
 
         await self.stop()
