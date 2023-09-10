@@ -137,7 +137,7 @@ class GD_Callback:
                     f"{self.node_name}/{self.port_name}/{self.callback.Label} took: {t_delta}"
                 )
         except TransitionException:
-            LOGGER.info("Transitioning...")
+            LOGGER.debug("Transitioning...")
         except Exception as e:
             LOGGER.error(str(e), node=self.node_name, callback=self.name)
 
