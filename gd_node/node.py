@@ -27,7 +27,6 @@ from dal.models.var import Var
 
 from gd_node.protocol import Iport, Oport, Transports
 from gd_node.user import GD_User
-from movai_core_shared.exceptions import TransitionException
 
 LOGGER = Log.get_logger("spawner.mov.ai")
 
@@ -49,6 +48,7 @@ class GDNode:
     """GD_Node asynchronous class"""
 
     __DEFAULT_CALLBACK__ = "place_holder"
+    RUNNING = True
 
     def __init__(self, args, unknown):
         type(self).RUNNING = True
@@ -336,8 +336,8 @@ class GDNode:
             await asyncio.sleep(0.2)
 
         # Then we run the initial callback
-        try:
-            await self.init_iports(self.inst_name, node_ports, self.node["PortsInst"], init=True)
+        await self.init_iports(self.inst_name, node_ports, self.node["PortsInst"], init=True)
+        if not GD_User.is_transitioning:
 
             # And finally we enable the iports
             for iport in GD_User.iport:
@@ -351,14 +351,12 @@ class GDNode:
             if self.transports["Http"]:
                 Transports.get("Http").start()
 
-            start_time = time.time() - TIME_0
+        start_time = time.time() - TIME_0
 
-            LOGGER.info('Full time to init the GD_Node "%s": %s' % (self.inst_name, start_time))
+        LOGGER.info('Full time to init the GD_Node "%s": %s' % (self.inst_name, start_time))
 
-            while self.RUNNING:
-                # heart beat
-                await asyncio.sleep(1)  # Give time to other tasks to run.
-        except TransitionException:
-            pass
+        while self.RUNNING:
+            # heart beat
+            await asyncio.sleep(1)  # Give time to other tasks to run.
 
         await self.stop()
