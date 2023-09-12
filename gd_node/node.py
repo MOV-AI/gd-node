@@ -48,6 +48,7 @@ class GDNode:
     """GD_Node asynchronous class"""
 
     __DEFAULT_CALLBACK__ = "place_holder"
+    RUNNING = True
 
     def __init__(self, args, unknown):
         type(self).RUNNING = True
@@ -336,18 +337,19 @@ class GDNode:
 
         # Then we run the initial callback
         await self.init_iports(self.inst_name, node_ports, self.node["PortsInst"], init=True)
+        if not GD_User.is_transitioning:
 
-        # And finally we enable the iports
-        for iport in GD_User.iport:
-            try:
-                if GD_User.iport[iport].start_enabled:
-                    GD_User.iport[iport].register()
-            except AttributeError:
-                pass
+            # And finally we enable the iports
+            for iport in GD_User.iport:
+                try:
+                    if GD_User.iport[iport].start_enabled:
+                        GD_User.iport[iport].register()
+                except AttributeError:
+                    pass
 
-        # Start servers only after all routes were added
-        if self.transports["Http"]:
-            Transports.get("Http").start()
+            # Start servers only after all routes were added
+            if self.transports["Http"]:
+                Transports.get("Http").start()
 
         start_time = time.time() - TIME_0
 
