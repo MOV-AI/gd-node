@@ -30,6 +30,7 @@ class GD_User:
     oport = {}
     params = {}
     shared = Shared()
+    is_transitioning = False
 
     @classmethod
     def send(cls, port, msg=""):
