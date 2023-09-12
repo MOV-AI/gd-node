@@ -138,6 +138,7 @@ class GD_Callback:
                 )
         except TransitionException:
             LOGGER.debug("Transitioning...")
+            gd.is_transitioning = True
         except Exception as e:
             LOGGER.error(str(e), node=self.node_name, callback=self.name)
 
