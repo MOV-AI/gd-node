@@ -203,6 +203,7 @@ class GDNode:
                     "message": message,
                     "_params": params,
                     "flow_name": flow_name,
+                    "_gd_node": self,
                 }
 
                 Oport.create(key, **config)

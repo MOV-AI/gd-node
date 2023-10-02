@@ -548,10 +548,11 @@ class ROS1_Publisher:
         _message: ROS message
     """
 
-    def __init__(self, _topic: str, _message: Any, _params: dict = None) -> None:
+    def __init__(self, _topic: str, _message: Any, _params: dict = None, _gd_node=None) -> None:
         """Init"""
 
         self.msg = GD_Message(_message).get()
+        self._gd_node = _gd_node
         params = {"queue_size": 1}
         if _params is not None:
             params.update(_params)
@@ -563,7 +564,9 @@ class ROS1_Publisher:
         Args:
             msg: ROS Message
         """
-        self.pub.publish(msg)
+        if not self._gd_node or self._gd_node.RUNNING:
+            # publish only when Node is actually still running
+            self.pub.publish(msg)
 
     def unregister(self):
         if self.pub:
