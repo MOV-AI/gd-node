@@ -124,7 +124,7 @@ class ROS1IportBase(BaseIport):
     def callback(self, msg: Any) -> None:
         """Callback function for all the ROS IPORTS"""
         for _ in range(self.MAX_RETRIES):
-            if self.enabled:
+            if self._gd_node.RUNNING and self.enabled:
                 self.cb.execute(msg)
                 return
             # if the port isn't initiated after 10 seconds it means it's disabled
@@ -152,10 +152,12 @@ class ROS1_Subscriber(ROS1IportBase):
         _message: str,
         _callback: str,
         _update: bool,
+        _gd_node: Any = None,
         **_
     ) -> None:
         """Init"""
-        super().__init__(_node_name, _port_name, _topic, _message, _callback, _update)
+        super().__init__(_node_name, _port_name, _topic, _message, _callback, _update, _gd_node=_gd_node)
+        self._gd_node = _gd_node
 
         self.msg = GD_Message(_message, _type="msg").get()
         self.sub = rospy.Subscriber(self.topic, self.msg, self.callback)
@@ -198,10 +200,11 @@ class ROS1_ServiceServer(ROS1IportBase):
         _message: str,
         _callback: str,
         _update: bool,
+        _gd_node: Any = None,
         **_ignore
     ) -> None:
         """Init"""
-        super().__init__(_node_name, _port_name, _topic, _message, _callback, _update)
+        super().__init__(_node_name, _port_name, _topic, _message, _callback, _update, _gd_node=_gd_node)
         _message = _message.rsplit("Request")[0]
         self.srv = GD_Message(_message, _type="srv").get()
 
@@ -275,10 +278,11 @@ class ROS1_Timer(ROS1IportBase):
         _callback: str,
         _params: dict,
         _update: bool,
+        _gd_node: Any = None,
         **_ignore
     ) -> None:
         """Init"""
-        super().__init__(_node_name, _port_name, _topic, _message, _callback, _update)
+        super().__init__(_node_name, _port_name, _topic, _message, _callback, _update, _gd_node=_gd_node)
 
         self.duration = 1 / float(_params.get("Frequency", 10))
         self.oneshot = _params.get("Oneshot", False)
@@ -316,11 +320,12 @@ class ROS1_TFSubscriber(ROS1IportBase):
         _callback: str,
         _params: dict,
         _update: bool,
+        _gd_node: Any = None,
         **_ignore
     ) -> None:
         globals()["tf"] = importlib.import_module("tf")
         globals()["tf2_ros"] = importlib.import_module("tf2_ros")
-        super().__init__(_node_name, _port_name, _topic, _message, _callback, _update)
+        super().__init__(_node_name, _port_name, _topic, _message, _callback, _update, _gd_node=_gd_node)
 
         self.parent_frame = _params["Parent"]
         self.child_frame = _params["Child"]
@@ -362,9 +367,10 @@ class ROS1_ActionServer(ROS1IportBase):
         _message: str,
         _callback: str,
         _update: bool,
+        _gd_node: Any = None,
         **_ignore
     ) -> None:
-        super().__init__(_node_name, _port_name, _topic, _message, _callback, _update)
+        super().__init__(_node_name, _port_name, _topic, _message, _callback, _update, _gd_node=_gd_node)
         reply_key = "reply@" + self.topic
 
         module, msg_name = _message.split("/")
@@ -467,6 +473,7 @@ class ROS1_TopicHz(ROS1IportBase):
         _callback: str,
         _params: dict,
         _update: bool,
+        _gd_node: Any = None,
         **_ignore
     ) -> None:
 
@@ -474,7 +481,7 @@ class ROS1_TopicHz(ROS1IportBase):
 
         import rostopic
 
-        super().__init__(_node_name, _port_name, _topic, _message, _callback, _update)
+        super().__init__(_node_name, _port_name, _topic, _message, _callback, _update, _gd_node=_gd_node)
 
         self.msg = rospy.AnyMsg
 

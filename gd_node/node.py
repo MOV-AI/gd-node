@@ -253,6 +253,7 @@ class GDNode:
                     "_params": params,
                     "_data": transition_data,
                     "_update": self.develop,
+                    "_gd_node": self,
                 }
 
                 if (key == MOVAI_INIT) == init:
