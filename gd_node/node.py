@@ -203,6 +203,7 @@ class GDNode:
                     "message": message,
                     "_params": params,
                     "flow_name": flow_name,
+                    "_gd_node": self,
                 }
 
                 Oport.create(key, **config)
@@ -252,6 +253,7 @@ class GDNode:
                     "_params": params,
                     "_data": transition_data,
                     "_update": self.develop,
+                    "_gd_node": self,
                 }
 
                 if (key == MOVAI_INIT) == init:
