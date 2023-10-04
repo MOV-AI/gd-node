@@ -26,6 +26,7 @@ class BaseIport:
         _message: str,
         _callback: str,
         update: bool = True,
+        _gd_node: Any = None,
         **_ignore
     ) -> None:
 
@@ -34,12 +35,12 @@ class BaseIport:
         self.topic = _topic
         self.enabled = False
         self.start_enabled = True
+        self._gd_node = _gd_node
         self.cb = Callback(_callback, self.node_name, self.port_name, update)
 
     def callback(self, msg: Any) -> None:
         """Executes the callback if port is enabled"""
         if self.enabled:
-            # print("iport trigger", self.port_name)
             self.cb.execute(msg)
 
     def unregister(self) -> None:
