@@ -351,7 +351,6 @@ class GDNode:
             self.inst_name, node_ports, self.node.PortsInst, init=True
         )
         if not GD_User.is_transitioning:
-
             # And finally we enable the iports
             for iport in GD_User.iport:
                 try:
