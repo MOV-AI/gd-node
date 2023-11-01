@@ -26,14 +26,14 @@ from dal.new_models import Callback
 from dal.models.lock import Lock
 from dal.new_models.flow.container import Container
 from dal.new_models.flow.nodeinst import NodeInst
-from dal.scopes.package import Package
+from dal.new_models import Package
 from dal.new_models import Ports
 from dal.models.var import Var
-from dal.models.scopestree import ScopesTree, scopes
+from dal.models.scopestree import scopes
 
 from dal.new_models import Configuration
 from dal.scopes.fleetrobot import FleetRobot
-from dal.scopes.message import Message
+from dal.new_models import Message
 from dal.scopes.robot import Robot
 from dal.scopes.statemachine import StateMachine, SMVars
 
