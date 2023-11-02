@@ -16,6 +16,7 @@ import time
 
 import uvloop
 
+from typing import Dict
 from movai_core_shared.logger import Log
 from movai_core_shared.consts import MOVAI_INIT
 
@@ -24,6 +25,7 @@ from dal.movaidb import RedisClient
 from dal.models.scopestree import scopes, ScopePropertyNode
 from dal.models.var import Var
 from dal.new_models import Ports
+from dal.new_models.node import PortsInstValue
 
 
 from gd_node.protocol import Iport, Oport, Transports
@@ -128,7 +130,7 @@ class GDNode:
         self,
         node_name: str,
         inst_name: str,
-        ports_templates: dict,
+        ports_templates: Dict[str, Ports],
         transports: dict,
         remaps: list,
     ):
@@ -172,7 +174,8 @@ class GDNode:
             # print("ROS1 Node %s registered successfully." % inst_name)
 
     async def init_oports(
-        self, inst_name: str, ports_templates: dict, ports_inst: dict, flow_name: str
+        self, inst_name: str, ports_templates: Dict[str, Ports],
+        ports_inst: Dict[str, PortsInstValue], flow_name: str
     ):
         """Init all the output ports
 
@@ -183,12 +186,12 @@ class GDNode:
 
         for ports in ports_inst:
             template = ports_templates[ports_inst[ports].Template]
-            for pout in ports_inst[ports].Out.dict(exclude_none=True):
+            for pout in ports_inst[ports].Out.model_dump(exclude_none=True):
                 outvalue = getattr(ports_inst[ports].Out, pout)
                 transport = template.Out[pout].Transport
                 protocol = template.Out[pout].Protocol
                 message = outvalue.Message
-                params = outvalue.Parameter.dict(exclude_none=True) or {}
+                params = outvalue.Parameter.model_dump(exclude_none=True) or {}
 
                 for param in params:
                     params[param] = self.ports_params.get(
