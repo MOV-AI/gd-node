@@ -9,7 +9,7 @@ requirements = [
     "aiohttp_cors==0.7.0",
     "bleach==4.1.0",
     "uvloop==0.14.0",
-    "data-access-layer==2.5.0-1-1.*",
+    "data-access-layer==2.5.0.*",
 ]
 # requests is required by movai-core-shared
 # aioredis is required by data-access-layer
