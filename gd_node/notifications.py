@@ -16,8 +16,8 @@ from movai_core_shared.consts import NOTIFICATIONS_HANDLER_MSG_TYPE
 import re
 import jsonpickle
 from movai_core_shared.envvars import (
-    MESSAGE_SERVER_LOCAL_ADDR,
-    MESSAGE_SERVER_REMOTE_ADDR,
+    LOCAL_MESSAGE_SERVER,
+    MASTER_MESSAGE_SERVER,
 )
 from dal.scopes.robot import Robot
 
@@ -36,11 +36,11 @@ class Notify:
         # remove multiple '/' together
         self._robot_id = Robot().name
         self._path = re.sub(r"/{2,}", r"/", path)
-        self._local_client = MessageClient(MESSAGE_SERVER_LOCAL_ADDR, self._robot_id)
+        self._local_client = MessageClient(LOCAL_MESSAGE_SERVER, self._robot_id)
         if is_manager():
             self._remote_client = self._local_client
         else:
-            self._remote_client = MessageClient(MESSAGE_SERVER_REMOTE_ADDR, self._robot_id)
+            self._remote_client = MessageClient(MASTER_MESSAGE_SERVER, self._robot_id)
 
     def email(self, recipients: list, body: str, subject: str = "", attachment: str = "", **kwargs):
         """sends an email through Message Server client, by sending smtp
