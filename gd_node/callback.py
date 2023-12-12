@@ -16,7 +16,6 @@ from asyncio import CancelledError
 
 from movai_core_shared.logger import Log, LogAdapter
 from movai_core_shared.exceptions import DoesNotExist, TransitionException
-from movai_core_shared.consts import USER_LOG_TAG
 
 # Imports from DAL
 
@@ -140,6 +139,8 @@ class GD_Callback:
         except TransitionException:
             LOGGER.debug("Transitioning...")
             gd.is_transitioning = True
+        except CancelledError:
+            raise CancelledError("cancelled task")
         except Exception as e:
             LOGGER.error(str(e), node=self.node_name, callback=self.name)
 
@@ -172,10 +173,10 @@ class UserFunctions:
                     self.globals[lib] = mod
             except CancelledError:
                 raise CancelledError("cancelled task")
-            except Exception as e:
-                raise Exception(
+            except (ImportError, AttributeError, LookupError):
+                raise ImportError(
                     f"Import {lib} in callback {_cb_name} of node {_node_name} was not found"
-                ) from e
+                )
 
         if GD_Callback._robot is None:
             GD_Callback._robot = Robot()
