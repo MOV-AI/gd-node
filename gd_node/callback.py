@@ -12,6 +12,7 @@ import importlib
 import time
 from typing import Any
 from os import getenv
+from asyncio import CancelledError
 
 from movai_core_shared.logger import Log, LogAdapter
 from movai_core_shared.exceptions import DoesNotExist, TransitionException
@@ -169,6 +170,8 @@ class UserFunctions:
                     self.globals[lib] = getattr(mod, _libraries[lib].Class)
                 except TypeError:  # Class is not defined
                     self.globals[lib] = mod
+            except CancelledError:
+                raise CancelledError("cancelled task")
             except Exception as e:
                 raise Exception(
                     f"Import {lib} in callback {_cb_name} of node {_node_name} was not found"
