@@ -242,7 +242,7 @@ class GDNode:
                 message = v.Message
                 # place_holder
                 callback = v.Callback or self.__DEFAULT_CALLBACK__
-                params = v.Parameter.dict(exclude_none=True) or {}
+                params = v.Parameter.model_dump(exclude_none=True) or {}
 
                 for param in params:
                     params[param] = self.ports_params.get(
@@ -291,7 +291,8 @@ class GDNode:
 
         inst_params = {}
         if args.params:
-            parameters = args.params.split('"', 1)[1].rsplit('"', 1)[0]
+            p1 = args.params.split('"', 1)[1]
+            parameters = p1.rsplit('"', 1)[0]
             for param in parameters.split(";"):
                 key, value = param.split(":=")
                 try:
