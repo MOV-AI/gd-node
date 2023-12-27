@@ -8,6 +8,7 @@ requirements = [
     "aiohttp==3.8.1",
     "aiohttp_cors==0.7.0",
     "bleach==4.1.0",
+    "debugpy==1.8.0",
     "uvloop==0.14.0",
     "data-access-layer==2.5.0.*",
 ]

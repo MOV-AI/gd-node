@@ -21,26 +21,26 @@ from movai_core_shared.exceptions import DoesNotExist, TransitionException
 # Imports from DAL
 
 from dal.movaidb import MovaiDB
-from dal.new_models import Callback
 
-from dal.models.lock import Lock
 from dal.new_models.flow.container import Container
 from dal.new_models.flow.nodeinst import NodeInst
-from dal.new_models import Package
-from dal.new_models import Ports
-from dal.models.var import Var
-from dal.models.scopestree import scopes
-
+from dal.new_models import Callback
 from dal.new_models import Configuration
-from dal.scopes.fleetrobot import FleetRobot
 from dal.new_models import Message
+from dal.new_models import Ports
+
+from dal.models.lock import Lock
+from dal.models.scopestree import scopes
+from dal.models.var import Var
+
+from dal.scopes.package import Package
+from dal.scopes.fleetrobot import FleetRobot
 from dal.scopes.robot import Robot
 from dal.scopes.statemachine import StateMachine, SMVars
 
 from gd_node.user import GD_User as gd
 
 try:
-
     from movai_core_enterprise.message_client_handlers.alerts import Alerts
     from movai_core_enterprise.new_models import Annotation
     from movai_core_enterprise.models.graphicasset import GraphicAsset
@@ -105,7 +105,6 @@ class GD_Callback:
         Args:
             msg: Message received in the callback
         """
-
         self.user.globals.update({"msg": msg})
         self.user.globals.update({"count": self.count})
         globais = copy.copy(self.user.globals)
@@ -129,13 +128,16 @@ class GD_Callback:
             t_init = time.perf_counter()
             if self._debug:
                 import linecache
-
+                import debugpy
                 linecache.cache[self.name] = (
                     len(self.callback.Code),
                     None,
                     self.callback.Code.splitlines(True),
                     self.name,
                 )
+                debugpy.listen(5678)
+                debugpy.wait_for_client()
+                debugpy.breakpoint()
             exec(code, globais)
             t_delta = time.perf_counter() - t_init
             if t_delta > 0.5:
@@ -299,7 +301,6 @@ class UserFunctions:
 
     def run(self, cb_name, msg):
         """Run another callback from a callback"""
-        #callback = scopes.from_path(cb_name, scope="Callback")
         callback = Callback(cb_name)
         compiled_code = compile(callback.Code, cb_name, "exec")
         user = UserFunctions("", "", "", callback.Py3Lib, callback.Message)
