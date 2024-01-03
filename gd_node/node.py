@@ -43,10 +43,6 @@ def CoreInterruptHandler(signalnum, *_):
     GDNode.RUNNING.set()
 
 
-signal.signal(signal.SIGINT, CoreInterruptHandler)
-signal.signal(signal.SIGTERM, CoreInterruptHandler)
-
-
 class GDNode:
     """GD_Node asynchronous class"""
 
@@ -376,6 +372,8 @@ class GDNode:
             'Full time to init the GD_Node "%s": %s' % (self.inst_name, start_time)
         )
 
+        signal.signal(signal.SIGINT, CoreInterruptHandler)
+        signal.signal(signal.SIGTERM, CoreInterruptHandler)
         await type(self).RUNNING.wait()
 
         await self.stop()

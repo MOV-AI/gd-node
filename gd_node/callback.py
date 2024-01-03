@@ -14,11 +14,10 @@ from typing import Any
 from os import getenv
 import re
 
+from asyncio import CancelledError
+
 from movai_core_shared.logger import Log, LogAdapter
 from movai_core_shared.exceptions import DoesNotExist, TransitionException
-
-
-# Imports from DAL
 
 from dal.movaidb import MovaiDB
 
@@ -150,6 +149,8 @@ class GD_Callback:
         except TransitionException:
             LOGGER.debug("Transitioning...")
             gd.is_transitioning = True
+        except CancelledError:
+            raise CancelledError("cancelled task")
         except Exception as e:
             LOGGER.error(str(e), node=self.node_name, callback=self.name)
 
@@ -181,10 +182,12 @@ class UserFunctions:
                         self.globals[lib] = getattr(mod, _libraries[lib].Class)
                     except TypeError:  # Class is not defined
                         self.globals[lib] = mod
-                except Exception as e:
-                    raise Exception(
+                except CancelledError as exc:
+                    raise CancelledError("cancelled task") from exc
+                except (ImportError, AttributeError, LookupError) as exc:
+                    raise ImportError(
                         f"Import {lib} in callback {_cb_name} of node {_node_name} was not found"
-                    ) from e
+                    ) from exc
 
         if GD_Callback._robot is None:
             GD_Callback._robot = Robot()
