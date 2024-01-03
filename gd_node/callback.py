@@ -24,10 +24,10 @@ from dal.movaidb import MovaiDB
 
 from dal.new_models.flow.container import Container
 from dal.new_models.flow.nodeinst import NodeInst
-from dal.new_models import Callback
-from dal.new_models import Configuration
-from dal.new_models import Message
-from dal.new_models import Ports
+from dal.new_models.callback import Callback
+from dal.new_models.configuration import Configuration
+from dal.new_models.message import Message
+from dal.new_models.ports import Ports
 
 from dal.models.lock import Lock
 from dal.models.scopestree import scopes
@@ -38,11 +38,12 @@ from dal.scopes.fleetrobot import FleetRobot
 from dal.scopes.robot import Robot
 from dal.scopes.statemachine import StateMachine, SMVars
 
+
 from gd_node.user import GD_User as gd
 
 try:
     from movai_core_enterprise.message_client_handlers.alerts import Alerts
-    from movai_core_enterprise.new_models import Annotation
+    from movai_core_enterprise.models.annotation import Annotation
     from movai_core_enterprise.models.graphicasset import GraphicAsset
     from movai_core_enterprise.models.graphicscene import GraphicScene
     from movai_core_enterprise.models.layout import Layout
@@ -96,8 +97,14 @@ class GD_Callback:
             self.callback.Message,
         )
         self.count = 0
-
         self._debug = eval(getenv("DEBUG_CB", "False"))
+
+    def debug_callback(self):
+        if self._debug and self.callback.name in self.debug_callbacks:
+            import debugpy
+            debugpy.listen(5678)
+            debugpy.wait_for_client()
+            debugpy.breakpoint()
 
     def execute(self, msg: Any = None) -> None:
         """Executes the code
@@ -128,16 +135,12 @@ class GD_Callback:
             t_init = time.perf_counter()
             if self._debug:
                 import linecache
-                import debugpy
                 linecache.cache[self.name] = (
                     len(self.callback.Code),
                     None,
                     self.callback.Code.splitlines(True),
                     self.name,
                 )
-                debugpy.listen(5678)
-                debugpy.wait_for_client()
-                debugpy.breakpoint()
             exec(code, globais)
             t_delta = time.perf_counter() - t_init
             if t_delta > 0.5:
