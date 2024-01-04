@@ -189,7 +189,7 @@ class GDNode:
                 transport = template.Out[pout].Transport
                 protocol = template.Out[pout].Protocol
                 message = outvalue.Message
-                params = outvalue.Parameter.model_dump(exclude_none=True) or {}
+                params = outvalue.Parameter
 
                 for param in params:
                     params[param] = self.ports_params.get(
@@ -238,7 +238,7 @@ class GDNode:
                 message = v.Message
                 # place_holder
                 callback = v.Callback or self.__DEFAULT_CALLBACK__
-                params = v.Parameter.model_dump(exclude_none=True) or {}
+                params = v.Parameter
 
                 for param in params:
                     params[param] = self.ports_params.get(
