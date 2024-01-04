@@ -12,34 +12,35 @@ import importlib
 import time
 from typing import Any
 from os import getenv
+import re
+
 from asyncio import CancelledError
 
 from movai_core_shared.logger import Log, LogAdapter
 from movai_core_shared.exceptions import DoesNotExist, TransitionException
 
-# Imports from DAL
-
 from dal.movaidb import MovaiDB
-from dal.models.callback import Callback
+
+from dal.new_models.flow.container import Container
+from dal.new_models.flow.nodeinst import NodeInst
+from dal.new_models.callback import Callback
+from dal.new_models.configuration import Configuration
+from dal.new_models.message import Message
+from dal.new_models.ports import Ports
 
 from dal.models.lock import Lock
-from dal.models.container import Container
-from dal.models.nodeinst import NodeInst
-from dal.scopes.package import Package
-from dal.models.ports import Ports
+from dal.models.scopestree import scopes
 from dal.models.var import Var
-from dal.models.scopestree import ScopesTree, scopes
 
-from dal.scopes.configuration import Configuration
+from dal.scopes.package import Package
 from dal.scopes.fleetrobot import FleetRobot
-from dal.scopes.message import Message
 from dal.scopes.robot import Robot
 from dal.scopes.statemachine import StateMachine, SMVars
+
 
 from gd_node.user import GD_User as gd
 
 try:
-
     from movai_core_enterprise.message_client_handlers.alerts import Alerts
     from movai_core_enterprise.models.annotation import Annotation
     from movai_core_enterprise.models.graphicasset import GraphicAsset
@@ -78,8 +79,11 @@ class GD_Callback:
         self.node_name = _node_name
         self.port_name = _port_name
         self.updated_globals = {}
-
-        self.callback = ScopesTree().from_path(_cb_name, scope="Callback")
+        if "Callback/" in _cb_name:
+            cb_name = re.search(r".*Callback/([^/]+)", _cb_name).group(1)
+            self.callback = Callback(cb_name)
+        else:
+            self.callback = Callback(_cb_name)
 
         self.compiled_code = compile(self.callback.Code, _cb_name, "exec")
         self.user = UserFunctions(
@@ -90,8 +94,14 @@ class GD_Callback:
             self.callback.Message,
         )
         self.count = 0
-
         self._debug = eval(getenv("DEBUG_CB", "False"))
+
+    def debug_callback(self):
+        if self._debug and self.callback.name in self.debug_callbacks:
+            import debugpy
+            debugpy.listen(5678)
+            debugpy.wait_for_client()
+            debugpy.breakpoint()
 
     def execute(self, msg: Any = None) -> None:
         """Executes the code
@@ -99,7 +109,6 @@ class GD_Callback:
         Args:
             msg: Message received in the callback
         """
-
         self.user.globals.update({"msg": msg})
         self.user.globals.update({"count": self.count})
         globais = copy.copy(self.user.globals)
@@ -123,7 +132,6 @@ class GD_Callback:
             t_init = time.perf_counter()
             if self._debug:
                 import linecache
-
                 linecache.cache[self.name] = (
                     len(self.callback.Code),
                     None,
@@ -153,7 +161,7 @@ class UserFunctions:
         _cb_name: str,
         _node_name: str,
         _port_name: str,
-        _libraries: list,
+        _libraries: dict,
         _message: str,
         _user="SUPER",
     ) -> None:
@@ -164,19 +172,20 @@ class UserFunctions:
         self.node_name = _node_name
         # self.globals['redis_sub'] = GD_Message('movai_msgs/redis_sub', _type='msg').get()
 
-        for lib in _libraries:
-            try:
-                mod = importlib.import_module(_libraries[lib].Module)
+        if _libraries:
+            for lib in _libraries:
                 try:
-                    self.globals[lib] = getattr(mod, _libraries[lib].Class)
-                except TypeError:  # Class is not defined
-                    self.globals[lib] = mod
-            except CancelledError:
-                raise CancelledError("cancelled task")
-            except (ImportError, AttributeError, LookupError):
-                raise ImportError(
-                    f"Import {lib} in callback {_cb_name} of node {_node_name} was not found"
-                )
+                    mod = importlib.import_module(_libraries[lib].Module)
+                    try:
+                        self.globals[lib] = getattr(mod, _libraries[lib].Class)
+                    except TypeError:  # Class is not defined
+                        self.globals[lib] = mod
+                except CancelledError as exc:
+                    raise CancelledError("cancelled task") from exc
+                except (ImportError, AttributeError, LookupError) as exc:
+                    raise ImportError(
+                        f"Import {lib} in callback {_cb_name} of node {_node_name} was not found"
+                    ) from exc
 
         if GD_Callback._robot is None:
             GD_Callback._robot = Robot()
@@ -249,7 +258,8 @@ class UserFunctions:
                 super().__init__(_sm_name=sm_id, _node_name=_node_name)
 
         if _user == "SUPER":
-            logger = Log.get_callback_logger("GD_Callback", self.node_name, self.cb_name)
+            log = Log.get_logger("GD_Callback")
+            logger = LogAdapter(log, node=self.node_name, callback=self.cb_name, runtime=True)
             self.globals.update(
                 {
                     "scopes": scopes,
@@ -295,7 +305,7 @@ class UserFunctions:
 
     def run(self, cb_name, msg):
         """Run another callback from a callback"""
-        callback = scopes.from_path(cb_name, scope="Callback")
+        callback = Callback(cb_name)
         compiled_code = compile(callback.Code, cb_name, "exec")
         user = UserFunctions("", "", "", callback.Py3Lib, callback.Message)
 

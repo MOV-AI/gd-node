@@ -16,6 +16,7 @@ import time
 
 import uvloop
 
+from typing import Dict
 from movai_core_shared.logger import Log
 from movai_core_shared.consts import MOVAI_INIT
 
@@ -23,6 +24,8 @@ from movai_core_shared.consts import MOVAI_INIT
 from dal.movaidb import RedisClient
 from dal.models.scopestree import scopes, ScopePropertyNode
 from dal.models.var import Var
+from dal.new_models import Ports
+from dal.new_models.node import PortsInstValue, Node
 
 
 from gd_node.protocol import Iport, Oport, Transports
@@ -125,7 +128,7 @@ class GDNode:
         self,
         node_name: str,
         inst_name: str,
-        ports_templates: dict,
+        ports_templates: Dict[str, Ports],
         transports: dict,
         remaps: list,
     ):
@@ -169,7 +172,8 @@ class GDNode:
             # print("ROS1 Node %s registered successfully." % inst_name)
 
     async def init_oports(
-        self, inst_name: str, ports_templates: dict, ports_inst: dict, flow_name: str
+        self, inst_name: str, ports_templates: Dict[str, Ports],
+        ports_inst: Dict[str, PortsInstValue], flow_name: str
     ):
         """Init all the output ports
 
@@ -180,12 +184,12 @@ class GDNode:
 
         for ports in ports_inst:
             template = ports_templates[ports_inst[ports].Template]
-            for pout in ports_inst[ports].Out:
-
+            for pout in ports_inst[ports].Out.model_dump(exclude_none=True):
+                outvalue = getattr(ports_inst[ports].Out, pout)
                 transport = template.Out[pout].Transport
                 protocol = template.Out[pout].Protocol
-                message = ports_inst[ports].Out[pout].Message
-                params = ports_inst[ports].Out[pout].Parameter or {}
+                message = outvalue.Message
+                params = outvalue.Parameter
 
                 for param in params:
                     params[param] = self.ports_params.get(
@@ -224,13 +228,17 @@ class GDNode:
         for ports in ports_inst:
             template = ports_templates[ports_inst[ports].Template]
 
-            for i in ports_inst[ports].In:
+            for i, v in ports_inst[ports].In:
+                if i == "in_":
+                    i = "in"
+                if not v:
+                    continue
                 transport = template.In[i].Transport
                 protocol = template.In[i].Protocol
-                message = ports_inst[ports].In[i].Message
+                message = v.Message
                 # place_holder
-                callback = ports_inst[ports].In[i].Callback or self.__DEFAULT_CALLBACK__
-                params = ports_inst[ports].In[i].Parameter or {}
+                callback = v.Callback or self.__DEFAULT_CALLBACK__
+                params = v.Parameter
 
                 for param in params:
                     params[param] = self.ports_params.get(
@@ -263,21 +271,14 @@ class GDNode:
         type(self).RUNNING = asyncio.Event()
         # connect databases
         await self.connect()
-
-        # self.robot = Robot()
         GD_User.name = self.inst_name
         GD_User.template = self.node_name
-
-        self.node = scopes.from_path(self.node_name, scope="Node")
-
-        # set db    client name
-        # await self.databases.db_global.client_setname(self.robot.RobotName + '_' + self.inst_name)
-        # await self.databases.db_slave.client_setname(self.inst_name)
-        # await self.databases.db_local.client_setname(self.inst_name)
+        self.node = Node(self.node_name)
 
         inst_params = {}
         if args.params:
-            parameters = args.params.split('"', 1)[1].rsplit('"', 1)[0]
+            p1 = args.params.split('"', 1)[1]
+            parameters = p1.rsplit('"', 1)[0]
             for param in parameters.split(";"):
                 key, value = param.split(":=")
                 try:
@@ -290,7 +291,7 @@ class GDNode:
 
         # params are available all over the node as gd.params['name']
         for param in self.node.Parameter:
-            value = inst_params.get(param, self.node["Parameter"][param]["Value"])
+            value = inst_params.get(param, self.node.Parameter[param].Value)
             try:
                 if isinstance(value, ScopePropertyNode):
                     value = value.value
@@ -306,7 +307,7 @@ class GDNode:
         node_ports = {}
         for ports in self.node.PortsInst:
             ports_name = self.node.PortsInst[ports].Template
-            node_ports[ports_name] = scopes.from_path(ports_name, scope="Ports")
+            node_ports[ports_name] = Ports(ports_name)
 
         # Transition message
         trans_msg = None
@@ -321,13 +322,15 @@ class GDNode:
         )
 
         # Then we start the oports
-        await self.init_oports(self.inst_name, node_ports, self.node["PortsInst"], self.flow_name)
+        await self.init_oports(
+            self.inst_name, node_ports, self.node.PortsInst, self.flow_name
+        )
 
         # Init all the Iports
         await self.init_iports(
             self.inst_name,
             node_ports,
-            self.node["PortsInst"],
+            self.node.PortsInst,
             init=False,
             transition_data=trans_msg,
         )
@@ -337,9 +340,10 @@ class GDNode:
             await asyncio.sleep(0.2)
 
         # Then we run the initial callback
-        await self.init_iports(self.inst_name, node_ports, self.node["PortsInst"], init=True)
+        await self.init_iports(
+            self.inst_name, node_ports, self.node.PortsInst, init=True
+        )
         if not GD_User.is_transitioning:
-
             # And finally we enable the iports
             for iport in GD_User.iport:
                 try:
@@ -354,7 +358,9 @@ class GDNode:
 
         start_time = time.time() - TIME_0
 
-        LOGGER.info('Full time to init the GD_Node "%s": %s' % (self.inst_name, start_time))
+        LOGGER.info(
+            'Full time to init the GD_Node "%s": %s' % (self.inst_name, start_time)
+        )
 
         signal.signal(signal.SIGINT, CoreInterruptHandler)
         signal.signal(signal.SIGTERM, CoreInterruptHandler)
