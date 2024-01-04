@@ -79,8 +79,6 @@ class GD_Callback:
         self.node_name = _node_name
         self.port_name = _port_name
         self.updated_globals = {}
-
-        #self.callback = ScopesTree().from_path(_cb_name, scope="Callback")
         if "Callback/" in _cb_name:
             cb_name = re.search(r".*Callback/([^/]+)", _cb_name).group(1)
             self.callback = Callback(cb_name)

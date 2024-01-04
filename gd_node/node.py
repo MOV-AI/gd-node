@@ -25,7 +25,7 @@ from dal.movaidb import RedisClient
 from dal.models.scopestree import scopes, ScopePropertyNode
 from dal.models.var import Var
 from dal.new_models import Ports
-from dal.new_models.node import PortsInstValue
+from dal.new_models.node import PortsInstValue, Node
 
 
 from gd_node.protocol import Iport, Oport, Transports
@@ -271,19 +271,9 @@ class GDNode:
         type(self).RUNNING = asyncio.Event()
         # connect databases
         await self.connect()
-
-        # self.robot = Robot()
         GD_User.name = self.inst_name
         GD_User.template = self.node_name
-        from dal.new_models import Node
-
-        # self.node = scopes.from_path(self.node_name, scope="Node")
         self.node = Node(self.node_name)
-
-        # set db    client name
-        # await self.databases.db_global.client_setname(self.robot.RobotName + '_' + self.inst_name)
-        # await self.databases.db_slave.client_setname(self.inst_name)
-        # await self.databases.db_local.client_setname(self.inst_name)
 
         inst_params = {}
         if args.params:
