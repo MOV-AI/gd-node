@@ -21,12 +21,12 @@ from movai_core_shared.exceptions import DoesNotExist, TransitionException
 
 from dal.movaidb import MovaiDB
 
-from dal.new_models.flow.container import Container
-from dal.new_models.flow.nodeinst import NodeInst
-from dal.new_models.callback import Callback
-from dal.new_models.configuration import Configuration
-from dal.new_models.message import Message
-from dal.new_models.ports import Ports
+from dal.om.flow.container import Container
+from dal.om.flow.nodeinst import NodeInst
+from dal.om.callback import Callback
+from dal.om.configuration import Configuration
+from dal.om.message import Message
+from dal.om.ports import Ports
 
 from dal.models.lock import Lock
 from dal.models.scopestree import scopes

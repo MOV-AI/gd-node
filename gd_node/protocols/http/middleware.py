@@ -8,8 +8,8 @@ import urllib.parse
 from movai_core_shared.exceptions import InvalidToken, TokenExpired, TokenRevoked
 from movai_core_shared.logger import Log
 
-from dal.new_models.flow import Flow
-from dal.new_models.node import Node
+from dal.om.flow import Flow
+from dal.om.node import Node
 from dal.models.remoteuser import RemoteUser
 from dal.models.internaluser import InternalUser
 

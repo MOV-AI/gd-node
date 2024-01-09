@@ -24,8 +24,8 @@ from movai_core_shared.consts import MOVAI_INIT
 from dal.movaidb import RedisClient
 from dal.models.scopestree import scopes, ScopePropertyNode
 from dal.models.var import Var
-from dal.new_models import Ports
-from dal.new_models.node import PortsInstValue, Node
+from dal.om import Ports
+from dal.om.node import PortsInstValue, Node
 
 
 from gd_node.protocol import Iport, Oport, Transports
