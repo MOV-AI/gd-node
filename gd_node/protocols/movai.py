@@ -23,8 +23,9 @@ from gd_node.callback import GD_Callback as Callback
 from gd_node.user import GD_User
 from gd_node.protocols.base import BaseIport
 
-LOGGER = Log.get_logger("spawner.mov.ai")
+import datetime
 
+LOGGER = Log.get_logger("spawner.mov.ai")
 
 class Init(BaseIport):
 
@@ -300,6 +301,7 @@ class ContextClientIn(BaseIport):
         changed = {item: full_table[item] for item in changed_fields}
 
         _id = full_table.pop("_id")
+        changed.pop("last_update")
         changed.pop("_id")
 
         msg = ContextMsg(id=_id, data=full_table, changed=changed)
@@ -355,6 +357,7 @@ class ContextServerIn(BaseIport):
         changed = {item: full_table[item] for item in changed_fields}
 
         _id = full_table.pop("_id")
+        changed.pop("last_update")
         changed.pop("_id")
 
         msg = ContextMsg(id=_id, data=full_table, changed=changed)
@@ -376,7 +379,7 @@ class ContextClientOut:
         if not isinstance(msg, dict):
             raise Exception("Wrong message type, this should be a dictionary")
 
-        msg.update({"_id": self._node_name})
+        msg.update({"_id": self._node_name, "last_update": datetime.datetime.now().isoformat()})
         to_send = {"Var": {"context": {"ID": {self.stack + "_RX": {"Parameter": msg}}}}}
         MovaiDB("local").hset_pub(to_send)
 
@@ -394,7 +397,7 @@ class ContextServerOut:
 
         if not isinstance(msg, dict):
             raise Exception("Wrong message type, this should be a dictionary")
-        msg.update({"_id": self._node_name})
+        msg.update({"_id": self._node_name, "last_update": datetime.datetime.now().isoformat()})
         to_send = {"Var": {"context": {"ID": {self.stack + "_TX": {"Parameter": msg}}}}}
         MovaiDB("local").hset_pub(to_send)
 
