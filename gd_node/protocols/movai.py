@@ -251,62 +251,7 @@ class ContextMsg:
         self.id = id
 
 
-class ContextClientIn(BaseIport):
-
-    """Class that implements the Client Context comunication in the GD_Node
-       Is subscribed to a redis hash (param)
-
-    Args:
-            _node_name: Name of the node instance
-            _iport_name: Name of the port
-            _cb_name: Name of the callback to be executed
-    """
-
-    def __init__(
-        self,
-        _node_name: str,
-        _port_name: str,
-        _topic: str,
-        _message: str,
-        _callback: str,
-        _params: dict,
-        _update: bool,
-        **_ignore
-    ):
-        """Init"""
-        super().__init__(_node_name, _port_name, _topic, _message, _callback, _update)
-
-        self.stack = _params.get("Namespace", "")
-
-        self.loop = asyncio.get_event_loop()
-        self.loop.create_task(self.register_sub())
-
-    async def register_sub(self) -> None:
-        """Subscribe to key."""
-        pattern = {"Var": {"context": {"ID": {self.stack + "_TX": {"Parameter": "**"}}}}}
-        databases = await RedisClient().get_client()
-        await MovaiDB("local", loop=self.loop, databases=databases).subscribe_channel(
-            pattern, self.callback
-        )
-
-    def callback(self, msg):
-        """Executes callback"""
-        key = msg[0].decode("utf-8")
-        changed_fields = list(msg[1].split(" "))
-
-        dict_key = MovaiDB().keys_to_dict([(key, "")])
-        full_table = MovaiDB("local").get_hash(dict_key)
-
-        changed = {item: full_table[item] for item in changed_fields}
-
-        _id = full_table.pop("_id")
-        changed.pop("_id")
-
-        msg = ContextMsg(id=_id, data=full_table, changed=changed)
-        super().callback(msg)
-
-
-class ContextServerIn(BaseIport):
+class ContextIn(BaseIport):
 
     """Class that implements the Server Context comunication in the GD_Node
        Is subscribed to a redis hash (param)
@@ -326,16 +271,19 @@ class ContextServerIn(BaseIport):
         _callback: str,
         _params: dict,
         _update: bool,
+        channel="",
         **_ignore
     ):
         """Init"""
         super().__init__(_node_name, _port_name, _topic, _message, _callback, _update)
         self.stack = _params.get("Namespace", "")
-        asyncio.create_task(self.register_sub())
+        self.event = asyncio.Event()
+        self.channel = channel
+        self.await_coro = asyncio.create_task(self.register_sub())
 
     async def register_sub(self) -> None:
         """Subscribe to key."""
-        pattern = {"Var": {"context": {"ID": {self.stack + "_RX": {"Parameter": "**"}}}}}
+        pattern = {"Var": {"context": {"ID": {self.stack + self.channel: {"Parameter": "**"}}}}}
         databases = await RedisClient().get_client()
         loop = asyncio.get_event_loop()
         await MovaiDB("local", loop=loop, databases=databases).subscribe_channel(
@@ -356,7 +304,77 @@ class ContextServerIn(BaseIport):
         changed.pop("_id")
 
         msg = ContextMsg(id=_id, data=full_table, changed=changed)
+        if not self.enabled:
+            asyncio.create_task(self.wait_for_enable(msg))
+        else:
+            super().callback(msg)
+
+    def register(self):
+        """Enables the iport"""
+        super().register()
+        self.event.set
+
+    def unregister(self):
+        """Disables the iport"""
+        super().unregister()
+        self.event.clear()
+
+    async def wait_for_enable(self, msg):
+        """Wait for enable"""
+        await self.event.wait()
         super().callback(msg)
+
+
+class ContextClientIn(ContextIn):
+
+    """Class that implements the Client Context comunication in the GD_Node
+        Is subscribed to a redis hash (param)
+
+        Args:
+            _node_name: Name of the node instance
+        _iport_name: Name of the port
+        _cb_name: Name of the callback to be executed
+        """
+
+    def __init__(
+        self,
+        _node_name: str,
+        _port_name: str,
+        _topic: str,
+        _message: str,
+        _callback: str,
+        _params: dict,
+        _update: bool,
+        **_ignore
+    ):
+        """Init"""
+        super().__init__(_node_name, _port_name, _topic, _message, _callback, _params, _update, channel="_RX")
+
+
+class ContextServerIn(ContextIn):
+
+        """Class that implements the Server Context comunication in the GD_Node
+            Is subscribed to a redis hash (param)
+
+            Args:
+                _node_name: Name of the node instance
+            _iport_name: Name of the port
+            _cb_name: Name of the callback to be executed
+            """
+
+    def __init__(
+        self,
+        _node_name: str,
+        _port_name: str,
+        _topic: str,
+        _message: str,
+        _callback: str,
+        _params: dict,
+        _update: bool,
+        **_ignore
+    ):
+        """Init"""
+        super().__init__(_node_name, _port_name, _topic, _message, _callback, _params, _update, channel="_TX")
 
 
 class ContextClientOut:

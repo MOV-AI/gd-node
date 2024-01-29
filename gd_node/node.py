@@ -263,7 +263,9 @@ class GDNode:
                 }
 
                 if (key == MOVAI_INIT) == init:
-                    Iport.create(key, **config)
+                    port = Iport.create(key, **config)
+                    if port is not None and port.await_coro is not None:
+                        await port.await_coro
 
     async def main(self, args, unknown) -> None:
         """Runs the main loop. Exiting stops GDNode"""
