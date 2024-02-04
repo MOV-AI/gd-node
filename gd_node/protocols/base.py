@@ -12,6 +12,7 @@
 
 from typing import Any
 
+
 from gd_node.callback import GD_Callback as Callback
 
 
@@ -37,6 +38,7 @@ class BaseIport:
         self.start_enabled = True
         self._gd_node = _gd_node
         self.cb = Callback(_callback, self.node_name, self.port_name, update)
+        self.await_coro = None
 
     def callback(self, msg: Any) -> None:
         """Executes the callback if port is enabled"""
