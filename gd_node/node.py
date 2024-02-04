@@ -37,7 +37,7 @@ def CoreInterruptHandler(signalnum, *_):
     """Process interrupts"""
     # msg = "\nSignal (ID: {}) has been caught. Stopping GDNode...".format(signalnum)
     # LOGGER.info(msg)
-    GDNode.RUNNING = False
+    GDNode.RUNNING.set()
 
 
 signal.signal(signal.SIGINT, CoreInterruptHandler)
@@ -48,9 +48,9 @@ class GDNode:
     """GD_Node asynchronous class"""
 
     __DEFAULT_CALLBACK__ = "place_holder"
+    RUNNING = None
 
     def __init__(self, args, unknown):
-        type(self).RUNNING = True
         self.debug = args.verbose
         self.develop = args.develop
         # if self.debug:
@@ -86,7 +86,7 @@ class GDNode:
 
     def _stop(self):
         """stop node out of async loop"""
-        type(self).RUNNING = False
+        type(self).RUNNING.set()
 
     async def stop(self) -> None:
         """Gracefully shutdown node"""
@@ -96,6 +96,7 @@ class GDNode:
         Oport.shutdown()
         Transports.shutdown()
 
+        await self.databases.shutdown()
         # Clean all vars related to this node
         Var.delete_all(scope="Node", _node_name=GD_User.name)
         for iport in GD_User.iport:
@@ -103,8 +104,10 @@ class GDNode:
 
         tasks = [
             task
-            for task in asyncio.Task.all_tasks(loop=self.loop)
-            if task is not asyncio.tasks.Task.current_task(loop=self.loop)
+            for task in asyncio.all_tasks(loop=self.loop)
+            if task is not asyncio.current_task(loop=self.loop)
+            and not task.done()
+            and not task.cancelled()
         ]
 
         list(map(lambda task: task.cancel(), tasks))
@@ -202,6 +205,7 @@ class GDNode:
                     "message": message,
                     "_params": params,
                     "flow_name": flow_name,
+                    "_gd_node": self,
                 }
 
                 Oport.create(key, **config)
@@ -251,6 +255,7 @@ class GDNode:
                     "_params": params,
                     "_data": transition_data,
                     "_update": self.develop,
+                    "_gd_node": self,
                 }
 
                 if (key == MOVAI_INIT) == init:
@@ -259,6 +264,7 @@ class GDNode:
     async def main(self, args, unknown) -> None:
         """Runs the main loop. Exiting stops GDNode"""
 
+        type(self).RUNNING = asyncio.Event()
         # connect databases
         await self.connect()
 
@@ -336,25 +342,24 @@ class GDNode:
 
         # Then we run the initial callback
         await self.init_iports(self.inst_name, node_ports, self.node["PortsInst"], init=True)
+        if not GD_User.is_transitioning:
 
-        # And finally we enable the iports
-        for iport in GD_User.iport:
-            try:
-                if GD_User.iport[iport].start_enabled:
-                    GD_User.iport[iport].register()
-            except AttributeError:
-                pass
+            # And finally we enable the iports
+            for iport in GD_User.iport:
+                try:
+                    if GD_User.iport[iport].start_enabled:
+                        GD_User.iport[iport].register()
+                except AttributeError:
+                    pass
 
-        # Start servers only after all routes were added
-        if self.transports["Http"]:
-            Transports.get("Http").start()
+            # Start servers only after all routes were added
+            if self.transports["Http"]:
+                Transports.get("Http").start()
 
         start_time = time.time() - TIME_0
 
         LOGGER.info('Full time to init the GD_Node "%s": %s' % (self.inst_name, start_time))
 
-        while self.RUNNING:
-            # heart beat
-            await asyncio.sleep(1)  # Give time to other tasks to run.
+        await type(self).RUNNING.wait()
 
         await self.stop()

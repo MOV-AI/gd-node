@@ -7,17 +7,17 @@ with open("README.md", "r") as fh:
 requirements = [
     "aiohttp==3.8.1",
     "aiohttp_cors==0.7.0",
-    "aioredis==1.3.0",
     "bleach==4.1.0",
-    "requests==2.22.0",
     "uvloop==0.14.0",
-    "data-access-layer==2.4.1.*",
+    "data-access-layer==2.5.0.*",
 ]
+# requests is required by movai-core-shared
+# aioredis is required by data-access-layer
 
 
 setuptools.setup(
     name="gd-node",
-    version="2.4.1-4",
+    version="2.5.0-5",
     author="Backend team",
     author_email="backend@mov.ai",
     description="GD_Node",

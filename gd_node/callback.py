@@ -15,16 +15,17 @@ from os import getenv
 
 from movai_core_shared.logger import Log, LogAdapter
 from movai_core_shared.exceptions import DoesNotExist, TransitionException
-
+from movai_core_shared.consts import USER_LOG_TAG
 
 # Imports from DAL
 
 from dal.movaidb import MovaiDB
+from dal.models.callback import Callback
 
 from dal.models.lock import Lock
 from dal.models.container import Container
 from dal.models.nodeinst import NodeInst
-from dal.models.package import Package
+from dal.scopes.package import Package
 from dal.models.ports import Ports
 from dal.models.var import Var
 from dal.models.scopestree import ScopesTree, scopes
@@ -38,16 +39,17 @@ from dal.scopes.statemachine import StateMachine, SMVars
 from gd_node.user import GD_User as gd
 
 try:
-    
+
     from movai_core_enterprise.message_client_handlers.alerts import Alerts
     from movai_core_enterprise.models.annotation import Annotation
     from movai_core_enterprise.models.graphicasset import GraphicAsset
     from movai_core_enterprise.models.graphicscene import GraphicScene
     from movai_core_enterprise.models.layout import Layout
-    from movai_core_enterprise.scopes.task import Task    
+    from movai_core_enterprise.scopes.task import Task
     from movai_core_enterprise.models.taskentry import TaskEntry
     from movai_core_enterprise.models.tasktemplate import TaskTemplate
     from movai_core_enterprise.message_client_handlers.metrics import Metrics
+
     enterprise = True
 except ImportError:
     enterprise = False
@@ -135,7 +137,8 @@ class GD_Callback:
                     f"{self.node_name}/{self.port_name}/{self.callback.Label} took: {t_delta}"
                 )
         except TransitionException:
-            LOGGER.info("Transitioning...")
+            LOGGER.debug("Transitioning...")
+            gd.is_transitioning = True
         except Exception as e:
             LOGGER.error(str(e), node=self.node_name, callback=self.name)
 
@@ -242,8 +245,7 @@ class UserFunctions:
                 super().__init__(_sm_name=sm_id, _node_name=_node_name)
 
         if _user == "SUPER":
-            log = Log.get_logger("GD_Callback")
-            logger = LogAdapter(log, node=self.node_name, callback=self.cb_name)
+            logger = Log.get_callback_logger("GD_Callback", self.node_name, self.cb_name)
             self.globals.update(
                 {
                     "scopes": scopes,
@@ -257,6 +259,7 @@ class UserFunctions:
                     "logger": logger,
                     "PortName": _port_name,
                     "SM": UserSM,
+                    "Callback": Callback,
                     "Lock": UserLock,
                     "print": self.user_print,
                     "Scene": GD_Callback._scene,
@@ -296,3 +299,4 @@ class UserFunctions:
         globais = user.globals
 
         exec(compiled_code, globais)
+

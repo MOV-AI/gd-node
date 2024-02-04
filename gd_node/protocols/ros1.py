@@ -1,3 +1,4 @@
+
 """
    Copyright (C) Mov.ai  - All Rights Reserved
    Unauthorized copying of this file, via any medium is strictly prohibited
@@ -62,9 +63,7 @@ class ROS1:
 
     def launch_ros_node(self):
         """async launch"""
-        rospy.init_node(
-            self.node_name, argv=self.remaps, disable_signals=True, disable_rosout=True
-        )
+        rospy.init_node(self.node_name, argv=self.remaps, disable_signals=True, disable_rosout=True)
         rospy.on_shutdown(self.on_shutdown)
 
     def on_shutdown(self):
@@ -118,7 +117,24 @@ class ROS1:
 ##############################            IPORTS                   ###############################
 
 
-class ROS1_Subscriber(BaseIport):
+class ROS1IportBase(BaseIport):
+    """
+    A base class for all of the ROS IPORTS
+    """
+
+    MAX_RETRIES = 100
+
+    def callback(self, msg: Any) -> None:
+        """Callback function for all the ROS IPORTS"""
+        for _ in range(self.MAX_RETRIES):
+            if self._gd_node.RUNNING and self.enabled:
+                self.cb.execute(msg)
+                return
+            # if the port isn't initiated after 10 seconds it means it's disabled
+            rospy.timer.sleep(0.1)
+
+
+class ROS1_Subscriber(ROS1IportBase):
 
     """ROS Subscriber class. Implementation of the rospy.Subscriber
 
@@ -140,10 +156,14 @@ class ROS1_Subscriber(BaseIport):
         _message: str,
         _callback: str,
         _update: bool,
-        **_ignore
+        _gd_node: Any = None,
+        **_
     ) -> None:
         """Init"""
-        super().__init__(_node_name, _port_name, _topic, _message, _callback, _update)
+        super().__init__(
+            _node_name, _port_name, _topic, _message, _callback, _update, _gd_node=_gd_node
+        )
+        self._gd_node = _gd_node
 
         self.msg = GD_Message(_message, _type="msg").get()
         self.sub = rospy.Subscriber(self.topic, self.msg, self.callback)
@@ -165,7 +185,7 @@ class ROS1_Subscriber(BaseIport):
 ####################################################
 
 
-class ROS1_ServiceServer(BaseIport):
+class ROS1_ServiceServer(ROS1IportBase):
 
     """ROS Service Server class. Implementation of the rospy.Service
 
@@ -185,10 +205,13 @@ class ROS1_ServiceServer(BaseIport):
         _message: str,
         _callback: str,
         _update: bool,
+        _gd_node: Any = None,
         **_ignore
     ) -> None:
         """Init"""
-        super().__init__(_node_name, _port_name, _topic, _message, _callback, _update)
+        super().__init__(
+            _node_name, _port_name, _topic, _message, _callback, _update, _gd_node=_gd_node
+        )
         _message = _message.rsplit("Request")[0]
         self.srv = GD_Message(_message, _type="srv").get()
 
@@ -241,7 +264,7 @@ class ROS1_ServiceServerReply:
 ####################################################
 
 
-class ROS1_Timer(BaseIport):
+class ROS1_Timer(ROS1IportBase):
 
     """ROS Timer class. Implementation of the rospy.Timer
 
@@ -262,17 +285,18 @@ class ROS1_Timer(BaseIport):
         _callback: str,
         _params: dict,
         _update: bool,
+        _gd_node: Any = None,
         **_ignore
     ) -> None:
         """Init"""
-        super().__init__(_node_name, _port_name, _topic, _message, _callback, _update)
+        super().__init__(
+            _node_name, _port_name, _topic, _message, _callback, _update, _gd_node=_gd_node
+        )
 
         self.duration = 1 / float(_params.get("Frequency", 10))
         self.oneshot = _params.get("Oneshot", False)
 
-        self.timer = rospy.Timer(
-            rospy.Duration(self.duration), self.callback, oneshot=self.oneshot
-        )
+        self.timer = rospy.Timer(rospy.Duration(self.duration), self.callback, oneshot=self.oneshot)
         # timer need to start unregistered to start counting when enabled
         self.unregister()
 
@@ -293,7 +317,7 @@ class ROS1_Timer(BaseIport):
 ####################################################
 
 
-class ROS1_TFSubscriber(BaseIport):
+class ROS1_TFSubscriber(ROS1IportBase):
     """Subscriber of ROS TF. Implementation of tf.TransformListener"""
 
     def __init__(
@@ -305,11 +329,14 @@ class ROS1_TFSubscriber(BaseIport):
         _callback: str,
         _params: dict,
         _update: bool,
+        _gd_node: Any = None,
         **_ignore
     ) -> None:
         globals()["tf"] = importlib.import_module("tf")
         globals()["tf2_ros"] = importlib.import_module("tf2_ros")
-        super().__init__(_node_name, _port_name, _topic, _message, _callback, _update)
+        super().__init__(
+            _node_name, _port_name, _topic, _message, _callback, _update, _gd_node=_gd_node
+        )
 
         self.parent_frame = _params["Parent"]
         self.child_frame = _params["Child"]
@@ -341,8 +368,9 @@ class ROS1_TFSubscriber(BaseIport):
 
 ####################################################
 
+
 # This will not be used for now and is not up to date!
-class ROS1_ActionServer(BaseIport):
+class ROS1_ActionServer(ROS1IportBase):
     def __init__(
         self,
         _node_name: str,
@@ -351,9 +379,12 @@ class ROS1_ActionServer(BaseIport):
         _message: str,
         _callback: str,
         _update: bool,
+        _gd_node: Any = None,
         **_ignore
     ) -> None:
-        super().__init__(_node_name, _port_name, _topic, _message, _callback, _update)
+        super().__init__(
+            _node_name, _port_name, _topic, _message, _callback, _update, _gd_node=_gd_node
+        )
         reply_key = "reply@" + self.topic
 
         module, msg_name = _message.split("/")
@@ -417,7 +448,6 @@ class RostopicHzMsg:
     """
 
     def __init__(self, rate=0.0, min=0.0, max=0.0, std_dev=0.0, window=1):
-
         self.rate = rate
 
         self.min = min
@@ -429,7 +459,7 @@ class RostopicHzMsg:
         self.window = window
 
 
-class ROS1_TopicHz(BaseIport):
+class ROS1_TopicHz(ROS1IportBase):
 
     """ROS1 Frequency Subscriber class. Implementation of the rostopic.ROSTopicHz class
 
@@ -456,14 +486,16 @@ class ROS1_TopicHz(BaseIport):
         _callback: str,
         _params: dict,
         _update: bool,
+        _gd_node: Any = None,
         **_ignore
     ) -> None:
-
         """Init"""
 
         import rostopic
 
-        super().__init__(_node_name, _port_name, _topic, _message, _callback, _update)
+        super().__init__(
+            _node_name, _port_name, _topic, _message, _callback, _update, _gd_node=_gd_node
+        )
 
         self.msg = rospy.AnyMsg
 
@@ -482,23 +514,19 @@ class ROS1_TopicHz(BaseIport):
         self.timer = rospy.Timer(rospy.Duration(self.duration), self.callback)
 
     def callback(self, msg: Any) -> None:
-
         """Callback"""
 
         res = self.rostopic_hz.get_hz(self.topic)
 
         if res:
-
             data = RostopicHzMsg(*res)
 
         else:
-
             data = RostopicHzMsg()
 
         super().callback(data)
 
     def unregister(self) -> None:
-
         """Unregisters the subscriber"""
 
         super().unregister()
@@ -506,23 +534,19 @@ class ROS1_TopicHz(BaseIport):
         self.timer.shutdown()
 
         if self.sub is not None:
-
             self.sub.unregister()
 
             self.sub = None
 
     def register(self) -> None:
-
         """Registers the subscriber"""
 
         super().register()
 
         if self.sub is None:
-
             self.sub = rospy.Subscriber(self.topic, self.msg, self.callback)
 
         if self.timer._shutdown:
-
             self.timer = rospy.Timer(rospy.Duration(self.duration), self.callback)
 
 
@@ -537,14 +561,14 @@ class ROS1_Publisher:
         _message: ROS message
     """
 
-    def __init__(self, _topic: str, _message: Any, _params: dict) -> None:
+    def __init__(self, _topic: str, _message: Any, _params: dict = None, _gd_node=None) -> None:
         """Init"""
 
         self.msg = GD_Message(_message).get()
-        params = {
-            "queue_size": 1
-        }
-        params.update(_params)
+        self._gd_node = _gd_node
+        params = {"queue_size": 1}
+        if _params is not None:
+            params.update(_params)
         self.pub = rospy.Publisher(_topic, self.msg, **params)
 
     def send(self, msg: Any) -> None:
@@ -553,7 +577,9 @@ class ROS1_Publisher:
         Args:
             msg: ROS Message
         """
-        self.pub.publish(msg)
+        if not self._gd_node or self._gd_node.RUNNING:
+            # publish only when Node is actually still running
+            self.pub.publish(msg)
 
     def unregister(self):
         if self.pub:
@@ -683,13 +709,11 @@ class ROS1_DynReconfigure:
         client.update_configuration(msg)
 
     def access_dynclient(self, msg: dict, topic: str = None, timeout=0.5):
-
         topic = self.topic if topic is None else topic
 
         client = self.mapping.get(topic)
 
         if not client:
-
             client = DynClient(topic, timeout=timeout, config_callback=None)
 
             self.mapping[topic] = client
