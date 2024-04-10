@@ -1,15 +1,17 @@
+import asyncio
 import re
 import requests
 import bleach
 from typing import List, Union
 from aiohttp import web
 import urllib.parse
+from urllib.parse import unquote
 
 from movai_core_shared.exceptions import InvalidToken, TokenExpired, TokenRevoked
 from movai_core_shared.logger import Log
 
-from dal.new_models.flow import Flow
-from dal.new_models.node import Node
+from dal.scopes.flow import Flow
+from dal.scopes.node import Node
 from dal.models.remoteuser import RemoteUser
 from dal.models.internaluser import InternalUser
 
@@ -156,7 +158,7 @@ async def remove_flow_exposed_port_links(request, handler):
 
         if request.match_info.get("name"):
             try:
-                flow_obj = Flow(request.match_info.get("name"))
+                flow_obj = Flow(name=request.match_info.get("name"))
                 old_flow_exposed_ports = {**flow_obj.ExposedPorts}
             except Exception as e:
                 LOGGER.warning(
@@ -179,12 +181,11 @@ async def remove_flow_exposed_port_links(request, handler):
                 LOGGER.info(f"Deleted exposed ports result: {deleted_exposed_ports}")
 
                 # Loop trough all deleted ports and delete Links associated to that exposed port
-                port_regex = re.compile(r"^.+/")
                 for node in deleted_exposed_ports:
                     for deleted_exposed_port in node.values():
                         node_inst_name = next(iter(deleted_exposed_port))
                         for port in deleted_exposed_port[node_inst_name]:
-                            port_name = port_regex.search(port)[0][:-1]
+                            port_name = re.search(r"^.+/", port)[0][:-1]
                             flow_obj.delete_exposed_port_links(node_inst_name, port_name)
 
             if request.get("scope_delete"):

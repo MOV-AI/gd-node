@@ -330,15 +330,17 @@ class ContextServerIn(BaseIport):
     ):
         """Init"""
         super().__init__(_node_name, _port_name, _topic, _message, _callback, _update)
+
         self.stack = _params.get("Namespace", "")
-        asyncio.create_task(self.register_sub())
+
+        self.loop = asyncio.get_event_loop()
+        self.loop.create_task(self.register_sub())
 
     async def register_sub(self) -> None:
         """Subscribe to key."""
         pattern = {"Var": {"context": {"ID": {self.stack + "_RX": {"Parameter": "**"}}}}}
         databases = await RedisClient().get_client()
-        loop = asyncio.get_event_loop()
-        await MovaiDB("local", loop=loop, databases=databases).subscribe_channel(
+        await MovaiDB("local", loop=self.loop, databases=databases).subscribe_channel(
             pattern, self.callback
         )
 
