@@ -17,7 +17,7 @@ requirements = [
 
 setuptools.setup(
     name="gd-node",
-    version="2.5.0-6",
+    version="2.5.0-7",
     author="Backend team",
     author_email="backend@mov.ai",
     description="GD_Node",
