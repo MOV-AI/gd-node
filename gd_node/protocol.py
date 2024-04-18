@@ -317,6 +317,10 @@ class IportMovaiContextClient:
         self._instance = MovAI.ContextClientIn(**kwargs)
         gd.iport[name] = self._instance
 
+    def is_port_fully_created(self):
+        
+        return self._instance.is_port_subscribed()
+
 
 class IportMovaiContextServer:
     def __init__(self, **kwargs):
