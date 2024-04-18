@@ -15,7 +15,7 @@ from movai_core_shared.logger import Log
 from movai_core_shared.exceptions import TransitionException
 
 from dal.movaidb import RedisClient
-from dal.movaidb.database import MovaiDB
+from dal.movaidb.database import MovaiDB, SubscribeManager
 from dal.scopes.robot import Robot
 from dal.scopes.statemachine import SMVars, StateMachine
 
@@ -249,6 +249,8 @@ class ContextMsg:
         self.data = data
         self.changed = changed
         self.id = id
+    def __str__(self):
+        return str(self.__class__) + ": " + str(self.__dict__)
 
 
 class ContextClientIn(BaseIport):
@@ -277,17 +279,19 @@ class ContextClientIn(BaseIport):
         super().__init__(_node_name, _port_name, _topic, _message, _callback, _update)
 
         self.stack = _params.get("Namespace", "")
-
         self.loop = asyncio.get_event_loop()
-        self.loop.create_task(self.register_sub())
+        self.loop.create_task(self.register_sub(_port_name, _node_name))
 
-    async def register_sub(self) -> None:
+    async def register_sub(self, _port_name: str, _node_name: str) -> None:
         """Subscribe to key."""
         pattern = {"Var": {"context": {"ID": {self.stack + "_TX": {"Parameter": "**"}}}}}
         databases = await RedisClient().get_client()
         await MovaiDB("local", loop=self.loop, databases=databases).subscribe_channel(
-            pattern, self.callback
+            pattern, self.callback, _port_name, _node_name
         )
+
+    def is_port_subscribed(self):
+        return SubscribeManager().is_registered(self.node_name + self.port_name)
 
     def callback(self, msg):
         """Executes callback"""
@@ -334,14 +338,14 @@ class ContextServerIn(BaseIport):
         self.stack = _params.get("Namespace", "")
 
         self.loop = asyncio.get_event_loop()
-        self.loop.create_task(self.register_sub())
+        self.loop.create_task(self.register_sub(_port_name, _node_name))
 
-    async def register_sub(self) -> None:
+    async def register_sub(self, _port_name: str, _node_name: str) -> None:
         """Subscribe to key."""
         pattern = {"Var": {"context": {"ID": {self.stack + "_RX": {"Parameter": "**"}}}}}
         databases = await RedisClient().get_client()
         await MovaiDB("local", loop=self.loop, databases=databases).subscribe_channel(
-            pattern, self.callback
+            pattern, self.callback, _port_name, _node_name
         )
 
     def callback(self, msg):

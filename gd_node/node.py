@@ -17,7 +17,7 @@ import time
 import uvloop
 
 from movai_core_shared.logger import Log
-from movai_core_shared.consts import MOVAI_INIT
+from movai_core_shared.consts import MOVAI_INIT, MOVAI_TRANSITION, MOVAI_CONTEXTCLIENTIN
 
 # importing database profile automatically registers the database connections
 from dal.movaidb import RedisClient
@@ -253,9 +253,15 @@ class GDNode:
                     "_update": self.develop,
                     "_gd_node": self,
                 }
+                if (key == MOVAI_INIT or key == MOVAI_TRANSITION)  == init:
+                    port_instance = Iport.create(key, **config)
+                    if key == MOVAI_CONTEXTCLIENTIN:
+                        ongoing_creations.append(port_instance)
 
-                if (key == MOVAI_INIT) == init:
-                    Iport.create(key, **config)
+        while(ongoing_creations):
+            ongoing_creations = [port for port in ongoing_creations if not port.is_port_fully_created()]
+            if ongoing_creations:
+                await asyncio.sleep(0.1)
 
     async def main(self, args, unknown) -> None:
         """Runs the main loop. Exiting stops GDNode"""
