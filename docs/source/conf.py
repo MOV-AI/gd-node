@@ -24,7 +24,7 @@ author = 'MOV.AI'
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = [
+extensions: List[str] = [
     "sphinx.ext.autodoc",  # Include documentation from docstrings
     "sphinx.ext.napoleon",  # Add support for Google style docstrings
     "sphinx.ext.todo",  # Catch and show TODOs within docstrings
@@ -36,8 +36,7 @@ extensions = [
 todo_include_todos = True
 
 templates_path = ['_templates']
-exclude_patterns = []
-
+exclude_patterns: List[str] = []
 
 
 # -- Options for HTML output -------------------------------------------------
