@@ -221,6 +221,8 @@ class GDNode:
             ports_inst: Description
             init: Description
         """
+        ongoing_creations = []
+
         for ports in ports_inst:
             template = ports_templates[ports_inst[ports].Template]
 
@@ -253,13 +255,14 @@ class GDNode:
                     "_update": self.develop,
                     "_gd_node": self,
                 }
-                if (key == MOVAI_INIT or key == MOVAI_TRANSITION)  == init:
+                if (key in [MOVAI_INIT,MOVAI_TRANSITION]) == init:
                     port_instance = Iport.create(key, **config)
                     if key == MOVAI_CONTEXTCLIENTIN:
                         ongoing_creations.append(port_instance)
 
-        while(ongoing_creations):
-            ongoing_creations = [port for port in ongoing_creations if not port.is_port_fully_created()]
+        while ongoing_creations:
+            ongoing_creations = [port for port in ongoing_creations 
+                                 if not port.is_port_fully_created()]
             if ongoing_creations:
                 await asyncio.sleep(0.1)
 
