@@ -12,7 +12,7 @@
     This is the GD_Node
 """
 import argparse
-from gd_node.node import GDNode
+from gd_node.node import ARGS, GDNode
 
 
 def main():
@@ -42,9 +42,10 @@ def main():
         action="store_true",
     )
 
-    ARGS, UNKNOWN = parser.parse_known_args()
+    args = ARGS()
+    _, UNKNOWN = parser.parse_known_args(namespace=args)
 
-    GDNode(ARGS, UNKNOWN)
+    GDNode(args, UNKNOWN)
 
 
 if __name__ == "__main__":

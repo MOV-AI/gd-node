@@ -1,9 +1,109 @@
+from threading import Thread
+from unittest.mock import patch
 import unittest
+import time
+import os
+
+from dal.models.scopestree import scopes
+from dal.movaidb.database import Redis
+
+from gd_node.node import ARGS, GDNode
 
 
+@patch("gd_node.node.signal.signal")
 class TestSuite(unittest.TestCase):
-    def test_handler_executer_forward(self):
-        assert True
+    def test_disable_callbacks_on_transition(self, mock_signal):
+        scope = scopes(workspace="global")
+
+        callback_data = {"Callback": {"hello": {"Code": "open('/tmp/output', 'w').write('hello')"}}}
+        scope.write(callback_data, scope="Callback", ref="hello", version="__UNVERSIONED__")
+
+        callback_data = {"Callback": {"transition": {"Code": "gd.oport['end'].send()"}}}
+        scope.write(callback_data, scope="Callback", ref="transition", version="__UNVERSIONED__")
+
+        node_data = {
+            "Node": {
+                "Test Node 1": {
+                    "Info": "Node for testing",
+                    "Label": "test_node_1",
+                    "Launch": True,
+                    "PackageDepends": "",
+                    "Path": "",
+                    "Persistent": False,
+                    "PortsInst": {
+                        "Port1": {
+                            "Message": "ContextClientIn",
+                            "In": {
+                                "in": {
+                                    "Callback": "hello",
+                                    "Parameter": {"Namespace": "navigation"},
+                                }
+                            },
+                            "Package": "movai_msgs",
+                            "Template": "MovAI/ContextClient",
+                        },
+                        "transition_port": {
+                            "Message": "ContextClientIn",
+                            "In": {
+                                "in": {
+                                    "Callback": "transition",
+                                    "Parameter": {"Namespace": "calibration"},
+                                }
+                            },
+                            "Package": "movai_msgs",
+                            "Template": "MovAI/ContextClient",
+                        },
+                        "end": {
+                            "Message": "Transition",
+                            "Out": {"out": {"Message": "movai_msgs/Transition"}},
+                            "Package": "movai_msgs",
+                            "Template": "MovAI/TransitionFor",
+                        },
+                    },
+                    "Remappable": True,
+                    "Type": "MovAI/State",
+                    "User": "",
+                    "Version": "",
+                    "VersionDelta": {},
+                }
+            }
+        }
+        scope.write(node_data, scope="Node", ref="Test Node 1", version="__UNVERSIONED__")
+
+        args = ARGS()
+        args.verbose = True
+        args.develop = False
+        args.name = "Test Node 1"
+        args.inst = "Test Inst 1"
+        args.flow = "Test Flow 1"
+        args.params = ""
+        args.message = "None"
+
+        node_thread = Thread(target=GDNode, args=(args, []), daemon=True)
+        node_thread.start()
+
+        time.sleep(3)
+        if os.path.exists("/tmp/output"):
+            os.remove("/tmp/output")
+
+        redisc = Redis()
+        redisc.db_local.publish("Var:context,ID:navigation_TX,Parameter:", "_id status")
+
+        time.sleep(0.5)
+
+        assert os.path.exists("/tmp/output")
+        os.remove("/tmp/output")
+
+        # start the transition, which should disable all other callbacks
+        redisc.db_local.publish("Var:context,ID:calibration_TX,Parameter:", "_id result")
+
+        assert not os.path.exists("/tmp/output")
+        # trigger the file creation callback again
+        redisc.db_local.publish("Var:context,ID:navigation_TX,Parameter:", "_id status")
+
+        time.sleep(10)
+
+        assert not os.path.exists("/tmp/output")
 
 
 if __name__ == "__main__":

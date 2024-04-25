@@ -40,7 +40,7 @@ class HealthNodeHandler(logging.handlers.HTTPHandler):
         self.url = parsed_uri.path
         self.method = "POST"
         self.secure = False
-        self.credentials = False
+        self.credentials = None
 
     def emit(self, record):
         """
@@ -53,7 +53,7 @@ class HealthNodeHandler(logging.handlers.HTTPHandler):
 
             i = host.find(":")
             if i >= 0:
-                port = host[i + 1 :]
+                port = int(host[i + 1 :])
                 host = host[:i]
 
             conn = http.client.HTTPConnection(host, port=port)
@@ -128,17 +128,14 @@ class Metrics:
         if tags:
             params["tags"] = Metrics.validate_tags(tags)
 
-        try:
-            response = requests.get(url, params=params, timeout=5)
-            response.raise_for_status()
-        except Exception as e:
-            raise e
+        response = requests.get(url, params=params, timeout=5)
+        response.raise_for_status()
 
         try:
             content = response.json()
         except Exception as e:
             logger = Log.get_logger("merrtix")
-            logger.error(message=str(e))
+            logger.error(msg=str(e))
             return []
         else:
             return content if pagination else content.get("data", [])
