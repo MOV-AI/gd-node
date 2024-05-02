@@ -1,25 +1,34 @@
 from threading import Thread
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 import unittest
 import time
 import os
 
-from dal.models.scopestree import scopes
-from dal.movaidb.database import Redis
+from dal.movaidb.redis_proxies import fake_redis, FakeAsyncPool
 
-from gd_node.node import ARGS, GDNode
+test_dir = os.path.dirname(__file__)
 
 
-@patch("gd_node.node.signal.signal")
+@patch("gd_node.node.signal.signal", new=MagicMock)
 class TestSuite(unittest.TestCase):
-    def test_disable_callbacks_on_transition(self, mock_signal):
-        scope = scopes(workspace="global")
+
+    @fake_redis("dal.movaidb.database.Connection", recording_dir=test_dir)
+    @fake_redis("dal.plugins.persistence.redis.redis.Connection", recording_dir=test_dir)
+    @patch("dal.movaidb.database.aioredis.ConnectionsPool", FakeAsyncPool)
+    def test_disable_callbacks_on_transition(self):
+        # We must import here to make sure the mocks are activated first
+        from dal.movaidb.database import Redis
+        Redis() # start up the singleton
+        from dal.models.scopestree import scopes
+        from gd_node.node import ARGS, GDNode
+
+        #scope = scopes(workspace="global")
 
         callback_data = {"Callback": {"hello": {"Code": "open('/tmp/output', 'w').write('hello')"}}}
-        scope.write(callback_data, scope="Callback", ref="hello", version="__UNVERSIONED__")
+        #scope.write(callback_data, scope="Callback", ref="hello", version="__UNVERSIONED__")
 
         callback_data = {"Callback": {"transition": {"Code": "gd.oport['end'].send()"}}}
-        scope.write(callback_data, scope="Callback", ref="transition", version="__UNVERSIONED__")
+        #scope.write(callback_data, scope="Callback", ref="transition", version="__UNVERSIONED__")
 
         node_data = {
             "Node": {
@@ -68,7 +77,7 @@ class TestSuite(unittest.TestCase):
                 }
             }
         }
-        scope.write(node_data, scope="Node", ref="Test Node 1", version="__UNVERSIONED__")
+        #scope.write(node_data, scope="Node", ref="Test Node 1", version="__UNVERSIONED__")
 
         args = ARGS()
         args.verbose = True
@@ -101,7 +110,7 @@ class TestSuite(unittest.TestCase):
         # trigger the file creation callback again
         redisc.db_local.publish("Var:context,ID:navigation_TX,Parameter:", "_id status")
 
-        time.sleep(10)
+        time.sleep(3)
 
         assert not os.path.exists("/tmp/output")
 

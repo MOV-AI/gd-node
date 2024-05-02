@@ -27,7 +27,7 @@ from dal.models.scopestree import scopes, ScopePropertyNode
 from dal.models.var import Var
 from dal.models.node import Node
 
-from gd_node.protocol import Iport, IportMovaiContextClient, Oport, Transports
+from gd_node.protocol import Iport, Oport, Transports
 from gd_node.user import GD_User
 
 LOGGER = Log.get_logger("spawner.mov.ai")
@@ -238,29 +238,29 @@ class GDNode:
         Args:
             ports_templates: Description
             ports_inst: Description
-            init: Description
+            init: if true, initialize INIT and TRANSITION ports, otherwise initialize the other ports
         """
         ongoing_creations: List[asyncio.Event] = []
 
-        for ports in ports_inst:
-            template = ports_templates[ports_inst[ports].Template]
+        for port_name in ports_inst:
+            template = ports_templates[ports_inst[port_name].Template]
 
-            for i in ports_inst[ports].In:
+            for i in ports_inst[port_name].In:
                 transport = template.In[i].Transport
                 protocol = template.In[i].Protocol
-                message = ports_inst[ports].In[i].Message
+                message = ports_inst[port_name].In[i].Message
                 # place_holder
-                callback = ports_inst[ports].In[i].Callback or self.__DEFAULT_CALLBACK__
-                params = ports_inst[ports].In[i].Parameter or {}
+                callback = ports_inst[port_name].In[i].Callback or self.__DEFAULT_CALLBACK__
+                params = ports_inst[port_name].In[i].Parameter or {}
 
                 for param in params:
                     params[param] = self.ports_params.get(
-                        "@" + param + "@" + i + "@" + ports, params[param]
+                        "@" + param + "@" + i + "@" + port_name, params[param]
                     )
 
                 _type = key = "/".join([transport, protocol])
-                _port_name = ports  # "/".join([ports, i])
-                _topic = "/".join([inst_name, ports, i])
+                _port_name = port_name  # "/".join([ports, i])
+                _topic = "/".join([inst_name, port_name, i])
                 config = {
                     "_node_name": inst_name,
                     "_port_name": _port_name,
@@ -348,7 +348,7 @@ class GDNode:
         # Then we start the oports
         await self.init_oports(self.inst_name, node_ports, self.node["PortsInst"], self.flow_name)
 
-        # Init all the Iports
+        # Init all the Iports except INIT and TRANSITION ports
         await self.init_iports(
             self.inst_name,
             node_ports,
@@ -361,7 +361,7 @@ class GDNode:
             # ros publishers sending stuff in the init need time to register..
             await asyncio.sleep(0.2)
 
-        # Then we run the initial callback
+        # Then we init the INIT and TRANSITION ports, which will run the initial callback
         await self.init_iports(self.inst_name, node_ports, self.node["PortsInst"], init=True)
         if not GD_User.is_transitioning:
 
