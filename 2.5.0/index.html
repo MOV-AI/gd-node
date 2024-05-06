@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to GD Node’s documentation! &mdash; GD Node  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="gd-node" href="readme.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="#" class="icon icon-home"> GD Node
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="readme.html">gd-node</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">gd-node</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">GD Node</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Welcome to GD Node’s documentation!</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="welcome-to-gd-node-s-documentation">
+<h1>Welcome to GD Node’s documentation!<a class="headerlink" href="#welcome-to-gd-node-s-documentation" title="Permalink to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+<section id="gd-node">
+<h1>gd-node<a class="headerlink" href="#gd-node" title="Permalink to this heading"></a></h1>
+<dl class="simple">
+<dt>The gd-node is an extendible and flexible node with the following features:</dt><dd><ol class="arabic simple">
+<li><p>Can activate ROS1, ROS2 and other protocols such as HTTP</p></li>
+<li><p>Allows for flexibility via callbacs that can be modified outside of the node</p></li>
+<li><p>Provide support for a GUI represintation of the node when building a Flow</p></li>
+</ol>
+</dd>
+</dl>
+<p>A gd-node is represented by a JSON configuration file
+A gd-node configuration has the following sections</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Info - Provide a general information about the node</p></li>
+<li><p>Parameters - Provide the nodes parameters and their default values</p></li>
+<li><dl class="simple">
+<dt>Ports Info - A list of the nodes’ ports</dt><dd><p>A port can be an in-port or an out-port
+In-port typically invoke a user define callback provided in the port configuration
+Each port represent a spesific protocol service e.g. ROS1 Publisher, ROS1 Service client …
+Each port is handeling a spesific message which is specified in the port configuration e.g. std_msgs/Float32 (ROS)</p>
+</dd>
+</dl>
+</li>
+</ol>
+</div></blockquote>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this heading"></a></h2>
+<p>GD node is build via the MOV.AI platform node editor
+GD node template can be customized for a spesific Flow requirement by modifying the default node template parameters
+GD node is used in the context of a flow in which multiple nodes are linked together to generate a desirable robot action
+GD node is created as a package and it is used by the Spawner container</p>
+<blockquote>
+<div><p>Prerequisites : The GD node depends on the DAL package</p>
+</div></blockquote>
+</section>
+<section id="build">
+<h2>Build<a class="headerlink" href="#build" title="Permalink to this heading"></a></h2>
+<p>The complete build process:</p>
+<ul class="simple">
+<li><p>a python module building step which will create a <code class="docutils literal notranslate"><span class="pre">.whl</span></code> file</p></li>
+</ul>
+</section>
+<section id="build-pip-module">
+<h2>build pip module<a class="headerlink" href="#build-pip-module" title="Permalink to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">rm</span> <span class="n">dist</span><span class="o">/*</span>
+<span class="n">python3</span> <span class="o">-</span><span class="n">m</span> <span class="n">build</span> <span class="o">.</span>
+</pre></div>
+</div>
+</section>
+<section id="install-pip-module-locally">
+<h2>install pip module locally<a class="headerlink" href="#install-pip-module-locally" title="Permalink to this heading"></a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="o">-</span><span class="n">m</span> <span class="n">venv</span> <span class="o">.</span><span class="n">testenv</span>
+<span class="n">source</span> <span class="o">.</span><span class="n">testenv</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">activate</span>
+<span class="n">python3</span> <span class="o">-</span><span class="n">m</span> <span class="n">pip</span> <span class="n">install</span> <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">cache</span><span class="o">-</span><span class="nb">dir</span> \
+<span class="o">--</span><span class="n">index</span><span class="o">-</span><span class="n">url</span><span class="o">=</span><span class="s2">&quot;https://artifacts.cloud.mov.ai/repository/pypi-experimental/simple&quot;</span> \
+<span class="o">--</span><span class="n">extra</span><span class="o">-</span><span class="n">index</span><span class="o">-</span><span class="n">url</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">pypi</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">simple</span> \
+<span class="o">./</span><span class="n">dist</span><span class="o">/*.</span><span class="n">whl</span>
+</pre></div>
+</div>
+<p>Possible environments:</p>
+<ul class="simple">
+<li><p>pypi-experimental (unstable and personal use)</p></li>
+<li><p>pypi-integration: Internally avaiable (stable. Where you should grab your dependencies from.)</p></li>
+<li><p>pypi-edge: Generally avaiable (Source for production purposes.)</p></li>
+</ul>
+<p>Write the following content into your pip.conf(<strong>~/.config/pip/pip.conf</strong>):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="k">global</span><span class="p">]</span>
+<span class="n">index</span><span class="o">-</span><span class="n">url</span> <span class="o">=</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">artifacts</span><span class="o">.</span><span class="n">cloud</span><span class="o">.</span><span class="n">mov</span><span class="o">.</span><span class="n">ai</span><span class="o">/</span><span class="n">repository</span><span class="o">/&lt;</span><span class="n">environment</span><span class="o">&gt;/</span><span class="n">simple</span>
+<span class="n">extra</span><span class="o">-</span><span class="n">index</span><span class="o">-</span><span class="n">url</span> <span class="o">=</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">pypi</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">simple</span>
+<span class="n">trusted</span><span class="o">-</span><span class="n">host</span> <span class="o">=</span> <span class="n">artifacts</span><span class="o">.</span><span class="n">cloud</span><span class="o">.</span><span class="n">mov</span><span class="o">.</span><span class="n">ai</span>
+               <span class="n">pypi</span><span class="o">.</span><span class="n">org</span>
+</pre></div>
+</div>
+</section>
+<section id="versioning-and-branching">
+<h2>Versioning and branching<a class="headerlink" href="#versioning-and-branching" title="Permalink to this heading"></a></h2>
+<p>The branches and meanings:</p>
+<ul class="simple">
+<li><p>branches derived from dev (feature/ or bugfix/): Its where developements should be introduced to. Its lifetime should be as should as the developments time.</p></li>
+<li><p>dev: The most recent version of the code should be here as its the source of the feature branches. The purpose of this branch is the first point of integration from all features.</p></li>
+<li><p>main/ main*: The branch where you will find the most stable version of the component. Its a “deploy” of dev version to an internal release. This deploy must create an artifact that is avaiable to all other teams to use it and provide feedback to it.</p></li>
+<li><p>branches derived from main (hotfix/): Its where your hotfixes should be implemented. Do not forget to propagate your hotfixes to the other release versions and the main development release line.</p></li>
+</ul>
+<a class="reference external image-reference" href="https://user-images.githubusercontent.com/84720623/137349613-368ea252-3c05-460c-8eef-20bb6c4b94f4.png"><img alt="Screenshot from 2021-10-14 16-29-53" src="https://user-images.githubusercontent.com/84720623/137349613-368ea252-3c05-460c-8eef-20bb6c4b94f4.png" /></a>
+<p>In terms of versioning, we basically use semantic versioning but with a 4th digit, automatic incremented by our CI systems:
+<strong>{Major}.{Minor}.{Patch}.{buildid}</strong></p>
+<p>If your component has a straight relation with a centralized system, we suggest keeping a relation with it in terms of major,minor and patch to ease support.</p>
+</section>
+<section id="testing">
+<h2>Testing<a class="headerlink" href="#testing" title="Permalink to this heading"></a></h2>
+<p>To run the tests locally, you simply execute:</p>
+<ul class="simple">
+<li><p>python3 -m pytest</p></li>
+</ul>
+</section>
+<section id="component-packaging">
+<h2>Component packaging<a class="headerlink" href="#component-packaging" title="Permalink to this heading"></a></h2>
+<p>The python component is packaged through the python module <strong>build</strong> and published by the twine <strong>framework</strong></p>
+<p>python3 -m build</p>
+<p>python3 -m twine upload -r nexus dist/*</p>
+</section>
+<section id="component-version-bumping">
+<h2>Component version bumping<a class="headerlink" href="#component-version-bumping" title="Permalink to this heading"></a></h2>
+<p>To bump the version you can use the <strong>bump2version</strong> framework. Simply in your repository root execute:</p>
+<p>bump2version <strong>&lt;version section&gt;</strong></p>
+<p>version section can be:</p>
+<ul class="simple">
+<li><p>major</p></li>
+<li><p>minor</p></li>
+<li><p>patch</p></li>
+</ul>
+<p>You don’t need to worry about the 4th digit, as the CI system does the automatic bump of it.</p>
+</section>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading"></a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="readme.html" class="btn btn-neutral float-right" title="gd-node" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, MOV.AI.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

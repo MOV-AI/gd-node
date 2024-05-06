@@ -1,0 +1,53 @@
+gd\_node.protocols.http package
+===============================
+
+Submodules
+----------
+
+gd\_node.protocols.http.http\_message module
+--------------------------------------------
+
+.. automodule:: gd_node.protocols.http.http_message
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+gd\_node.protocols.http.http\_route module
+------------------------------------------
+
+.. automodule:: gd_node.protocols.http.http_route
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+gd\_node.protocols.http.middleware module
+-----------------------------------------
+
+.. automodule:: gd_node.protocols.http.middleware
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+gd\_node.protocols.http.movai\_widget module
+--------------------------------------------
+
+.. automodule:: gd_node.protocols.http.movai_widget
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+gd\_node.protocols.http.web\_socket module
+------------------------------------------
+
+.. automodule:: gd_node.protocols.http.web_socket
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: gd_node.protocols.http
+   :members:
+   :undoc-members:
+   :show-inheritance:

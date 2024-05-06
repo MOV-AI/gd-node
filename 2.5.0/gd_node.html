@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gd_node package &mdash; GD Node  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="gd_node.protocols package" href="gd_node.protocols.html" />
+    <link rel="prev" title="gd-node" href="modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> GD Node
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="readme.html">gd-node</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">gd-node</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">gd_node package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gd_node.protocols.html">gd_node.protocols package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-gd_node.callback">gd_node.callback module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#gd_node.callback.GD_Callback"><code class="docutils literal notranslate"><span class="pre">GD_Callback</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gd_node.callback.UserFunctions"><code class="docutils literal notranslate"><span class="pre">UserFunctions</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-gd_node.message">gd_node.message module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#gd_node.message.GD_Message"><code class="docutils literal notranslate"><span class="pre">GD_Message</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gd_node.message.GD_Message2"><code class="docutils literal notranslate"><span class="pre">GD_Message2</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-gd_node.metrics">gd_node.metrics module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#gd_node.metrics.HealthNodeHandler"><code class="docutils literal notranslate"><span class="pre">HealthNodeHandler</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gd_node.metrics.Metrics"><code class="docutils literal notranslate"><span class="pre">Metrics</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#gd-node-node-module">gd_node.node module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gd-node-notifications-module">gd_node.notifications module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gd-node-protocol-module">gd_node.protocol module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-gd_node.shared">gd_node.shared module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#gd_node.shared.Shared"><code class="docutils literal notranslate"><span class="pre">Shared</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-gd_node.user">gd_node.user module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#gd_node.user.GD_User"><code class="docutils literal notranslate"><span class="pre">GD_User</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-gd_node">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">GD Node</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">gd-node</a></li>
+      <li class="breadcrumb-item active">gd_node package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/gd_node.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="gd-node-package">
+<h1>gd_node package<a class="headerlink" href="#gd-node-package" title="Permalink to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="gd_node.protocols.html">gd_node.protocols package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gd_node.protocols.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gd_node.protocols.http.html">gd_node.protocols.http package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gd_node.protocols.http.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gd_node.protocols.http.html#module-gd_node.protocols.http.http_message">gd_node.protocols.http.http_message module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gd_node.protocols.http.html#module-gd_node.protocols.http.http_route">gd_node.protocols.http.http_route module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gd_node.protocols.http.html#module-gd_node.protocols.http.middleware">gd_node.protocols.http.middleware module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gd_node.protocols.http.html#module-gd_node.protocols.http.movai_widget">gd_node.protocols.http.movai_widget module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gd_node.protocols.http.html#module-gd_node.protocols.http.web_socket">gd_node.protocols.http.web_socket module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gd_node.protocols.http.html#module-gd_node.protocols.http">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gd_node.protocols.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gd_node.protocols.html#module-gd_node.protocols.base">gd_node.protocols.base module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gd_node.protocols.html#gd_node.protocols.base.BaseIport"><code class="docutils literal notranslate"><span class="pre">BaseIport</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="gd_node.protocols.html#gd_node.protocols.base.BaseIport.callback"><code class="docutils literal notranslate"><span class="pre">BaseIport.callback()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gd_node.protocols.html#gd_node.protocols.base.BaseIport.register"><code class="docutils literal notranslate"><span class="pre">BaseIport.register()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="gd_node.protocols.html#gd_node.protocols.base.BaseIport.unregister"><code class="docutils literal notranslate"><span class="pre">BaseIport.unregister()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gd_node.protocols.html#gd_node.protocols.base.BaseOport"><code class="docutils literal notranslate"><span class="pre">BaseOport</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gd_node.protocols.html#gd-node-protocols-movai-module">gd_node.protocols.movai module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gd_node.protocols.html#gd-node-protocols-ros1-module">gd_node.protocols.ros1 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gd_node.protocols.html#gd-node-protocols-ros2-module">gd_node.protocols.ros2 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gd_node.protocols.html#module-gd_node.protocols">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-gd_node.callback">
+<span id="gd-node-callback-module"></span><h2>gd_node.callback module<a class="headerlink" href="#module-gd_node.callback" title="Permalink to this heading"></a></h2>
+<p>Copyright (C) Mov.ai  - All Rights Reserved
+Unauthorized copying of this file, via any medium is strictly prohibited
+Proprietary and confidential</p>
+<p>Developers:
+- Manuel Silva (<a class="reference external" href="mailto:manuel&#46;silva&#37;&#52;&#48;mov&#46;ai">manuel<span>&#46;</span>silva<span>&#64;</span>mov<span>&#46;</span>ai</a>) - 2020
+- Tiago Paulino (<a class="reference external" href="mailto:tiago&#37;&#52;&#48;mov&#46;ai">tiago<span>&#64;</span>mov<span>&#46;</span>ai</a>) - 2020</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="gd_node.callback.GD_Callback">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gd_node.callback.</span></span><span class="sig-name descname"><span class="pre">GD_Callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_cb_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_node_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_port_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_update</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.callback.GD_Callback" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Callback class used by GD_Node to execute code</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_cb_name</strong> – The name of the callback</p></li>
+<li><p><strong>_node_name</strong> – The name of the node instance</p></li>
+<li><p><strong>_port_name</strong> – The name of the input port</p></li>
+<li><p><strong>_update</strong> – Real time update of the callback code</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.callback.GD_Callback.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#gd_node.callback.GD_Callback.execute" title="Permalink to this definition"></a></dt>
+<dd><p>Executes the code</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>msg</strong> – Message received in the callback</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.callback.GD_Callback.start">
+<span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">globais</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.callback.GD_Callback.start" title="Permalink to this definition"></a></dt>
+<dd><p>Executes the code</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>msg</strong> – Message received in the callback</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gd_node.callback.UserFunctions">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gd_node.callback.</span></span><span class="sig-name descname"><span class="pre">UserFunctions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_cb_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_node_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_port_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_libraries</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'SUPER'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.callback.UserFunctions" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class that provides functions to the callback execution</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.callback.UserFunctions.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cb_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.callback.UserFunctions.run" title="Permalink to this definition"></a></dt>
+<dd><p>Run another callback from a callback</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.callback.UserFunctions.user_print">
+<span class="sig-name descname"><span class="pre">user_print</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.callback.UserFunctions.user_print" title="Permalink to this definition"></a></dt>
+<dd><p>Method to redirect the print function into logger</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-gd_node.message">
+<span id="gd-node-message-module"></span><h2>gd_node.message module<a class="headerlink" href="#module-gd_node.message" title="Permalink to this heading"></a></h2>
+<p>Copyright (C) Mov.ai  - All Rights Reserved
+Unauthorized copying of this file, via any medium is strictly prohibited
+Proprietary and confidential</p>
+<p>Developers:
+- Manuel Silva (<a class="reference external" href="mailto:manuel&#46;silva&#37;&#52;&#48;mov&#46;ai">manuel<span>&#46;</span>silva<span>&#64;</span>mov<span>&#46;</span>ai</a>) - 2020
+- Tiago Paulino (<a class="reference external" href="mailto:tiago&#37;&#52;&#48;mov&#46;ai">tiago<span>&#64;</span>mov<span>&#46;</span>ai</a>) - 2020</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="gd_node.message.GD_Message">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gd_node.message.</span></span><span class="sig-name descname"><span class="pre">GD_Message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'msg'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.message.GD_Message" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class that imports and make available all Messages, Services
+and Actions for the GD_Node</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_name</strong> – package/message_name</p></li>
+<li><p><strong>_type</strong> – Available types are: msg, srv, action</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>Exception</strong> – Message does not exist</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.message.GD_Message.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.message.GD_Message.get" title="Permalink to this definition"></a></dt>
+<dd><p>Method that returns the message</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Any</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>TYPE</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.message.GD_Message.get_srv">
+<span class="sig-name descname"><span class="pre">get_srv</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.message.GD_Message.get_srv" title="Permalink to this definition"></a></dt>
+<dd><p>Method that returns the full service</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Any</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>TYPE</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gd_node.message.GD_Message2">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gd_node.message.</span></span><span class="sig-name descname"><span class="pre">GD_Message2</span></span><a class="headerlink" href="#gd_node.message.GD_Message2" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class that makes available all Messages and Services from ROS1, ROS2 and Redis to the GD_Node</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_name</strong> – package/message_name</p></li>
+<li><p><strong>_type</strong> – Available types are: msg, srv, action</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>Exception</strong> – Message does not exist</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.message.GD_Message2.get_ros1_msg">
+<span class="sig-name descname"><span class="pre">get_ros1_msg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="headerlink" href="#gd_node.message.GD_Message2.get_ros1_msg" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a Ros1 msg class</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.message.GD_Message2.get_ros1_srv">
+<span class="sig-name descname"><span class="pre">get_ros1_srv</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.message.GD_Message2.get_ros1_srv" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.message.GD_Message2.get_ros2_msg">
+<span class="sig-name descname"><span class="pre">get_ros2_msg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="headerlink" href="#gd_node.message.GD_Message2.get_ros2_msg" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a Ros2 msg class. Accepts string with package/message
+and ROS1/ROS2 message class instance</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.message.GD_Message2.get_ros2_srv">
+<span class="sig-name descname"><span class="pre">get_ros2_srv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="headerlink" href="#gd_node.message.GD_Message2.get_ros2_srv" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a Ros2 srv class. Accepts string with package/service
+and ROS1/ROS2 service Request/Responce class instance</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-gd_node.metrics">
+<span id="gd-node-metrics-module"></span><h2>gd_node.metrics module<a class="headerlink" href="#module-gd_node.metrics" title="Permalink to this heading"></a></h2>
+<p>Copyright (C) Mov.ai  - All Rights Reserved
+Unauthorized copying of this file, via any medium is strictly prohibited
+Proprietary and confidential</p>
+<p>Developers:
+- Telmo Martinho (<a class="reference external" href="mailto:telmo&#46;martinho&#37;&#52;&#48;mov&#46;ai">telmo<span>&#46;</span>martinho<span>&#64;</span>mov<span>&#46;</span>ai</a>) - 2020</p>
+<p>Usage:</p>
+<blockquote>
+<div><p>from libraries import Metrics
+metrics_a = Metrics(&lt;name&gt;)</p>
+<p>metrics_a.add(&lt;value&gt;, tags=[&lt;string&gt;, &lt;string&gt;,…])
+– or –
+metrics_a.log(&lt;value&gt;, tags=[&lt;string&gt;, &lt;string&gt;,…])</p>
+</div></blockquote>
+<dl class="py class">
+<dt class="sig sig-object py" id="gd_node.metrics.HealthNodeHandler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gd_node.metrics.</span></span><span class="sig-name descname"><span class="pre">HealthNodeHandler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.metrics.HealthNodeHandler" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">HTTPHandler</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.metrics.HealthNodeHandler.emit">
+<span class="sig-name descname"><span class="pre">emit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.metrics.HealthNodeHandler.emit" title="Permalink to this definition"></a></dt>
+<dd><p>Emit a record.
+Send the record to the HealthNode API</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gd_node.metrics.Metrics">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gd_node.metrics.</span></span><span class="sig-name descname"><span class="pre">Metrics</span></span><a class="headerlink" href="#gd_node.metrics.Metrics" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.metrics.Metrics.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.metrics.Metrics.add" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.metrics.Metrics.get_metrics">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pagination</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.metrics.Metrics.get_metrics" title="Permalink to this definition"></a></dt>
+<dd><p>Get Metrics from HealthNode</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.metrics.Metrics.validate_fields">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_fields</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.metrics.Metrics.validate_fields" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.metrics.Metrics.validate_limit">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_limit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.metrics.Metrics.validate_limit" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.metrics.Metrics.validate_message">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.metrics.Metrics.validate_message" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.metrics.Metrics.validate_name">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.metrics.Metrics.validate_name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.metrics.Metrics.validate_tags">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_tags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.metrics.Metrics.validate_tags" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="gd-node-node-module">
+<h2>gd_node.node module<a class="headerlink" href="#gd-node-node-module" title="Permalink to this heading"></a></h2>
+</section>
+<section id="gd-node-notifications-module">
+<h2>gd_node.notifications module<a class="headerlink" href="#gd-node-notifications-module" title="Permalink to this heading"></a></h2>
+</section>
+<section id="gd-node-protocol-module">
+<h2>gd_node.protocol module<a class="headerlink" href="#gd-node-protocol-module" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-gd_node.shared">
+<span id="gd-node-shared-module"></span><h2>gd_node.shared module<a class="headerlink" href="#module-gd_node.shared" title="Permalink to this heading"></a></h2>
+<p>Copyright (C) Mov.ai  - All Rights Reserved
+Unauthorized copying of this file, via any medium is strictly prohibited
+Proprietary and confidential</p>
+<p>Developers:
+- Manuel Silva (<a class="reference external" href="mailto:manuel&#46;silva&#37;&#52;&#48;mov&#46;ai">manuel<span>&#46;</span>silva<span>&#64;</span>mov<span>&#46;</span>ai</a>) - 2020
+- Tiago Paulino (<a class="reference external" href="mailto:tiago&#37;&#52;&#48;mov&#46;ai">tiago<span>&#64;</span>mov<span>&#46;</span>ai</a>) - 2020</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="gd_node.shared.Shared">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gd_node.shared.</span></span><span class="sig-name descname"><span class="pre">Shared</span></span><a class="headerlink" href="#gd_node.shared.Shared" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Shared class implements thread safe local storage</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.shared.Shared.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.shared.Shared.delete" title="Permalink to this definition"></a></dt>
+<dd><p>Same as delattr</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.shared.Shared.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.shared.Shared.get" title="Permalink to this definition"></a></dt>
+<dd><p>Same as getattr</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gd_node.shared.Shared.lock">
+<span class="sig-name descname"><span class="pre">lock</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;unlocked</span> <span class="pre">_thread.RLock</span> <span class="pre">object</span> <span class="pre">owner=0</span> <span class="pre">count=0&gt;</span></em><a class="headerlink" href="#gd_node.shared.Shared.lock" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.shared.Shared.set">
+<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.shared.Shared.set" title="Permalink to this definition"></a></dt>
+<dd><p>Same as setattr</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gd_node.shared.Shared.store">
+<span class="sig-name descname"><span class="pre">store</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#gd_node.shared.Shared.store" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-gd_node.user">
+<span id="gd-node-user-module"></span><h2>gd_node.user module<a class="headerlink" href="#module-gd_node.user" title="Permalink to this heading"></a></h2>
+<p>Copyright (C) Mov.ai  - All Rights Reserved
+Unauthorized copying of this file, via any medium is strictly prohibited
+Proprietary and confidential</p>
+<p>Developers:
+- Manuel Silva (<a class="reference external" href="mailto:manuel&#46;silva&#37;&#52;&#48;mov&#46;ai">manuel<span>&#46;</span>silva<span>&#64;</span>mov<span>&#46;</span>ai</a>) - 2020
+- Tiago Paulino (<a class="reference external" href="mailto:tiago&#37;&#52;&#48;mov&#46;ai">tiago<span>&#64;</span>mov<span>&#46;</span>ai</a>) - 2020</p>
+<blockquote>
+<div><p>Module to store and give access to GD_Node
+Iports, Oports and Parameters during runtime</p>
+</div></blockquote>
+<dl class="py class">
+<dt class="sig sig-object py" id="gd_node.user.GD_User">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gd_node.user.</span></span><span class="sig-name descname"><span class="pre">GD_User</span></span><a class="headerlink" href="#gd_node.user.GD_User" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>User class</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gd_node.user.GD_User.iport">
+<span class="sig-name descname"><span class="pre">iport</span></span><a class="headerlink" href="#gd_node.user.GD_User.iport" title="Permalink to this definition"></a></dt>
+<dd><p>Input ports of the node</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gd_node.user.GD_User.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#gd_node.user.GD_User.name" title="Permalink to this definition"></a></dt>
+<dd><p>Name of the node instance</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gd_node.user.GD_User.oport">
+<span class="sig-name descname"><span class="pre">oport</span></span><a class="headerlink" href="#gd_node.user.GD_User.oport" title="Permalink to this definition"></a></dt>
+<dd><p>Output ports of the node</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gd_node.user.GD_User.params">
+<span class="sig-name descname"><span class="pre">params</span></span><a class="headerlink" href="#gd_node.user.GD_User.params" title="Permalink to this definition"></a></dt>
+<dd><p>Parameters of the node instance</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">iport</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#id0" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gd_node.user.GD_User.is_transitioning">
+<span class="sig-name descname"><span class="pre">is_transitioning</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#gd_node.user.GD_User.is_transitioning" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#id1" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">oport</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#id2" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">params</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#id3" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.user.GD_User.send">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.user.GD_User.send" title="Permalink to this definition"></a></dt>
+<dd><p>Making send function easy to write</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gd_node.user.GD_User.template">
+<span class="sig-name descname"><span class="pre">template</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#gd_node.user.GD_User.template" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-gd_node">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-gd_node" title="Permalink to this heading"></a></h2>
+<p>Copyright (C) Mov.ai  - All Rights Reserved
+Unauthorized copying of this file, via any medium is strictly prohibited
+Proprietary and confidential</p>
+<p>Developers:
+- Alexandre Pires  (<a class="reference external" href="mailto:alexandre&#46;pires&#37;&#52;&#48;mov&#46;ai">alexandre<span>&#46;</span>pires<span>&#64;</span>mov<span>&#46;</span>ai</a>) - 2020</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="modules.html" class="btn btn-neutral float-left" title="gd-node" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="gd_node.protocols.html" class="btn btn-neutral float-right" title="gd_node.protocols package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, MOV.AI.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

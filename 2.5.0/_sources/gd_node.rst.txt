@@ -1,0 +1,85 @@
+gd\_node package
+================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   gd_node.protocols
+
+Submodules
+----------
+
+gd\_node.callback module
+------------------------
+
+.. automodule:: gd_node.callback
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+gd\_node.message module
+-----------------------
+
+.. automodule:: gd_node.message
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+gd\_node.metrics module
+-----------------------
+
+.. automodule:: gd_node.metrics
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+gd\_node.node module
+--------------------
+
+.. automodule:: gd_node.node
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+gd\_node.notifications module
+-----------------------------
+
+.. automodule:: gd_node.notifications
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+gd\_node.protocol module
+------------------------
+
+.. automodule:: gd_node.protocol
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+gd\_node.shared module
+----------------------
+
+.. automodule:: gd_node.shared
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+gd\_node.user module
+--------------------
+
+.. automodule:: gd_node.user
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: gd_node
+   :members:
+   :undoc-members:
+   :show-inheritance:
