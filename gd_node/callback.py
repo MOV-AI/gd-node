@@ -52,7 +52,7 @@ try:
     from movai_core_enterprise.message_client_handlers.metrics import Metrics
 
     enterprise = True
-except ImportError:
+except ModuleNotFoundError:
     enterprise = False
 
 LOGGER = LogAdapter(Log.get_logger("spawner.mov.ai"))
