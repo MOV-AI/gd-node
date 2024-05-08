@@ -4,7 +4,7 @@ import unittest
 import time
 import os
 
-from dal.movaidb.redis_proxies import fake_redis, FakeAsyncPool
+from dal.utils.redis_mocks import fake_redis, FakeAsyncPool
 
 test_dir = os.path.dirname(__file__)
 
