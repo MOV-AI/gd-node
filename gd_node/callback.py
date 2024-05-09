@@ -68,8 +68,8 @@ class GD_Callback:
         _update: Real time update of the callback code
     """
 
-    _robot: Optional[Robot] = None
-    _scene: Optional[GraphicScene] = None
+    _robot: Optional["Robot"] = None
+    _scene: Optional["GraphicScene"] = None
 
     def __init__(
         self, _cb_name: str, _node_name: str, _port_name: str, _update: bool = False
