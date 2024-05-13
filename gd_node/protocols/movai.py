@@ -342,7 +342,7 @@ class ContextServerIn(BaseIport):
         self.stack = _params.get("Namespace", "")
 
         self.loop = asyncio.get_event_loop()
-        self.loop.run_until_complete(self.register_sub())
+        self.loop.create_task(self.register_sub())
 
     async def register_sub(self) -> asyncio.Event:
         """Subscribe to key."""
