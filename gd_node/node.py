@@ -73,7 +73,6 @@ class GDNode:
 
     def handle_exception(self, loop, context):
         msg = context.get("exception", context["message"])
-        LOGGER.error(f"YEP SOU EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU")
         LOGGER.error(f"{self.inst_name}: {msg}")
 
     async def connect(self) -> None:
@@ -368,6 +367,7 @@ class GDNode:
 
             signal.signal(signal.SIGINT, CoreInterruptHandler)
             signal.signal(signal.SIGTERM, CoreInterruptHandler)
+            signal.signal(signal.SIGKILL, CoreInterruptHandler)
             await type(self).RUNNING.wait()
 
             await self.stop()
