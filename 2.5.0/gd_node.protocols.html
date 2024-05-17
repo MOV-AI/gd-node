@@ -220,8 +220,242 @@ Proprietary and confidential</p>
 </dd></dl>
 
 </section>
-<section id="gd-node-protocols-movai-module">
-<h2>gd_node.protocols.movai module<a class="headerlink" href="#gd-node-protocols-movai-module" title="Permalink to this heading"></a></h2>
+<section id="module-gd_node.protocols.movai">
+<span id="gd-node-protocols-movai-module"></span><h2>gd_node.protocols.movai module<a class="headerlink" href="#module-gd_node.protocols.movai" title="Permalink to this heading"></a></h2>
+<p>Copyright (C) Mov.ai  - All Rights Reserved
+Unauthorized copying of this file, via any medium is strictly prohibited
+Proprietary and confidential</p>
+<p>Developers:
+- Manuel Silva (<a class="reference external" href="mailto:manuel&#46;silva&#37;&#52;&#48;mov&#46;ai">manuel<span>&#46;</span>silva<span>&#64;</span>mov<span>&#46;</span>ai</a>) - 2020
+- Tiago Paulino (<a class="reference external" href="mailto:tiago&#37;&#52;&#48;mov&#46;ai">tiago<span>&#64;</span>mov<span>&#46;</span>ai</a>) - 2020</p>
+<blockquote>
+<div><p>Module that implements specific Mov.AI protocol to deal with GD_Nodes</p>
+</div></blockquote>
+<dl class="py class">
+<dt class="sig sig-object py" id="gd_node.protocols.movai.ContextClientIn">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gd_node.protocols.movai.</span></span><span class="sig-name descname"><span class="pre">ContextClientIn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_node_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_port_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_topic</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_callback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_update</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">_ignore</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.protocols.movai.ContextClientIn" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gd_node.protocols.base.BaseIport" title="gd_node.protocols.base.BaseIport"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseIport</span></code></a></p>
+<dl class="simple">
+<dt>Class that implements the Client Context comunication in the GD_Node</dt><dd><p>Is subscribed to a redis hash (param)</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_node_name</strong> – Name of the node instance</p></li>
+<li><p><strong>_iport_name</strong> – Name of the port</p></li>
+<li><p><strong>_cb_name</strong> – Name of the callback to be executed</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.protocols.movai.ContextClientIn.callback">
+<span class="sig-name descname"><span class="pre">callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.protocols.movai.ContextClientIn.callback" title="Permalink to this definition"></a></dt>
+<dd><p>Executes callback</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.protocols.movai.ContextClientIn.is_port_subscribed">
+<span class="sig-name descname"><span class="pre">is_port_subscribed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.protocols.movai.ContextClientIn.is_port_subscribed" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.protocols.movai.ContextClientIn.register_sub">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">register_sub</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_port_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_node_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#gd_node.protocols.movai.ContextClientIn.register_sub" title="Permalink to this definition"></a></dt>
+<dd><p>Subscribe to key.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gd_node.protocols.movai.ContextClientOut">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gd_node.protocols.movai.</span></span><span class="sig-name descname"><span class="pre">ContextClientOut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_node_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_oport_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.protocols.movai.ContextClientOut" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class that implements Client Context comunication in the GD_Node</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.protocols.movai.ContextClientOut.send">
+<span class="sig-name descname"><span class="pre">send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.protocols.movai.ContextClientOut.send" title="Permalink to this definition"></a></dt>
+<dd><p>Send function</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gd_node.protocols.movai.ContextMsg">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gd_node.protocols.movai.</span></span><span class="sig-name descname"><span class="pre">ContextMsg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">changed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.protocols.movai.ContextMsg" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Message for Context
+data -&gt; dictionary of full context table
+changed -&gt; dictionary only of values changed</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gd_node.protocols.movai.ContextServerIn">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gd_node.protocols.movai.</span></span><span class="sig-name descname"><span class="pre">ContextServerIn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_node_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_port_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_topic</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_callback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_update</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">_ignore</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.protocols.movai.ContextServerIn" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gd_node.protocols.base.BaseIport" title="gd_node.protocols.base.BaseIport"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseIport</span></code></a></p>
+<dl class="simple">
+<dt>Class that implements the Server Context comunication in the GD_Node</dt><dd><p>Is subscribed to a redis hash (param)</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_node_name</strong> – Name of the node instance</p></li>
+<li><p><strong>_iport_name</strong> – Name of the port</p></li>
+<li><p><strong>_cb_name</strong> – Name of the callback to be executed</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.protocols.movai.ContextServerIn.callback">
+<span class="sig-name descname"><span class="pre">callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.protocols.movai.ContextServerIn.callback" title="Permalink to this definition"></a></dt>
+<dd><p>Executes callback</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.protocols.movai.ContextServerIn.register_sub">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">register_sub</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_port_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_node_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#gd_node.protocols.movai.ContextServerIn.register_sub" title="Permalink to this definition"></a></dt>
+<dd><p>Subscribe to key.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gd_node.protocols.movai.ContextServerOut">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gd_node.protocols.movai.</span></span><span class="sig-name descname"><span class="pre">ContextServerOut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_node_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_oport_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.protocols.movai.ContextServerOut" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class that implements Client Context comunication in the GD_Node</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.protocols.movai.ContextServerOut.send">
+<span class="sig-name descname"><span class="pre">send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.protocols.movai.ContextServerOut.send" title="Permalink to this definition"></a></dt>
+<dd><p>Send function</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gd_node.protocols.movai.Exit">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gd_node.protocols.movai.</span></span><span class="sig-name descname"><span class="pre">Exit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_node_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_port_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_topic</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_callback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">_ignore</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.protocols.movai.Exit" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gd_node.protocols.base.BaseIport" title="gd_node.protocols.base.BaseIport"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseIport</span></code></a></p>
+<p>Class that implements the exit callback of the GD_Node</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_node_name</strong> – Name of the node instance</p></li>
+<li><p><strong>_iport_name</strong> – Name of the port</p></li>
+<li><p><strong>_cb_name</strong> – Name of the callback to be executed</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.protocols.movai.Exit.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.protocols.movai.Exit.execute" title="Permalink to this definition"></a></dt>
+<dd><p>Executes exit callback</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.protocols.movai.Exit.unregister">
+<span class="sig-name descname"><span class="pre">unregister</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.protocols.movai.Exit.unregister" title="Permalink to this definition"></a></dt>
+<dd><p>Disables the iport</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gd_node.protocols.movai.Init">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gd_node.protocols.movai.</span></span><span class="sig-name descname"><span class="pre">Init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_node_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_port_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_callback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">_ignore</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.protocols.movai.Init" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gd_node.protocols.base.BaseIport" title="gd_node.protocols.base.BaseIport"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseIport</span></code></a></p>
+<p>Class that implements the init callback of the GD_Node</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_node_name</strong> – Name of the node instance</p></li>
+<li><p><strong>_iport_name</strong> – Name of the port</p></li>
+<li><p><strong>_cb_name</strong> – Name of the callback to be executed</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gd_node.protocols.movai.StateMachineProtocol">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gd_node.protocols.movai.</span></span><span class="sig-name descname"><span class="pre">StateMachineProtocol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_node_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_port_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_topic</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_message</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_callback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">_ignore</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.protocols.movai.StateMachineProtocol" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gd_node.protocols.base.BaseIport" title="gd_node.protocols.base.BaseIport"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseIport</span></code></a></p>
+<p>Class that implements a state machine inside a GD_Node</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.protocols.movai.StateMachineProtocol.callback">
+<span class="sig-name descname"><span class="pre">callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#gd_node.protocols.movai.StateMachineProtocol.callback" title="Permalink to this definition"></a></dt>
+<dd><p>Executes the callback if port is enabled</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.protocols.movai.StateMachineProtocol.change_state">
+<span class="sig-name descname"><span class="pre">change_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.protocols.movai.StateMachineProtocol.change_state" title="Permalink to this definition"></a></dt>
+<dd><p>Change from current state to next one according to port called</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.protocols.movai.StateMachineProtocol.get_state">
+<span class="sig-name descname"><span class="pre">get_state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.protocols.movai.StateMachineProtocol.get_state" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the current state</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.protocols.movai.StateMachineProtocol.register_sub">
+<em class="property"><span class="pre">async</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">register_sub</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">loop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">sub_dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.protocols.movai.StateMachineProtocol.register_sub" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.protocols.movai.StateMachineProtocol.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.protocols.movai.StateMachineProtocol.run" title="Permalink to this definition"></a></dt>
+<dd><p>Executes the callback of the current state</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.protocols.movai.StateMachineProtocol.set_state">
+<span class="sig-name descname"><span class="pre">set_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.protocols.movai.StateMachineProtocol.set_state" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the current state</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gd_node.protocols.movai.Transition">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gd_node.protocols.movai.</span></span><span class="sig-name descname"><span class="pre">Transition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_node_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_oport_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_flow_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.protocols.movai.Transition" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Method for changing between GD_Nodes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_node_name</strong> – Name of the node instance</p></li>
+<li><p><strong>_oport_name</strong> – Name of the port</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="gd_node.protocols.movai.Transition.send">
+<span class="sig-name descname"><span class="pre">send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#gd_node.protocols.movai.Transition.send" title="Permalink to this definition"></a></dt>
+<dd><p>Send function</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gd_node.protocols.movai.TransitionIn">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gd_node.protocols.movai.</span></span><span class="sig-name descname"><span class="pre">TransitionIn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_node_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_port_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_callback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_data</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">_ignore</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gd_node.protocols.movai.TransitionIn" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gd_node.protocols.base.BaseIport" title="gd_node.protocols.base.BaseIport"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseIport</span></code></a></p>
+<p>Class that implements the transition callback of the state GD_Node</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_node_name</strong> – Name of the node instance</p></li>
+<li><p><strong>_iport_name</strong> – Name of the port</p></li>
+<li><p><strong>_cb_name</strong> – Name of the callback to be executed</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="gd-node-protocols-ros1-module">
 <h2>gd_node.protocols.ros1 module<a class="headerlink" href="#gd-node-protocols-ros1-module" title="Permalink to this heading"></a></h2>
