@@ -268,105 +268,108 @@ class GDNode:
 
     async def main(self, args, unknown) -> None:
         """Runs the main loop. Exiting stops GDNode"""
+        try:
+            type(self).RUNNING = asyncio.Event()
+            # connect databases
+            await self.connect()
 
-        type(self).RUNNING = asyncio.Event()
-        # connect databases
-        await self.connect()
+            # self.robot = Robot()
+            GD_User.name = self.inst_name
+            GD_User.template = self.node_name
 
-        # self.robot = Robot()
-        GD_User.name = self.inst_name
-        GD_User.template = self.node_name
+            self.node = scopes.from_path(self.node_name, scope="Node")
 
-        self.node = scopes.from_path(self.node_name, scope="Node")
+            # set db    client name
+            # await self.databases.db_global.client_setname(self.robot.RobotName + '_' + self.inst_name)
+            # await self.databases.db_slave.client_setname(self.inst_name)
+            # await self.databases.db_local.client_setname(self.inst_name)
 
-        # set db    client name
-        # await self.databases.db_global.client_setname(self.robot.RobotName + '_' + self.inst_name)
-        # await self.databases.db_slave.client_setname(self.inst_name)
-        # await self.databases.db_local.client_setname(self.inst_name)
+            inst_params = {}
+            if args.params:
+                parameters = args.params.split('"', 1)[1].rsplit('"', 1)[0]
+                for param in parameters.split(";"):
+                    key, value = param.split(":=")
+                    try:
+                        value = ast.literal_eval(value)
+                    except:
+                        pass
+                    inst_params[key] = value
 
-        inst_params = {}
-        if args.params:
-            parameters = args.params.split('"', 1)[1].rsplit('"', 1)[0]
-            for param in parameters.split(";"):
-                key, value = param.split(":=")
+            self.initial_print(self.inst_name, self.node_name, inst_params)
+
+            # params are available all over the node as gd.params['name']
+            for param in self.node.Parameter:
+                value = inst_params.get(param, self.node["Parameter"][param]["Value"])
                 try:
+                    if isinstance(value, ScopePropertyNode):
+                        value = value.value
                     value = ast.literal_eval(value)
                 except:
                     pass
-                inst_params[key] = value
+                pattern = r"^@[a-zA-Z_0-9-.]+(@[a-zA-Z_0-9-]+)(@[a-zA-Z_0-9-.]+)$"
+                if not re.match(pattern, param):
+                    GD_User.params[param] = value
+                else:
+                    self.ports_params.update({param: value})
 
-        self.initial_print(self.inst_name, self.node_name, inst_params)
+            node_ports = {}
+            for ports in self.node.PortsInst:
+                ports_name = self.node.PortsInst[ports].Template
+                node_ports[ports_name] = scopes.from_path(ports_name, scope="Ports")
 
-        # params are available all over the node as gd.params['name']
-        for param in self.node.Parameter:
-            value = inst_params.get(param, self.node["Parameter"][param]["Value"])
-            try:
-                if isinstance(value, ScopePropertyNode):
-                    value = value.value
-                value = ast.literal_eval(value)
-            except:
-                pass
-            pattern = r"^@[a-zA-Z_0-9-.]+(@[a-zA-Z_0-9-]+)(@[a-zA-Z_0-9-.]+)$"
-            if not re.match(pattern, param):
-                GD_User.params[param] = value
-            else:
-                self.ports_params.update({param: value})
+            # Transition message
+            trans_msg = None
+            if args.message is not None:
+                temp_msg = eval(args.message)
+                if temp_msg is not None:
+                    trans_msg = pickle.loads(temp_msg)
 
-        node_ports = {}
-        for ports in self.node.PortsInst:
-            ports_name = self.node.PortsInst[ports].Template
-            node_ports[ports_name] = scopes.from_path(ports_name, scope="Ports")
+            # Initialize each of the transports
+            await self.init_transports(
+                self.node_name, self.inst_name, node_ports, self.transports, unknown
+            )
 
-        # Transition message
-        trans_msg = None
-        if args.message is not None:
-            temp_msg = eval(args.message)
-            if temp_msg is not None:
-                trans_msg = pickle.loads(temp_msg)
+            # Then we start the oports
+            await self.init_oports(self.inst_name, node_ports, self.node["PortsInst"], self.flow_name)
 
-        # Initialize each of the transports
-        await self.init_transports(
-            self.node_name, self.inst_name, node_ports, self.transports, unknown
-        )
+            # Init all the Iports
+            await self.init_iports(
+                self.inst_name,
+                node_ports,
+                self.node["PortsInst"],
+                init=False,
+                transition_data=trans_msg,
+            )
 
-        # Then we start the oports
-        await self.init_oports(self.inst_name, node_ports, self.node["PortsInst"], self.flow_name)
+            if self.transports["ROS1"]:
+                # ros publishers sending stuff in the init need time to register..
+                await asyncio.sleep(0.2)
 
-        # Init all the Iports
-        await self.init_iports(
-            self.inst_name,
-            node_ports,
-            self.node["PortsInst"],
-            init=False,
-            transition_data=trans_msg,
-        )
+            # Then we run the initial callback
+            await self.init_iports(self.inst_name, node_ports, self.node["PortsInst"], init=True)
+            if not GD_User.is_transitioning:
 
-        if self.transports["ROS1"]:
-            # ros publishers sending stuff in the init need time to register..
-            await asyncio.sleep(0.2)
+                # And finally we enable the iports
+                for iport in GD_User.iport:
+                    try:
+                        if GD_User.iport[iport].start_enabled:
+                            GD_User.iport[iport].register()
+                    except AttributeError:
+                        pass
 
-        # Then we run the initial callback
-        await self.init_iports(self.inst_name, node_ports, self.node["PortsInst"], init=True)
-        if not GD_User.is_transitioning:
+                # Start servers only after all routes were added
+                if self.transports["Http"]:
+                    Transports.get("Http").start()
 
-            # And finally we enable the iports
-            for iport in GD_User.iport:
-                try:
-                    if GD_User.iport[iport].start_enabled:
-                        GD_User.iport[iport].register()
-                except AttributeError:
-                    pass
+            start_time = time.time() - TIME_0
 
-            # Start servers only after all routes were added
-            if self.transports["Http"]:
-                Transports.get("Http").start()
+            LOGGER.info('Full time to init the GD_Node "%s": %s' % (self.inst_name, start_time))
 
-        start_time = time.time() - TIME_0
+            signal.signal(signal.SIGINT, CoreInterruptHandler)
+            signal.signal(signal.SIGTERM, CoreInterruptHandler)
+            signal.signal(signal.SIGKILL, CoreInterruptHandler)
+            await type(self).RUNNING.wait()
 
-        LOGGER.info('Full time to init the GD_Node "%s": %s' % (self.inst_name, start_time))
-
-        signal.signal(signal.SIGINT, CoreInterruptHandler)
-        signal.signal(signal.SIGTERM, CoreInterruptHandler)
-        await type(self).RUNNING.wait()
-
-        await self.stop()
+            await self.stop()
+        except KeyboardInterrupt:
+            LOGGER.warning(f"[KILLED] Node killed forcefully while being initialized. Instance: {self.inst_name} Node: {self.node_name}")

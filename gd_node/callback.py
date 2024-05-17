@@ -13,6 +13,7 @@ import time
 from typing import Any
 from os import getenv
 from asyncio import CancelledError
+import sys
 
 from movai_core_shared.logger import Log, LogAdapter
 from movai_core_shared.exceptions import DoesNotExist, TransitionException
@@ -37,7 +38,7 @@ from dal.scopes.robot import Robot
 from dal.scopes.statemachine import StateMachine, SMVars
 
 from gd_node.user import GD_User as gd
-
+from rospy.exceptions import ROSException
 try:
 
     from movai_core_enterprise.message_client_handlers.alerts import Alerts
@@ -54,7 +55,7 @@ try:
 except ImportError:
     enterprise = False
 
-LOGGER = LogAdapter(Log.get_logger("spawner.mov.ai"))
+LOGGER = Log.get_logger("spawner.mov.ai")
 
 
 class GD_Callback:
@@ -141,6 +142,12 @@ class GD_Callback:
             gd.is_transitioning = True
         except CancelledError:
             raise CancelledError("cancelled task")
+        except KeyboardInterrupt:
+            LOGGER.warning(f"[KILLED] Callback forcefully killed (node: {self.node_name}, callback={self.name}")
+            sys.exit(1)
+        except ROSException:
+            LOGGER.warning(f"[KILLED] Callback's ros protocol forcefully killed (node: {self.node_name}, callback={self.name}")
+            sys.exit(1)
         except Exception as e:
             LOGGER.error(str(e), node=self.node_name, callback=self.name)
 
@@ -188,6 +195,9 @@ class UserFunctions:
             if scene_name:
                 try:
                     GD_Callback._scene = scopes.from_path(scene_name, scope="GraphicScene")
+                except KeyboardInterrupt:
+                    LOGGER.warning(f"[KILLED] Callback forcefully killed while initializing. It was trying to load Scene {scene_name}. Callback: {_cb_name} , Node: {_node_name}")
+                    sys.exit(1)
                 except:
                     LOGGER.error(f'Scene "{scene_name}" was not found')
 
