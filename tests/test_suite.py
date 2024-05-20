@@ -16,6 +16,19 @@ class TestSuite(unittest.TestCase):
     @fake_redis("dal.plugins.persistence.redis.redis.Connection", recording_dir=test_dir)
     @patch("dal.movaidb.database.aioredis.ConnectionsPool", FakeAsyncPool)
     def test_disable_callbacks_on_transition(self):
+        """ Confirm that context callbacks are no longer executed after a transition has been initiated
+
+        Here we set up a scenario of a Node with two Context callbacks:
+         - One callback, when triggered, will just write to the file /tmp/output
+         - The other callbacks, when triggered, will initiated a transition out of this Node
+
+        To run the test, first, we publish to the context that will trigger the first callbacks, and
+        we confirm that the file is created.
+        Then, we publish to the context that will trigger the second callback (thereby initiating the
+        transition) and _then_ we attempt to trigger the first callback again. Now the file should
+        no longer be created, since by initiating the transition, the callback should no longer run.
+        """
+
         # We must import here to make sure the mocks are activated first
         from dal.movaidb.database import Redis
         Redis() # start up the singleton

@@ -353,6 +353,10 @@ class ContextServerIn(BaseIport):
         )
         return (await self.callback_subscription.subscribe())
 
+    def unregister(self) -> None:
+        super().unregister()
+        self.callback_subscription.unsubscribe()
+
     def callback(self, msg):
         """Executes callback"""
         key = msg[0].decode("utf-8")

@@ -333,6 +333,10 @@ class IportMovaiContextServer:
     async def ready(self) -> Event:
         return (await self._instance.register_sub())
 
+    def shutdown(self):
+        if self._instance:
+            self._instance.unregister()
+
 
 class IportRos2Sub:
     def __init__(self, **kwargs):

@@ -57,6 +57,9 @@ class GDNode:
     """GD_Node asynchronous class"""
 
     __DEFAULT_CALLBACK__ = "place_holder"
+    # Events are like booleans; they start as False, and you can await
+    # (efficiently wait) for them to be set to True.
+    # This Event should be set to True when the Node should stop.
     STOPPING_EVENT: asyncio.Event
     node: Node
 
@@ -83,7 +86,6 @@ class GDNode:
         }
         self.launched_transports = []
         self.ports_params = {}
-        self.loop.set_debug(True)
         self.loop.run_until_complete(self.main(args, unknown))
 
     def handle_exception(self, loop, context):
