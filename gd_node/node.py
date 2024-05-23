@@ -363,7 +363,7 @@ class GDNode:
 
             start_time = time.time() - TIME_0
 
-            LOGGER.info('Full time to init the GD_Node "%s": %s' % (self.inst_name, start_time))
+            LOGGER.debug('Full time to init the GD_Node "%s": %s' % (self.inst_name, start_time))
 
             signal.signal(signal.SIGINT, CoreInterruptHandler)
             signal.signal(signal.SIGTERM, CoreInterruptHandler)

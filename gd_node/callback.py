@@ -133,7 +133,7 @@ class GD_Callback:
             exec(code, globais)
             t_delta = time.perf_counter() - t_init
             if t_delta > 0.5:
-                LOGGER.info(
+                LOGGER.debug(
                     f"{self.node_name}/{self.port_name}/{self.callback.Label} took: {t_delta}"
                 )
         except TransitionException:
@@ -182,8 +182,8 @@ class UserFunctions:
             except CancelledError:
                 raise CancelledError("cancelled task")
             except (ImportError, AttributeError, LookupError):
-                    LOGGER.error(f"Import {lib} in callback blew up. Node: {self.node_name} Callback: {self.cb_name}", exc_info=True)
-                    sys.exit(1)
+                LOGGER.error(f"Import {lib} in callback blew up. Node: {self.node_name} Callback: {self.cb_name}", exc_info=True)
+                sys.exit(1)
 
         if GD_Callback._robot is None:
             GD_Callback._robot = Robot()
@@ -301,7 +301,8 @@ class UserFunctions:
     def user_print(self, *args):
         """Method to redirect the print function into logger"""
         to_send = " ".join([str(arg) for arg in args])
-        LOGGER.debug(to_send, node=self.node_name, callback=self.cb_name)
+        logger = Log.get_callback_logger("GD_Callback", self.node_name, self.cb_name)
+        logger.debug(to_send)
 
     def run(self, cb_name, msg):
         """Run another callback from a callback"""
