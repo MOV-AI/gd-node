@@ -182,8 +182,8 @@ class UserFunctions:
             except CancelledError:
                 raise CancelledError("cancelled task")
             except (ImportError, AttributeError, LookupError):
-                    LOGGER.error(f"Import {lib} in callback blew up. Node: {self.node_name} Callback: {self.cb_name}", exc_info=True)
-                    sys.exit(1)
+                LOGGER.error(f"Import {lib} in callback blew up. Node: {self.node_name} Callback: {self.cb_name}", exc_info=True)
+                sys.exit(1)
 
         if GD_Callback._robot is None:
             GD_Callback._robot = Robot()
