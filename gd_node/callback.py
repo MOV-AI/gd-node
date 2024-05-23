@@ -14,7 +14,6 @@ from typing import Any
 from os import getenv
 from asyncio import CancelledError
 import sys
-
 from movai_core_shared.logger import Log, LogAdapter
 from movai_core_shared.exceptions import DoesNotExist, TransitionException
 
@@ -149,7 +148,9 @@ class GD_Callback:
             LOGGER.warning(f"[KILLED] Callback's ros protocol forcefully killed (node: {self.node_name}, callback={self.name}")
             sys.exit(1)
         except Exception as e:
-            LOGGER.error(str(e), node=self.node_name, callback=self.name)
+            LOGGER.error(f"Error in executing callback. Node: {self.node_name} Callback: {self.name}", exc_info=True)
+            sys.exit(1)
+
 
 
 class UserFunctions:
@@ -181,9 +182,8 @@ class UserFunctions:
             except CancelledError:
                 raise CancelledError("cancelled task")
             except (ImportError, AttributeError, LookupError):
-                raise ImportError(
-                    f"Import {lib} in callback {_cb_name} of node {_node_name} was not found"
-                )
+                    LOGGER.error(f"Import {lib} in callback blew up. Node: {self.node_name} Callback: {self.cb_name}", exc_info=True)
+                    sys.exit(1)
 
         if GD_Callback._robot is None:
             GD_Callback._robot = Robot()

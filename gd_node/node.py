@@ -367,7 +367,6 @@ class GDNode:
 
             signal.signal(signal.SIGINT, CoreInterruptHandler)
             signal.signal(signal.SIGTERM, CoreInterruptHandler)
-            signal.signal(signal.SIGKILL, CoreInterruptHandler)
             await type(self).RUNNING.wait()
 
             await self.stop()
