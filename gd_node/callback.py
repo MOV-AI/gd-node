@@ -149,7 +149,8 @@ class GD_Callback:
             sys.exit(1)
         except Exception as e:
             LOGGER.error(f"Error in executing callback. Node: {self.node_name} Callback: {self.name}", exc_info=True)
-            sys.exit(1)
+            #TODO We can't kill the node if callbacks blow up. Some callbacks are not critical.
+            #sys.exit(1)
 
 
 
@@ -183,7 +184,8 @@ class UserFunctions:
                 raise CancelledError("cancelled task")
             except (ImportError, AttributeError, LookupError):
                 LOGGER.error(f"Import {lib} in callback blew up. Node: {self.node_name} Callback: {self.cb_name}", exc_info=True)
-                sys.exit(1)
+                #TODO We can't kill the node if callbacks blow up. Some callbacks are not critical.
+                #sys.exit(1)
 
         if GD_Callback._robot is None:
             GD_Callback._robot = Robot()
