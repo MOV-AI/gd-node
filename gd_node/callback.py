@@ -10,11 +10,11 @@
 import copy
 import importlib
 import time
-from types import CodeType
+from types import CodeType, Any
 from typing import Any, Dict, Optional
 from os import getenv
 from asyncio import CancelledError
-
+import sys
 from movai_core_shared.logger import Log, LogAdapter
 from movai_core_shared.exceptions import DoesNotExist, TransitionException
 
@@ -38,7 +38,7 @@ from dal.scopes.robot import Robot
 from dal.scopes.statemachine import StateMachine, SMVars
 
 from gd_node.user import GD_User as gd
-
+from rospy.exceptions import ROSException
 try:
 
     from movai_core_enterprise.message_client_handlers.alerts import Alerts
@@ -52,7 +52,7 @@ try:
     from movai_core_enterprise.message_client_handlers.metrics import Metrics
 
     enterprise = True
-except ModuleNotFoundError:
+except ImportError:
     enterprise = False
 
 LOGGER = LogAdapter(Log.get_logger("spawner.mov.ai"))
@@ -142,8 +142,17 @@ class GD_Callback:
             gd.is_transitioning = True
         except CancelledError:
             raise CancelledError("cancelled task")
+        except KeyboardInterrupt:
+            LOGGER.warning(f"[KILLED] Callback forcefully killed (node: {self.node_name}, callback={self.name}")
+            sys.exit(1)
+        except ROSException:
+            LOGGER.warning(f"[KILLED] Callback's ros protocol forcefully killed (node: {self.node_name}, callback={self.name}")
+            sys.exit(1)
         except Exception as e:
-            LOGGER.error(str(e), node=self.node_name, callback=self.name)
+            LOGGER.error(f"Error in executing callback. Node: {self.node_name} Callback: {self.name}", exc_info=True)
+            #TODO We can't kill the node if callbacks blow up. Some callbacks are not critical.
+            #sys.exit(1)
+
 
 
 class UserFunctions:
@@ -175,9 +184,9 @@ class UserFunctions:
             except CancelledError:
                 raise CancelledError("cancelled task")
             except (ImportError, AttributeError, LookupError):
-                raise ImportError(
-                    f"Import {lib} in callback {_cb_name} of node {_node_name} was not found"
-                )
+                LOGGER.error(f"Import {lib} in callback blew up. Node: {self.node_name} Callback: {self.cb_name}", exc_info=True)
+                #TODO We can't kill the node if callbacks blow up. Some callbacks are not critical.
+                #sys.exit(1)
 
         if GD_Callback._robot is None:
             GD_Callback._robot = Robot()
@@ -189,6 +198,9 @@ class UserFunctions:
             if scene_name:
                 try:
                     GD_Callback._scene = scopes.from_path(scene_name, scope="GraphicScene")
+                except KeyboardInterrupt:
+                    LOGGER.warning(f"[KILLED] Callback forcefully killed while initializing. It was trying to load Scene {scene_name}. Callback: {_cb_name} , Node: {_node_name}")
+                    sys.exit(1)
                 except ValueError:
                     LOGGER.error(f'Scene "{scene_name}" was not found')
 
@@ -292,7 +304,8 @@ class UserFunctions:
     def user_print(self, *args):
         """Method to redirect the print function into logger"""
         to_send = " ".join([str(arg) for arg in args])
-        LOGGER.debug(to_send, node=self.node_name, callback=self.cb_name)
+        logger = Log.get_callback_logger("GD_Callback", self.node_name, self.cb_name)
+        logger.debug(to_send)
 
     def run(self, cb_name, msg):
         """Run another callback from a callback"""
