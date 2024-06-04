@@ -10,6 +10,7 @@
    Module that implements all the tranports and protocols
    currently supported by the GD_Node
 """
+from asyncio import Event
 from typing import Any
 
 from dal.classes.protocols import redissub as RedisSub
@@ -174,10 +175,8 @@ class PortsProvider:
         # disable all callback events
         self._callbacks.clear()
         for instance in self._instances:
-            try:
+            if hasattr(instance, "shutdown"):
                 instance.shutdown()
-            except AttributeError as e:
-                pass
 
 
 class IportRos1Sub:
@@ -317,9 +316,12 @@ class IportMovaiContextClient:
         self._instance = MovAI.ContextClientIn(**kwargs)
         gd.iport[name] = self._instance
 
-    def is_port_fully_created(self):
-        
-        return self._instance.is_port_subscribed()
+    async def ready(self) -> Event:
+        return (await self._instance.register_sub())
+
+    def shutdown(self):
+        if self._instance:
+            self._instance.unregister()
 
 
 class IportMovaiContextServer:
@@ -327,6 +329,13 @@ class IportMovaiContextServer:
         name = kwargs["_port_name"]
         self._instance = MovAI.ContextServerIn(**kwargs)
         gd.iport[name] = self._instance
+
+    async def ready(self) -> Event:
+        return (await self._instance.register_sub())
+
+    def shutdown(self):
+        if self._instance:
+            self._instance.unregister()
 
 
 class IportRos2Sub:

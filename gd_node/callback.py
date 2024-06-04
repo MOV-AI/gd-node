@@ -10,7 +10,8 @@
 import copy
 import importlib
 import time
-from typing import Any
+from types import CodeType
+from typing import Any, Dict, Optional
 from os import getenv
 from asyncio import CancelledError
 import sys
@@ -54,7 +55,7 @@ try:
 except ImportError:
     enterprise = False
 
-LOGGER = Log.get_logger("spawner.mov.ai")
+LOGGER = LogAdapter(Log.get_logger("spawner.mov.ai"))
 
 
 class GD_Callback:
@@ -67,8 +68,8 @@ class GD_Callback:
         _update: Real time update of the callback code
     """
 
-    _robot = None
-    _scene = None
+    _robot: Optional["Robot"] = None
+    _scene: Optional["GraphicScene"] = None
 
     def __init__(
         self, _cb_name: str, _node_name: str, _port_name: str, _update: bool = False
@@ -77,7 +78,7 @@ class GD_Callback:
         self.name = _cb_name
         self.node_name = _node_name
         self.port_name = _port_name
-        self.updated_globals = {}
+        self.updated_globals: Dict[str, Any] = {}
 
         self.callback = ScopesTree().from_path(_cb_name, scope="Callback")
 
@@ -113,7 +114,7 @@ class GD_Callback:
         ):
             self.updated_globals["status_code"] = globais["response"]["status_code"]
 
-    def start(self, code, globais):
+    def start(self, code: CodeType, globais: Dict):
         """Executes the code
 
         Args:
@@ -133,7 +134,7 @@ class GD_Callback:
             exec(code, globais)
             t_delta = time.perf_counter() - t_init
             if t_delta > 0.5:
-                LOGGER.debug(
+                LOGGER.info(
                     f"{self.node_name}/{self.port_name}/{self.callback.Label} took: {t_delta}"
                 )
         except TransitionException:
@@ -190,7 +191,7 @@ class UserFunctions:
         if GD_Callback._robot is None:
             GD_Callback._robot = Robot()
 
-        _robot_id = GD_Callback._robot.name
+        _robot_id : str = GD_Callback._robot.name
 
         if GD_Callback._scene is None:
             scene_name = GD_Callback._robot.Status.get("active_scene")
@@ -200,7 +201,7 @@ class UserFunctions:
                 except KeyboardInterrupt:
                     LOGGER.warning(f"[KILLED] Callback forcefully killed while initializing. It was trying to load Scene {scene_name}. Callback: {_cb_name} , Node: {_node_name}")
                     sys.exit(1)
-                except:
+                except ValueError:
                     LOGGER.error(f'Scene "{scene_name}" was not found')
 
         class UserVar(Var):

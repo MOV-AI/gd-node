@@ -10,10 +10,11 @@
    Module that implements the ROS1 protocol
 """
 import asyncio
+import datetime
 import importlib
 import os
 import sys
-from typing import Any
+from typing import TYPE_CHECKING, Any, Dict, Optional
 
 import actionlib
 import rosgraph
@@ -28,6 +29,9 @@ from gd_node.message import GD_Message
 from gd_node.user import GD_User
 
 from gd_node.protocols.base import BaseIport
+
+if TYPE_CHECKING:
+    from gd_node.node import GDNode
 
 
 class ROS1:
@@ -126,7 +130,7 @@ class ROS1IportBase(BaseIport):
     def callback(self, msg: Any) -> None:
         """Callback function for all the ROS IPORTS"""
         for _ in range(self.MAX_RETRIES):
-            if self._gd_node.RUNNING and self.enabled:
+            if not self._gd_node.STOPPING_EVENT.is_set() and self.enabled:
                 self.cb.execute(msg)
                 return
             # if the port isn't initiated after 10 seconds it means it's disabled
@@ -564,7 +568,7 @@ class ROS1_Publisher:
         """Init"""
 
         self.msg = GD_Message(_message).get()
-        self._gd_node = _gd_node
+        self._gd_node: "GDNode" = _gd_node
         params = {"queue_size": 1}
         if _params is not None:
             params.update(_params)
@@ -576,7 +580,7 @@ class ROS1_Publisher:
         Args:
             msg: ROS Message
         """
-        if not self._gd_node or self._gd_node.RUNNING:
+        if not self._gd_node or not self._gd_node.STOPPING_EVENT.is_set():
             # publish only when Node is actually still running
             self.pub.publish(msg)
 
