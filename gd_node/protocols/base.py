@@ -10,9 +10,12 @@
    Base classes for all protocols
 """
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from gd_node.callback import GD_Callback as Callback
+
+if TYPE_CHECKING:
+    from gd_node.node import GDNode
 
 
 class BaseIport:
@@ -35,7 +38,7 @@ class BaseIport:
         self.topic = _topic
         self.enabled = False
         self.start_enabled = True
-        self._gd_node = _gd_node
+        self._gd_node: "GDNode" = _gd_node
         self.cb = Callback(_callback, self.node_name, self.port_name, update)
 
     def callback(self, msg: Any) -> None:

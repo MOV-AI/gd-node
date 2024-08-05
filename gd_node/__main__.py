@@ -20,7 +20,7 @@ except KeyboardInterrupt:
 LOGGER = Log.get_logger("spawner.mov.ai")
 
 try:
-    from gd_node.node import GDNode
+    from gd_node.node import ARGS, GDNode
 except KeyboardInterrupt:
     LOGGER.warning(f"[KILLED] GD_Node forcefully killed during imports.")
     sys.exit(1)
@@ -52,9 +52,11 @@ def main():
         action="store_true",
     )
 
-    ARGS, UNKNOWN = parser.parse_known_args()
+    args = ARGS()
+    _, UNKNOWN = parser.parse_known_args(namespace=args)
+
     try:
-        GDNode(ARGS, UNKNOWN)
+        GDNode(args, UNKNOWN)
     except KeyboardInterrupt:
         LOGGER.warning(f"[KILLED] GD_Node forcefully killed. Instance: {ARGS.inst}, Node: {ARGS.name}, Flow: {ARGS.flow}")
 

@@ -7,12 +7,14 @@
    - Manuel Silva (manuel.silva@mov.ai) - 2020
    - Tiago Paulino (tiago@mov.ai) - 2020
 """
+import argparse
 import ast
 import asyncio
 import pickle
 import re
 import signal
 import time
+from typing import List
 
 import uvloop
 
@@ -23,7 +25,7 @@ from movai_core_shared.consts import MOVAI_INIT, MOVAI_TRANSITION, MOVAI_CONTEXT
 from dal.movaidb import RedisClient
 from dal.models.scopestree import scopes, ScopePropertyNode
 from dal.models.var import Var
-
+from dal.models.node import Node
 
 from gd_node.protocol import Iport, Oport, Transports
 from gd_node.user import GD_User
@@ -33,20 +35,35 @@ LOGGER = Log.get_logger("spawner.mov.ai")
 TIME_0 = time.time()
 
 
+class ARGS(argparse.Namespace):
+    name: str
+    inst: str
+    params: str
+    flow: str
+    verbose: bool = False
+    message: str
+    develop: bool = False
+
+
 def CoreInterruptHandler(signalnum, *_):
     """Process interrupts"""
     # msg = "\nSignal (ID: {}) has been caught. Stopping GDNode...".format(signalnum)
     # LOGGER.info(msg)
-    GDNode.RUNNING.set()
+    if GDNode.STOPPING_EVENT:
+        GDNode.STOPPING_EVENT.set()
 
 
 class GDNode:
     """GD_Node asynchronous class"""
 
     __DEFAULT_CALLBACK__ = "place_holder"
-    RUNNING = None
+    # Events are like booleans; they start as False, and you can await
+    # (efficiently wait) for them to be set to True.
+    # This Event should be set to True when the Node should stop.
+    STOPPING_EVENT: asyncio.Event
+    node: Node
 
-    def __init__(self, args, unknown):
+    def __init__(self, args: ARGS, unknown: List[str]):
         self.debug = args.verbose
         self.develop = args.develop
         # if self.debug:
@@ -73,7 +90,7 @@ class GDNode:
 
     def handle_exception(self, loop, context):
         msg = context.get("exception", context["message"])
-        LOGGER.error(f"{self.inst_name}: {msg}")
+        LOGGER.exception(f"{self.inst_name}: {msg}")
 
     async def connect(self) -> None:
         """Connect to aioredis slave db"""
@@ -82,7 +99,8 @@ class GDNode:
 
     def _stop(self):
         """stop node out of async loop"""
-        type(self).RUNNING.set()
+        if type(self).STOPPING_EVENT is not None:
+            type(self).STOPPING_EVENT.set()
 
     async def stop(self) -> None:
         """Gracefully shutdown node"""
@@ -92,7 +110,8 @@ class GDNode:
         Oport.shutdown()
         Transports.shutdown()
 
-        await self.databases.shutdown()
+        if self.databases:
+            await self.databases.shutdown()
         # Clean all vars related to this node
         Var.delete_all(scope="Node", _node_name=GD_User.name)
         for iport in GD_User.iport:
@@ -106,8 +125,10 @@ class GDNode:
             and not task.cancelled()
         ]
 
-        list(map(lambda task: task.cancel(), tasks))
-        results = await asyncio.gather(*tasks, return_exceptions=True)
+        for task in tasks:
+            task.cancel()
+
+        await asyncio.gather(*tasks, return_exceptions=True)
 
     def initial_print(self, inst_name: str, template_name: str, inst_params: list):
         """Some inital debug prints"""
@@ -219,29 +240,29 @@ class GDNode:
         Args:
             ports_templates: Description
             ports_inst: Description
-            init: Description
+            init: if true, initialize INIT and TRANSITION ports, otherwise initialize the other ports
         """
-        ongoing_creations = []
+        ongoing_creations: List[asyncio.Event] = []
 
-        for ports in ports_inst:
-            template = ports_templates[ports_inst[ports].Template]
+        for port_name in ports_inst:
+            template = ports_templates[ports_inst[port_name].Template]
 
-            for i in ports_inst[ports].In:
+            for i in ports_inst[port_name].In:
                 transport = template.In[i].Transport
                 protocol = template.In[i].Protocol
-                message = ports_inst[ports].In[i].Message
+                message = ports_inst[port_name].In[i].Message
                 # place_holder
-                callback = ports_inst[ports].In[i].Callback or self.__DEFAULT_CALLBACK__
-                params = ports_inst[ports].In[i].Parameter or {}
+                callback = ports_inst[port_name].In[i].Callback or self.__DEFAULT_CALLBACK__
+                params = ports_inst[port_name].In[i].Parameter or {}
 
                 for param in params:
                     params[param] = self.ports_params.get(
-                        "@" + param + "@" + i + "@" + ports, params[param]
+                        "@" + param + "@" + i + "@" + port_name, params[param]
                     )
 
                 _type = key = "/".join([transport, protocol])
-                _port_name = ports  # "/".join([ports, i])
-                _topic = "/".join([inst_name, ports, i])
+                _port_name = port_name  # "/".join([ports, i])
+                _topic = "/".join([inst_name, port_name, i])
                 config = {
                     "_node_name": inst_name,
                     "_port_name": _port_name,
@@ -257,19 +278,17 @@ class GDNode:
                 }
                 if (key in [MOVAI_INIT,MOVAI_TRANSITION]) == init:
                     port_instance = Iport.create(key, **config)
-                    if key == MOVAI_CONTEXTCLIENTIN:
-                        ongoing_creations.append(port_instance)
+                    if port_instance and hasattr(port_instance, "ready"):
+                        evt = await port_instance.ready()
+                        ongoing_creations.append(evt)
 
-        while ongoing_creations:
-            ongoing_creations = [port for port in ongoing_creations 
-                                 if not port.is_port_fully_created()]
-            if ongoing_creations:
-                await asyncio.sleep(0.1)
+        await asyncio.gather(*[port.wait() for port in ongoing_creations])
 
-    async def main(self, args, unknown) -> None:
+    async def main(self, args: ARGS, unknown: List[str]) -> None:
         """Runs the main loop. Exiting stops GDNode"""
+
         try:
-            type(self).RUNNING = asyncio.Event()
+            type(self).STOPPING_EVENT = asyncio.Event()
             # connect databases
             await self.connect()
 
@@ -345,7 +364,7 @@ class GDNode:
                 # ros publishers sending stuff in the init need time to register..
                 await asyncio.sleep(0.2)
 
-            # Then we run the initial callback
+            # Then we init the INIT and TRANSITION ports, which will run the initial callback
             await self.init_iports(self.inst_name, node_ports, self.node["PortsInst"], init=True)
             if not GD_User.is_transitioning:
 
@@ -363,11 +382,11 @@ class GDNode:
 
             start_time = time.time() - TIME_0
 
-            LOGGER.debug('Full time to init the GD_Node "%s": %s' % (self.inst_name, start_time))
+            LOGGER.info('Full time to init the GD_Node "%s": %s' % (self.inst_name, start_time))
 
             signal.signal(signal.SIGINT, CoreInterruptHandler)
             signal.signal(signal.SIGTERM, CoreInterruptHandler)
-            await type(self).RUNNING.wait()
+            await type(self).STOPPING_EVENT.wait()
 
             await self.stop()
         except KeyboardInterrupt:
