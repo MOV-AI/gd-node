@@ -120,7 +120,9 @@ class JWTMiddleware:
             except Exception as e:
                 LOGGER.error(e)
                 raise web.HTTPForbidden(reason=e.__str__())
-        return await handler(request)
+        semaphore = asyncio.Semaphore(5)
+        async with semaphore:
+            return await handler(request)
 
 
 @web.middleware
