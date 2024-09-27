@@ -20,7 +20,7 @@ from movai_core_shared.logger import Log
 from movai_core_shared.consts import MOVAI_INIT, MOVAI_TRANSITION, MOVAI_CONTEXTCLIENTIN
 
 # importing database profile automatically registers the database connections
-from dal.movaidb import RedisClient
+from dal.movaidb import RedisClient, MovaiDB
 from dal.models.scopestree import scopes, ScopePropertyNode
 from dal.models.var import Var
 
@@ -77,8 +77,11 @@ class GDNode:
 
     async def connect(self) -> None:
         """Connect to aioredis slave db"""
+        # for subscribing to events
         self.databases = await RedisClient.get_client()
-        # await self.databases.init_redis()
+        # for reading/writing
+        #MovaiDB("global")
+        #MovaiDB("local")
 
     def _stop(self):
         """stop node out of async loop"""
