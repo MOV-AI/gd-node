@@ -7,14 +7,17 @@
    - Manuel Silva (manuel.silva@mov.ai) - 2020
    - Tiago Paulino (tiago@mov.ai) - 2020
 """
-import copy
-import importlib
-import time
-from typing import Any
-from os import getenv
-from asyncio import CancelledError
 import sys
-from movai_core_shared.logger import Log, LogAdapter
+import copy
+import time
+import importlib
+from os import getenv
+from typing import Any
+from asyncio import CancelledError
+
+from rospy.exceptions import ROSException
+
+from movai_core_shared.logger import Log
 from movai_core_shared.exceptions import DoesNotExist, TransitionException
 
 # Imports from DAL
@@ -37,7 +40,6 @@ from dal.scopes.robot import Robot
 from dal.scopes.statemachine import StateMachine, SMVars
 
 from gd_node.user import GD_User as gd
-from rospy.exceptions import ROSException
 try:
 
     from movai_core_enterprise.message_client_handlers.alerts import Alerts
@@ -142,16 +144,21 @@ class GD_Callback:
         except CancelledError:
             raise CancelledError("cancelled task")
         except KeyboardInterrupt:
-            LOGGER.warning(f"[KILLED] Callback forcefully killed (node: {self.node_name}, callback={self.name}")
+            LOGGER.warning(f"[KILLED] Callback forcefully killed (node: {self.node_name}, callback={self.name})")
             sys.exit(1)
-        except ROSException:
-            LOGGER.warning(f"[KILLED] Callback's ros protocol forcefully killed (node: {self.node_name}, callback={self.name}")
+        except ROSException as e:
+            LOGGER.warning(
+                f"[KILLED] Callback's ros protocol forcefully killed (node: {self.node_name}, callback={self.name})"
+            )
+            LOGGER.warning(f"Exception: {e}", exc_info=True)
             sys.exit(1)
-        except Exception as e:
-            LOGGER.error(f"Error in executing callback. Node: {self.node_name} Callback: {self.name}", exc_info=True)
-            #TODO We can't kill the node if callbacks blow up. Some callbacks are not critical.
-            #sys.exit(1)
-
+        except Exception:
+            LOGGER.error(
+                f"Error in executing callback. Node: {self.node_name} Callback: {self.name}",
+                exc_info=True,
+            )
+            # TODO We can't kill the node if callbacks blow up. Some callbacks are not critical.
+            # sys.exit(1)
 
 
 class UserFunctions:
