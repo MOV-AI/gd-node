@@ -23,7 +23,7 @@ The GD Node callbacks have access to the following builtins:
 * ``run``: Function to run another callback (from the callback itself)
 * ``Scene``: Active scene **instance**, None if active_scene is not specified
 * ``scopes``: A ScopesTree **instance**
-* ``SM``:UserSM class
+* ``SM``: UserSM class
 * ``StateMachine``: StateMachine class
 * ``Var``: UserVar class - used to set, get and delete node scoped variables
 
