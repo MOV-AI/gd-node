@@ -11,12 +11,33 @@ The GD Node callbacks have access to the following builtins:
 * ``Container``: Container class
 * ``FleetRobot``: FleetRobot class
 * ``gd``: Node shared object - used to get param and interact with oports
+
+   .. code-block:: python
+
+      # Get the value of a param
+      param_value = gd.params('param_name')
+
+      # Set the value of an oport
+      gd.oport('port_name').send(msg)
+
 * ``Lock``: UserLock class - used to interact with locks
+
+   .. code-block:: python
+
+      # Acquire a lock
+      Lock(Robot.RobotName, persistent=True).acquire()
+
 * ``logger``: LogAdapter **instance** - logger that should be used in callbacks
 * ``Message``: Message class
 * ``NodeInst``: NodeInst class
 * ``Package``: Package class
 * ``PortName``: Name of the port that triggered the callback
+
+   .. code-block:: python
+
+      # Log the name of the port that triggered the callback
+      logger.info("The callback was triggered by port: %s", PortName)
+
 * ``Ports``: Ports class
 * ``print``: Debug log function
 * ``Robot``: Robot class **instance**
