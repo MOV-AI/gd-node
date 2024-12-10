@@ -7,7 +7,7 @@ Callback builtins
 The GD Node callbacks have access to the following builtins:
 
 * ``Callback``: Callback class
-* ``Configuration``: Configuration class
+* ``Configuration``: Configuration class - used to get Configuration files
 * ``Container``: Container class
 * ``FleetRobot``: FleetRobot class
 * ``gd``: Node shared object - used to get param and interact with oports
@@ -34,7 +34,7 @@ If you are using the enterprise version of MOV.AI the following are also availab
 * ``GraphicAsset``: GraphicAsset class
 * ``GraphicScene``: GraphicScene class
 * ``Layout``: Layout class
-* ``metrics``: Metrics class **instance**
+* ``metrics``: Metrics class **instance** - used to send metrics
 * ``Task``: Task class
 * ``TaskEntry``: TaskEntry class
 * ``TaskTemplate``: TaskTemplate class
