@@ -12,8 +12,18 @@
     This is the GD_Node
 """
 import argparse
-from gd_node.node import GDNode
+import sys
+try:
+    from movai_core_shared.logger import Log
+except KeyboardInterrupt:
+    sys.exit(1)
+LOGGER = Log.get_logger("spawner.mov.ai")
 
+try:
+    from gd_node.node import GDNode
+except KeyboardInterrupt:
+    LOGGER.warning(f"[KILLED] GD_Node forcefully killed during imports.")
+    sys.exit(1)
 
 def main():
     parser = argparse.ArgumentParser(description="Launch GD_Node")
@@ -43,9 +53,10 @@ def main():
     )
 
     ARGS, UNKNOWN = parser.parse_known_args()
-
-    GDNode(ARGS, UNKNOWN)
-
+    try:
+        GDNode(ARGS, UNKNOWN)
+    except KeyboardInterrupt:
+        LOGGER.warning(f"[KILLED] GD_Node forcefully killed. Instance: {ARGS.inst}, Node: {ARGS.name}, Flow: {ARGS.flow}")
 
 if __name__ == "__main__":
     main()
