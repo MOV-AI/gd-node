@@ -9,7 +9,7 @@ requirements = [
     "aiohttp_cors==0.7.0",
     "bleach==4.1.0",
     "uvloop==0.14.0",
-    "data-access-layer==2.5.0.*",
+    "data-access-layer==3.0.0.*",
 ]
 # requests is required by movai-core-shared
 # aioredis is required by data-access-layer
@@ -17,7 +17,7 @@ requirements = [
 
 setuptools.setup(
     name="gd-node",
-    version="2.6.0-1",
+    version="3.0.0-0",
     author="Backend team",
     author_email="backend@mov.ai",
     description="GD_Node",

@@ -12,7 +12,7 @@
 """
 from typing import Any
 
-from dal.classes.protocols.redissub import VarSubscriber
+from dal.classes.protocols import redissub as RedisSub
 
 import gd_node.protocols.http.http_route
 import gd_node.protocols.http.web_socket
@@ -253,7 +253,7 @@ class IportRos1TopicHz:
 class IportVarSub:
     def __init__(self, **kwargs):
         name = kwargs["_port_name"]
-        gd.iport[name] = VarSubscriber(**kwargs)
+        gd.iport[name] = RedisSub.Var_Subscriber(**kwargs)
 
 
 class IportHttpRoute:
@@ -316,6 +316,10 @@ class IportMovaiContextClient:
         name = kwargs["_port_name"]
         self._instance = MovAI.ContextClientIn(**kwargs)
         gd.iport[name] = self._instance
+
+    def is_port_fully_created(self):
+        
+        return self._instance.is_port_subscribed()
 
 
 class IportMovaiContextServer:
