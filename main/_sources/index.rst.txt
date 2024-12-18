@@ -13,6 +13,7 @@ Welcome to GD Node's documentation!
 
    readme
    modules
+   using_gd_node
 
 .. include:: readme.rst
 
