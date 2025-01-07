@@ -10,7 +10,7 @@
    Module that implements all the tranports and protocols
    currently supported by the GD_Node
 """
-from typing import Any
+from typing import Any, Optional
 
 from dal.classes.protocols import redissub as RedisSub
 
@@ -98,7 +98,7 @@ class TransportRedis:
 
 class TransportHttp:
     def __init__(self):
-        self._instance = None
+        self._instance: Optional[Http.CreateServer] = None
 
     def __call__(self, node_name, **_ignore):
         if not self._instance:

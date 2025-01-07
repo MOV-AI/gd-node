@@ -3,7 +3,6 @@ from typing import Any
 from aiohttp import web
 
 from gd_node.callback import GD_Callback
-from gd_node.protocols.http import HTTP
 
 
 class HttpRoute:
@@ -30,13 +29,18 @@ class HttpRoute:
         **_ignore
     ):
         """Init"""
+        from gd_node.protocol import TransportHttp, Transports
+        transport: TransportHttp = Transports.get("Http")
+        assert transport is not None and transport._instance is not None
+        app = transport._instance.app
+
         self.node_name = _node_name
         self.port_name = _port_name
         self.topic = _params.get("Endpoint", _message)
 
         self.reply = None
         self.callback = GD_Callback(_callback, self.node_name, self.port_name, _update)
-        self.callback.user.globals.update({"app": HTTP.app, "web": web})
+        self.callback.user.globals.update({"app": app, "web": web})
 
         # add http route
         HTTP.app.add_routes(
