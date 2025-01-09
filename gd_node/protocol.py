@@ -12,15 +12,13 @@
 """
 from typing import Any
 
-from dal.classes.protocols import redissub as RedisSub
-
+from gd_node.protocols import redissub as RedisSub
 import gd_node.protocols.http.http_route
 import gd_node.protocols.http.web_socket
 import gd_node.protocols.base as Base
 import gd_node.protocols.http as Http
 import gd_node.protocols.ros1 as ROS1
 import gd_node.protocols.movai as MovAI
-
 from gd_node.user import GD_User as gd
 
 
