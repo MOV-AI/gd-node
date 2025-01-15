@@ -14,30 +14,24 @@
 """
 
 import asyncio
-from typing import Any
 
 import aiohttp_cors
 from aiohttp import web
 
 from movai_core_shared.logger import Log
+from movai_core_shared.common.http_middlewares import (
+    JWTMiddleware,
+    apply_scope_contextmanagers,
+    redirect_not_found,
+)
 
 from dal.data.shared.vault import JWT_SECRET_KEY
-
-from gd_node.protocols.http.middleware import (
-    JWTMiddleware,
-    redirect_not_found,
-    remove_flow_exposed_port_links,
-    save_node_type,
-)
+from dal.scopes.flow import delete_links_of_deleted_exposed_ports
+from dal.scopes.node import save_node_type
+from dal.utils import get_user_by_type_and_name
 
 
 LOGGER = Log.get_logger("http.mov.ai")
-
-
-class HTTP:
-    """Holder for app"""
-
-    app = ""
 
 
 class CreateServer:
@@ -48,6 +42,7 @@ class CreateServer:
         _hostname: Name of the server host
         _port: Port of the server
     """
+    app: web.Application
 
     def __init__(self, _node_name: str, _hostname: str, _port: int, *, test=False) -> None:
         """Init"""
@@ -65,18 +60,18 @@ class CreateServer:
             r"{api_version}apps/(.*)".format(api_version=self.api_version),
         )
 
-        HTTP.app = web.Application(
+        self.app = web.Application(
             middlewares=[
-                JWTMiddleware(JWT_SECRET_KEY, auth_whitelist).middleware,
-                save_node_type,
-                remove_flow_exposed_port_links,
+                JWTMiddleware(JWT_SECRET_KEY, get_user_by_type_and_name, auth_whitelist).middleware,
+                apply_scope_contextmanagers("Flow", [delete_links_of_deleted_exposed_ports]),
+                apply_scope_contextmanagers("Node", [save_node_type]),
                 redirect_not_found,
             ]
         )
-        HTTP.app["connections"] = set()
-        HTTP.app["sub_connections"] = set()
+        self.app["connections"] = set()
+        self.app["sub_connections"] = set()
         aiohttp_cors.setup(
-            HTTP.app,
+            self.app,
             defaults={
                 "*": aiohttp_cors.ResourceOptions(
                     allow_credentials=True,
@@ -95,7 +90,7 @@ class CreateServer:
         """
         Keep the server running
         """
-        runner = web.AppRunner(HTTP.app)
+        runner = web.AppRunner(self.app)
         await runner.setup()
         site = web.TCPSite(runner, self.hostname, self.port)
         await site.start()
