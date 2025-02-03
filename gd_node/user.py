@@ -10,11 +10,12 @@
     Module to store and give access to GD_Node
     Iports, Oports and Parameters during runtime
 """
+import asyncio
+from typing import Optional
 from gd_node.shared import Shared
 
 
 class GD_User:
-
     """User class
 
     Attributes:
@@ -30,7 +31,7 @@ class GD_User:
     oport = {}
     params = {}
     shared = Shared()
-    is_transitioning = False
+    RUNNING: Optional[asyncio.Event] = None
 
     @classmethod
     def send(cls, port, msg=""):

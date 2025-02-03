@@ -140,7 +140,7 @@ class GD_Callback:
                 )
         except TransitionException:
             LOGGER.debug("Transitioning...")
-            gd.is_transitioning = True
+            gd.RUNNING.set()
         except CancelledError:
             raise CancelledError("cancelled task")
         except KeyboardInterrupt:
