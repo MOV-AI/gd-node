@@ -126,7 +126,7 @@ class ROS1IportBase(BaseIport):
     def callback(self, msg: Any) -> None:
         """Callback function for all the ROS IPORTS"""
         for _ in range(self.MAX_RETRIES):
-            if self._gd_node.RUNNING and self.enabled:
+            if (GD_User.RUNNING and not GD_User.RUNNING.is_set()) and self.enabled:
                 self.cb.execute(msg)
                 return
             # if the port isn't initiated after 10 seconds it means it's disabled
@@ -576,8 +576,8 @@ class ROS1_Publisher:
         Args:
             msg: ROS Message
         """
-        if not self._gd_node or self._gd_node.RUNNING:
-            # publish only when Node is actually still running
+        if not self._gd_node or (GD_User.RUNNING and not GD_User.RUNNING.is_set()):
+            # publish only when  Node is actually still running
             self.pub.publish(msg)
 
     def unregister(self):

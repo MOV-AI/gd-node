@@ -37,14 +37,13 @@ def CoreInterruptHandler(signalnum, *_):
     """Process interrupts"""
     # msg = "\nSignal (ID: {}) has been caught. Stopping GDNode...".format(signalnum)
     # LOGGER.info(msg)
-    GDNode.RUNNING.set()
+    GD_User.RUNNING.set()
 
 
 class GDNode:
     """GD_Node asynchronous class"""
 
     __DEFAULT_CALLBACK__ = "place_holder"
-    RUNNING = None
 
     def __init__(self, args, unknown):
         self.debug = args.verbose
@@ -82,7 +81,7 @@ class GDNode:
 
     def _stop(self):
         """stop node out of async loop"""
-        type(self).RUNNING.set()
+        GD_User.RUNNING.set()
 
     async def stop(self) -> None:
         """Gracefully shutdown node"""
@@ -261,7 +260,7 @@ class GDNode:
                         ongoing_creations.append(port_instance)
 
         while ongoing_creations:
-            ongoing_creations = [port for port in ongoing_creations 
+            ongoing_creations = [port for port in ongoing_creations
                                  if not port.is_port_fully_created()]
             if ongoing_creations:
                 await asyncio.sleep(0.1)
@@ -269,7 +268,7 @@ class GDNode:
     async def main(self, args, unknown) -> None:
         """Runs the main loop. Exiting stops GDNode"""
         try:
-            type(self).RUNNING = asyncio.Event()
+            GD_User.RUNNING = asyncio.Event()
             # connect databases
             await self.connect()
 
@@ -347,7 +346,7 @@ class GDNode:
 
             # Then we run the initial callback
             await self.init_iports(self.inst_name, node_ports, self.node["PortsInst"], init=True)
-            if not GD_User.is_transitioning:
+            if not GD_User.RUNNING.is_set():
 
                 # And finally we enable the iports
                 for iport in GD_User.iport:
@@ -367,7 +366,7 @@ class GDNode:
 
             signal.signal(signal.SIGINT, CoreInterruptHandler)
             signal.signal(signal.SIGTERM, CoreInterruptHandler)
-            await type(self).RUNNING.wait()
+            await GD_User.RUNNING.wait()
 
             await self.stop()
         except KeyboardInterrupt:
