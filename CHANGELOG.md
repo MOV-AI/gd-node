@@ -1,4 +1,4 @@
-# vTBD
+# v3.0.3
 - [BP-1338](https://movai.atlassian.net/browse/BP-1338): Migrate gd-node to py-workflow@v2
 
 # v3.0.2
