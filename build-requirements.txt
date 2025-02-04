@@ -2,11 +2,10 @@
 pytest
 pytest-cov
 mock
-bump2version
 flake8
 pylint
 black
-tox
+tox==4.*
 pyyaml
 sphinx==5.3.0
 sphinx-rtd-theme==1.1.1
