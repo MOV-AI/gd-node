@@ -22,7 +22,7 @@ dependencies = [
     "aiohttp_cors==0.7.0",
     "bleach==4.1.0",
     "uvloop==0.14.0",
-    "data-access-layer==3.0.*",
+    "data-access-layer>=3.0.2.1",
 ]
 
 [project.urls]
