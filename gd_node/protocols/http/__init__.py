@@ -14,7 +14,6 @@
 """
 
 import asyncio
-from typing import Any
 
 import aiohttp_cors
 from aiohttp import web
@@ -22,8 +21,7 @@ from aiohttp import web
 from movai_core_shared.logger import Log
 
 from dal.data.shared.vault import JWT_SECRET_KEY
-
-from gd_node.protocols.http.middleware import (
+from dal.utils.middleware import (
     JWTMiddleware,
     redirect_not_found,
     remove_flow_exposed_port_links,
