@@ -20,14 +20,6 @@ gd\_node.protocols.http.http\_route module
    :undoc-members:
    :show-inheritance:
 
-gd\_node.protocols.http.middleware module
------------------------------------------
-
-.. automodule:: gd_node.protocols.http.middleware
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 gd\_node.protocols.http.movai\_widget module
 --------------------------------------------
 
