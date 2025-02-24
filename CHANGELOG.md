@@ -1,5 +1,9 @@
+# vTBD
+- [BP-1360](https://movai.atlassian.net/browse/BP-1360): Metrics no longer available when running cloud function
+
 # v3.0.3
 - [BP-1338](https://movai.atlassian.net/browse/BP-1338): Migrate gd-node to py-workflow@v2
+- [https://movai.atlassian.net/browse/BP-1342](https://movai.atlassian.net/browse/BP-1342): Move classes to DAL (v3.0.3.2)
 
 # v3.0.2
 - Update docs entrypoint to main and fix documentation versioning
