@@ -7,11 +7,6 @@ from movai_core_shared.exceptions import DoesNotExist
 from gd_node.user import GD_User as gd
 
 
-class GD_Callback(Callback):
-    def set_transitioning(self):
-        gd.is_transitioning = True
-
-
 class GD_UserFunctions(UserFunctions):
     def load_classes(self, _node_name, _port_name, _user):
         # Enhance the globals environment with gd-node and
@@ -61,3 +56,10 @@ class GD_UserFunctions(UserFunctions):
 
         if _user == "SUPER":
             self.globals["SM"] = UserSM
+
+
+class GD_Callback(Callback):
+    _user_functions_class = GD_UserFunctions
+
+    def set_transitioning(self):
+        gd.is_transitioning = True
