@@ -1,25 +1,24 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Welcome to GD Node’s documentation! &mdash; GD Node  documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
-    <link rel="shortcut icon" href="_static/cropped-Mov.ai-favicon2-32x32.png"/>
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
-        <script src="_static/versions.js"></script>
+    <link rel="shortcut icon" href="_static/cropped-Mov.ai-favicon2-32x32.png"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="_static/doctools.js?v=888ff710"></script>
+      <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="_static/versions.js?v=6808f9ef"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -31,14 +30,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="#" class="icon icon-home"> GD Node
+
+          
+          
+          <a href="#" class="icon icon-home">
+            GD Node
           </a>
-              <div class="version">
-                main
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -64,7 +64,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="#" class="icon icon-home"></a></li>
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">Welcome to GD Node’s documentation!</li>
       <li class="wy-breadcrumbs-aside">
               <a href="https://github.com/MOV-AI/gd-node/blob/main/docs/source/index.rst" class="fa fa-github"> Edit on GitHub</a>
@@ -82,30 +82,19 @@
 </section>
 <section id="gd-node">
 <h1>gd-node<a class="headerlink" href="#gd-node" title="Permalink to this heading"></a></h1>
-<dl class="simple">
-<dt>The gd-node is an extendible and flexible node with the following features:</dt><dd><ol class="arabic simple">
-<li><p>Can activate ROS1, ROS2 and other protocols such as HTTP</p></li>
-<li><p>Allows for flexibility via callbacs that can be modified outside of the node</p></li>
-<li><p>Provide support for a GUI represintation of the node when building a Flow</p></li>
-</ol>
-</dd>
-</dl>
-<p>A gd-node is represented by a JSON configuration file
-A gd-node configuration has the following sections</p>
-<blockquote>
-<div><ol class="arabic simple">
-<li><p>Info - Provide a general information about the node</p></li>
-<li><p>Parameters - Provide the nodes parameters and their default values</p></li>
-<li><dl class="simple">
-<dt>Ports Info - A list of the nodes’ ports</dt><dd><p>A port can be an in-port or an out-port
+<p>The gd-node is an extendible and flexible node with the following features:
+1) Can activate ROS1, ROS2 and other protocols such as HTTP
+2) Allows for flexibility via callbacs that can be modified outside of the node
+3) Provide support for a GUI represintation of the node when building a Flow
+A gd-node is represented by a JSON configuration file
+A gd-node configuration has the following sections
+1) Info - Provide a general information about the node
+2) Parameters - Provide the nodes parameters and their default values
+3) Ports Info - A list of the nodes’ ports
+A port can be an in-port or an out-port
 In-port typically invoke a user define callback provided in the port configuration
 Each port represent a spesific protocol service e.g. ROS1 Publisher, ROS1 Service client …
 Each port is handeling a spesific message which is specified in the port configuration e.g. std_msgs/Float32 (ROS)</p>
-</dd>
-</dl>
-</li>
-</ol>
-</div></blockquote>
 <section id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Permalink to this heading"></a></h2>
 <p>GD node is build via the MOV.AI platform node editor
@@ -158,13 +147,14 @@ GD node is created as a package and it is used by the Spawner container</p>
 <section id="versioning-and-branching">
 <h2>Versioning and branching<a class="headerlink" href="#versioning-and-branching" title="Permalink to this heading"></a></h2>
 <p>The branches and meanings:</p>
-<ul class="simple">
+<ul>
 <li><p>branches derived from dev (feature/ or bugfix/): Its where developements should be introduced to. Its lifetime should be as should as the developments time.</p></li>
 <li><p>dev: The most recent version of the code should be here as its the source of the feature branches. The purpose of this branch is the first point of integration from all features.</p></li>
 <li><p>main/ main*: The branch where you will find the most stable version of the component. Its a “deploy” of dev version to an internal release. This deploy must create an artifact that is avaiable to all other teams to use it and provide feedback to it.</p></li>
-<li><p>branches derived from main (hotfix/): Its where your hotfixes should be implemented. Do not forget to propagate your hotfixes to the other release versions and the main development release line.</p></li>
-</ul>
+<li><p>branches derived from main (hotfix/): Its where your hotfixes should be implemented. Do not forget to propagate your hotfixes to the other release versions and the main development release line.</p>
 <a class="reference external image-reference" href="https://user-images.githubusercontent.com/84720623/137349613-368ea252-3c05-460c-8eef-20bb6c4b94f4.png"><img alt="Screenshot from 2021-10-14 16-29-53" src="https://user-images.githubusercontent.com/84720623/137349613-368ea252-3c05-460c-8eef-20bb6c4b94f4.png" /></a>
+</li>
+</ul>
 <p>In terms of versioning, we basically use semantic versioning but with a 4th digit, automatic incremented by our CI systems:
 <strong>{Major}.{Minor}.{Patch}.{buildid}</strong></p>
 <p>If your component has a straight relation with a centralized system, we suggest keeping a relation with it in terms of major,minor and patch to ease support.</p>
